@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -16,8 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body>{children}</body>
+    <html className="dark">
+      <body>
+        <DashBoardLayout>{children}</DashBoardLayout>
+      </body>
     </html>
   );
 }

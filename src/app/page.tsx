@@ -1,10 +1,11 @@
+import { Dashboard } from "@/modules/dashboard/dashboard";
 
 
 export default function Home() {
   return (
-    <div className="">
-      <main className="">
-        <div className="bg-red-500 dark:bg-blue-500"> hola </div>
+    <div>
+      <main>
+        <Dashboard/>
       </main>
     </div>
   );
