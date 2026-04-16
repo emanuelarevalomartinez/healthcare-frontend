@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className="dark">
-      <body>
+      <body className="bg-background text-foreground">
         <DashBoardLayout>{children}</DashBoardLayout>
       </body>
     </html>

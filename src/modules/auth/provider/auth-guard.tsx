@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 export default function AuthGuard({ children }: Readonly<PropsWithChildren>) {
-
-const router = useRouter();
+  const router = useRouter();
   const isAuthenticated = false;
 
   useEffect(() => {
@@ -15,10 +14,13 @@ const router = useRouter();
     }
   }, [isAuthenticated]);
 
-     return (
+  return (
     <>
-      { children }
+      <div className="flex h-screen items-center justify-center">
+        <div className="flex h-96">
+          {children}
+        </div>
+        </div>
     </>
   );
-
- }
+}
