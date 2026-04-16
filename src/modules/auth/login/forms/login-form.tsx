@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,19 +20,24 @@ import { routes } from "@/lib/routes/routes";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
 
-    const router = useRouter();
-
-  function handleGoTORegisterView(){
-       router.push(routes.auth.register);
+  function handleGoTORegisterView() {
+    router.push(routes.auth.register);
   }
-
 
   return (
     <>
       <div>
         <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
           <CardHeader>
+            <div className="flex w-full h-20 justify-center">
+<Avatar className="w-20 h-20">
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+              <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+            </Avatar>
+            </div>
             <CardTitle className="text-foreground text-center">
               Inicia sesión en tu cuenta
             </CardTitle>
@@ -54,7 +65,9 @@ export default function LoginForm() {
           </CardContent>
           <CardFooter className="flex-col gap-2 border-border">
             <Button
-            onClick={ ()=> { handleGoTORegisterView() } }
+              onClick={() => {
+                handleGoTORegisterView();
+              }}
               type="submit"
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
