@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { HEALTHCARE_ICON } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { useRouter } from "next/navigation";
 
@@ -32,11 +28,13 @@ export default function LoginForm() {
         <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
           <CardHeader>
             <div className="flex w-full h-20 justify-center">
-<Avatar className="w-20 h-20">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-              <AvatarBadge className="bg-green-600 dark:bg-green-800" />
-            </Avatar>
+              <Avatar className="w-20 h-20 p-2">
+                <AvatarImage
+                  src={HEALTHCARE_ICON.src}
+                  alt={HEALTHCARE_ICON.alt}
+                />
+                <AvatarFallback> {HEALTHCARE_ICON.alt} </AvatarFallback>
+              </Avatar>
             </div>
             <CardTitle className="text-foreground text-center">
               Inicia sesión en tu cuenta
