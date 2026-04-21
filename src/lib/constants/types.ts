@@ -1,5 +1,5 @@
 
-export enum USER_TYPE {
+export enum USER_ROLE {
     ADMIN = "ADMIN",
     DOCTOR = "DOCTOR",
     RECEPTIONIST = "RECEPTIONIST"

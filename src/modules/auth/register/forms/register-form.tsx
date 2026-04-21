@@ -26,19 +26,27 @@ import { registerUser } from "../services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getErrorMessage, USER_ROLE } from "@/lib";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<RegisterUserSchema>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<RegisterUserSchema>({
     resolver: zodResolver(getRegisterUserSchema()),
     defaultValues: {
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
-      role: "PATIENT",
+      role: undefined,
     },
   });
 
@@ -46,25 +54,28 @@ export default function RegisterForm() {
     router.push(routes.auth.login);
   }
 
-   async function onSubmit(data: RegisterUserSchema) {
-        setIsSubmitting(true);
+  async function onSubmit(data: RegisterUserSchema) {
+    setIsSubmitting(true);
     try {
-      const response = await registerUser(data);
+      const { confirmPassword, ...userData } = data;
 
-      if (response.error || !response.data) {
-        throw response.error ?? response;
+      const response = await registerUser(userData);
+
+      if (response.status === 201) {
+        console.log(response.message);
+        router.push(routes.auth.login);
+        toast("El usuario a sido registrado exitosamente");
       }
-
-      router.push(routes.auth.login);
-
     } catch (error) {
+      toast.error(getErrorMessage(error));
+
       console.error(error);
     } finally {
-      // setIsLoading(false);
+      setIsSubmitting(false);
     }
   }
 
-    const handleFocusError = (errors: any) => {
+  const handleFocusError = (errors: any) => {
     const firstError = Object.keys(errors)[0];
     const element = document.getElementById(firstError);
     if (element) {
@@ -74,32 +85,35 @@ export default function RegisterForm() {
 
   return (
     <>
-    <form
+      <form
         id="register-user-form"
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
-    >
-
-    </form>
-      <div>
-        <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
-          <CardHeader>
-            <CardTitle className="text-foreground text-center">
-              Registrate con nosotros
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form>
+      >
+        <div>
+          <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
+            <CardHeader>
+              <CardTitle className="text-foreground text-center">
+                Registrate con nosotros
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Nombre de usuario</Label>
-                  <Input id="username" type="text" placeholder="Bob" required
-                   {...register("username")}
-                  aria-invalid={errors.username ? "true" : "false"}
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="ana"
+                    required
+                    {...register("username")}
+                    aria-invalid={errors.username ? "true" : "false"}
                   />
-                                  {errors.username && (
-                  <p className="text-sm text-red-500">{errors.username.message}</p>
-                )}
+                  {errors.username && (
+                    <p className="text-sm text-red-500">
+                      {errors.username.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -107,99 +121,105 @@ export default function RegisterForm() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="ejemplo@ejemplo.com"
                     required
                     {...register("email")}
-                  aria-invalid={errors.email ? "true" : "false"}
+                    aria-invalid={errors.email ? "true" : "false"}
                   />
-                                  {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <Field className="w-full">
                   <FieldLabel>Rol</FieldLabel>
                   <Select
-                  onValueChange={(value) => setValue("role", value)}
-                  defaultValue={watch("role")}
+                    onValueChange={(value) =>
+                      setValue("role", value as USER_ROLE)
+                    }
+                    defaultValue={watch("role")}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>
                     <SelectContent className="bg-secondary">
                       <SelectGroup>
-                        <SelectItem value="___" defaultChecked> </SelectItem>
                         <SelectItem value="ADMIN">ADMINISTRADOR</SelectItem>
                         <SelectItem value="DOCTOR">DOCTOR</SelectItem>
-                        <SelectItem value="RECEPTIONIST">RECEPCIONISTA</SelectItem>
+                        <SelectItem value="RECEPTIONIST">
+                          RECEPCIONISTA
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                   {errors.role && (
-                  <p className="text-sm text-red-500">{errors.role.message}</p>
-                )}
-
+                    <p className="text-sm text-red-500">
+                      {errors.role.message}
+                    </p>
+                  )}
                 </Field>
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Contraseña</Label>
                   </div>
-                  <Input id="password" type="password" required 
-                  {...register("password")}
-                  aria-invalid={errors.password ? "true" : "false"}
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    {...register("password")}
+                    aria-invalid={errors.password ? "true" : "false"}
                   />
-                                  {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password.message}</p>
-                )}
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Confirmar Contraseña</Label>
                   </div>
-                  <Input id="confirmPassword" type="password" required 
-                                    {...register("confirmPassword")}
-                  aria-invalid={errors.confirmPassword ? "true" : "false"}
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    required
+                    {...register("confirmPassword")}
+                    aria-invalid={errors.confirmPassword ? "true" : "false"}
                   />
-                                                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-                )}
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
                 </div>
               </div>
-            </form>
-          </CardContent>
-          <CardFooter className="flex-col gap-2 border-border">
-            {/* <Button
-              onClick={() => {
-                handleGoTOLoginView();
-              }}
-              type="submit"
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
-            >
-              Autenticarse
-            </Button> */}
-                        <Button
-              type="submit"
-              size="lg"
-              disabled={isSubmitting}
-              className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
-            >
-              {isSubmitting ? "Registrando..." : "Registrarse"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              onClick={handleGoToLoginView}
-              className="w-full"
-            >
-              Ya tengo cuenta - Autenticarse
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+            </CardContent>
+            <CardFooter className="flex-col gap-2 border-border">
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
+              >
+                {isSubmitting ? "Registrando..." : "Registrarse"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={handleGoToLoginView}
+                className="w-full"
+              >
+                Ya tengo cuenta - Autenticarse
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </form>
     </>
   );
 }

@@ -10,14 +10,16 @@ export default function AuthGuard({ children }: Readonly<PropsWithChildren>) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push(routes.auth.login);
+
+      // TODO esto debe redirigir inicialmente al login
+      router.push(routes.auth.register);
     }
   }, [isAuthenticated]);
 
   return (
     <>
       <div className="flex h-screen items-center justify-center">
-        <div className="flex h-96">
+        <div className="flex items-center h-[75vh]">
           {children}
         </div>
         </div>
