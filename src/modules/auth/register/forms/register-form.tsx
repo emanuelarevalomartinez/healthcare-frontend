@@ -26,12 +26,13 @@ import { registerUser } from "../services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getErrorMessage, USER_ROLE } from "@/lib";
+import { getErrorMessage, HEALTHCARE_ICON, USER_ROLE } from "@/lib";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -55,7 +56,7 @@ export default function RegisterForm() {
   }
 
   async function onSubmit(data: RegisterUserSchema) {
-    setIsSubmitting(true);
+    setIsLoading(true);
     try {
       const { confirmPassword, ...userData } = data;
 
@@ -64,14 +65,14 @@ export default function RegisterForm() {
       if (response.status === 201) {
         console.log(response.message);
         router.push(routes.auth.login);
-        toast("El usuario a sido registrado exitosamente");
+        toast("Registro completado exitosamente.");
       }
     } catch (error) {
       toast.error(getErrorMessage(error));
 
       console.error(error);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   }
 
@@ -93,14 +94,23 @@ export default function RegisterForm() {
         <div>
           <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
             <CardHeader>
+              <div className="flex w-full h-20 justify-center">
+                <Avatar className="w-20 h-20 p-2">
+                  <AvatarImage
+                    src={HEALTHCARE_ICON.src}
+                    alt={HEALTHCARE_ICON.alt}
+                  />
+                  <AvatarFallback> {HEALTHCARE_ICON.alt} </AvatarFallback>
+                </Avatar>
+              </div>
               <CardTitle className="text-foreground text-center">
                 Registrate con nosotros
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Nombre de usuario</Label>
+                  <Label htmlFor="username">Nombre de usuario</Label>
                   <Input
                     id="username"
                     type="text"
@@ -181,7 +191,7 @@ export default function RegisterForm() {
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Confirmar Contraseña</Label>
+                    <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
                   </div>
                   <Input
                     id="confirmPassword"
@@ -202,10 +212,10 @@ export default function RegisterForm() {
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
               >
-                {isSubmitting ? "Registrando..." : "Registrarse"}
+                {isLoading ? "Registrando..." : "Registrarse"}
               </Button>
               <Button
                 type="button"

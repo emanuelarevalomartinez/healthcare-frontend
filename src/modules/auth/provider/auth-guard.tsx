@@ -6,23 +6,21 @@ import { PropsWithChildren, useEffect } from "react";
 
 export default function AuthGuard({ children }: Readonly<PropsWithChildren>) {
   const router = useRouter();
-  const isAuthenticated = false;
+
+  // FIXME corregir esto para que se guarde y obtenga correctamente el token
+
+  const isAuthenticated = typeof window !== "undefined" && localStorage.getItem("token") === "true";
 
   useEffect(() => {
-    if (!isAuthenticated) {
 
-      // TODO esto debe redirigir inicialmente al login
-      router.push(routes.auth.register);
+    if (!isAuthenticated) {
+      router.push(routes.auth.login);
     }
   }, [isAuthenticated]);
 
   return (
     <>
-      <div className="flex h-screen items-center justify-center">
-        <div className="flex items-center h-[75vh]">
-          {children}
-        </div>
-        </div>
+      {children}
     </>
   );
 }

@@ -26,4 +26,5 @@ export const routes = {
       },
     },
   },
+  root: "/"
 } satisfies Routes;

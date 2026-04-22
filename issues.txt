@@ -1,6 +1,6 @@
 
 
 // TODO
- // corregir el dise!no y la respuesta esperada en el formulrio del registrar para que ocurra de una mejor manera
- // añadir el icono de salud en el apartado de registro tambien
  // hacer un mejor responsive de las vistas de autenticacion
+ // capturar la informacion que regresa del usuario cuando se registra y mostrarla
+ // guardar las credenciales de acceso en localstorage
