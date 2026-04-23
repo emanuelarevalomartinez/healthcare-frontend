@@ -20,6 +20,7 @@ import { getLoginUserSchema, LoginUserSchema } from "./schema";
 import { loginUser } from "../services";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { setTokenLocalStore } from "@/lib/utils/local-storage";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -49,9 +50,7 @@ export default function LoginForm() {
       const response = await loginUser(data);
 
       if (response.status === 200) {
-        console.log(response.message);
-        // FIXME cambiar la forma de modificar y usar esto
-        localStorage.setItem("token", "true");
+       setTokenLocalStore("true");
         router.push(routes.root);
         toast("Inicio de sesión exitoso.");
       }

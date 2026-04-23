@@ -63,7 +63,6 @@ export default function RegisterForm() {
       const response = await registerUser(userData);
 
       if (response.status === 201) {
-        console.log(response.message);
         router.push(routes.auth.login);
         toast("Registro completado exitosamente.");
       }
