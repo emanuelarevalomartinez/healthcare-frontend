@@ -3,4 +3,5 @@
 // TODO
  // hacer un mejor responsive de las vistas de autenticacion
  // capturar la informacion que regresa del usuario cuando se registra y mostrarla
+ // añadir un contrlador de estado global para cuando el usario se registra con exito mostrar cierto contenido en el dasboard
  // guardar las credenciales de acceso en localstorage

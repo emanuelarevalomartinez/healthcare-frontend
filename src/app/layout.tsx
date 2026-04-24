@@ -3,6 +3,7 @@ import "./globals.css";
 import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { NavigationMenuWrapper } from "@/components/navigation-menu-wrapper";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -22,7 +23,10 @@ export default function RootLayout({
     <html className="dark">
       <TooltipProvider>
         <body className="bg-background text-foreground">
-          <DashBoardLayout>{children}</DashBoardLayout>
+          <div className="flex flex-col">
+            <NavigationMenuWrapper></NavigationMenuWrapper>
+            <DashBoardLayout>{children}</DashBoardLayout>
+          </div>
           <Toaster
             position="bottom-right"
             richColors
