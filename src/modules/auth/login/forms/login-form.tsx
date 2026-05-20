@@ -96,15 +96,6 @@ export default function LoginForm() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
-                {/* <div className="grid gap-2">
-                  <Label htmlFor="email">Correo Electrónico</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="ejemplo@ejemplo.com"
-                    required
-                  />
-                </div> */}
                 <div className="grid gap-2">
                   <Label htmlFor="email">Correo Electrónico</Label>
                   <Input
@@ -121,12 +112,6 @@ export default function LoginForm() {
                     </p>
                   )}
                 </div>
-                {/*  <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Contraseña</Label>
-                  </div>
-                  <Input id="password" type="password" required />
-                </div> */}
                 <div className="grid gap-2">
                   <Label htmlFor="password">Contraseña</Label>
                   <Input
@@ -145,16 +130,6 @@ export default function LoginForm() {
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2 border-border">
-              {/*   <Button
-              onClick={() => {
-                handleGoTORegisterView();
-              }}
-              type="submit"
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
-            >
-              Registrarse
-            </Button> */}
               <Button
                 type="submit"
                 size="lg"
