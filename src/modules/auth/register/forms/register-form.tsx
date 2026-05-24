@@ -90,18 +90,9 @@ export default function RegisterForm() {
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
       >
-        <div>
+        <div className="flex pt-[40%] md:pt-[20%]">
           <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
             <CardHeader>
-              <div className="flex w-full h-20 justify-center">
-                <Avatar className="w-20 h-20 p-2">
-                  <AvatarImage
-                    src={HEALTHCARE_ICON.src}
-                    alt={HEALTHCARE_ICON.alt}
-                  />
-                  <AvatarFallback> {HEALTHCARE_ICON.alt} </AvatarFallback>
-                </Avatar>
-              </div>
               <CardTitle className="text-foreground text-center">
                 Registrate con nosotros
               </CardTitle>

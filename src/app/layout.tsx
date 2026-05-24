@@ -23,7 +23,7 @@ export default function RootLayout({
     <html className="dark">
       <TooltipProvider>
         <body className="bg-background text-foreground">
-          <div className="flex flex-col">
+          <div className="">
             <NavigationMenuWrapper></NavigationMenuWrapper>
             <DashBoardLayout>{children}</DashBoardLayout>
           </div>
