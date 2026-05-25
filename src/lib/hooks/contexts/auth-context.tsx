@@ -1,7 +1,7 @@
 "use client";
 
+import { getUserAuthCredentialsLocalStore } from "@/lib/utils/local-storage";
 import { createContext, useContext, useEffect, useState } from "react";
-import { getTokenLocalStore } from "@/lib/utils/local-storage";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -15,7 +15,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const checkAuth = () => {
-    const token = getTokenLocalStore();
+    const token = getUserAuthCredentialsLocalStore();
     setIsAuthenticated(!!token);
   };
 

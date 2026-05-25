@@ -9,7 +9,7 @@ import {
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
 import { routes, useAuth } from "@/lib";
-import { deleteTokenLocalStorage } from "@/lib/utils/local-storage";
+import { deleteUserAuthCredentialsLocalStorage } from "@/lib/utils/local-storage";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -20,7 +20,7 @@ export function NavigationUserProfile() {
   const router = useRouter();
 
   function handleLogout(){
-    deleteTokenLocalStorage();
+    deleteUserAuthCredentialsLocalStorage();
     router.push(routes.auth.login);
     checkAuth();
     toast("Sesión cerrada con exito.");

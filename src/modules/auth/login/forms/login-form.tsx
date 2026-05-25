@@ -19,11 +19,17 @@ import { getLoginUserSchema, LoginUserSchema } from "./schema";
 import { loginUser } from "../services";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { setTokenLocalStore } from "@/lib/utils/local-storage";
+import {
+  setUserAuthCredentialsLocalStore,
+  setUserDataLocalStore,
+} from "@/lib/utils/local-storage";
+import {
+  UserAuthCredentialsInterface,
+  UserDataLocalStorageInterface,
+} from "@/lib/utils/local-storage-type";
 
 export default function LoginForm() {
   const { checkAuth } = useAuth();
-
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,8 +58,23 @@ export default function LoginForm() {
       const response = await loginUser(data);
 
       if (response.status === 200) {
-       setTokenLocalStore("true");
-      checkAuth();
+        const userAuthCredentialsInfo: UserAuthCredentialsInterface = {
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+        };
+
+        setUserAuthCredentialsLocalStore(userAuthCredentialsInfo);
+        console.log("response", response.data);
+
+        const userInfo: UserDataLocalStorageInterface = {
+          username: response.data.username,
+          email: response.data.email,
+          role: response.data.role,
+        };
+
+        setUserDataLocalStore(userInfo);
+        checkAuth();
+
         router.push(routes.root);
         toast("Inicio de sesión exitoso.");
       }

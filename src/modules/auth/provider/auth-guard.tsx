@@ -1,14 +1,14 @@
 "use client";
 
 import { routes } from "@/lib/routes/routes";
-import { getTokenLocalStore } from "@/lib/utils/local-storage";
+import { getUserAuthCredentialsLocalStore } from "@/lib/utils/local-storage";
 import { useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 export default function AuthGuard({ children }: Readonly<PropsWithChildren>) {
   const router = useRouter();
 
-  const isAuthenticated = typeof window !== "undefined" && getTokenLocalStore();
+  const isAuthenticated = typeof window !== "undefined" && getUserAuthCredentialsLocalStore();
 
   useEffect(() => {
 
