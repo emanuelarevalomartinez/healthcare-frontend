@@ -26,9 +26,8 @@ import { registerUser } from "../services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getErrorMessage, HEALTHCARE_ICON, USER_ROLE } from "@/lib";
+import { getErrorMessage, USER_ROLE } from "@/lib";
 import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -90,7 +89,7 @@ export default function RegisterForm() {
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
       >
-        <div className="flex pt-[40%] md:pt-[20%]">
+        <div className="flex py-10 pt-[20%] md:pt-[10%]">
           <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">

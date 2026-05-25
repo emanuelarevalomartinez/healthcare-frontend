@@ -8,9 +8,24 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
+import { routes, useAuth } from "@/lib";
+import { deleteTokenLocalStorage } from "@/lib/utils/local-storage";
 import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function NavigationUserProfile() {
+
+  const { checkAuth } = useAuth();
+  const router = useRouter();
+
+  function handleLogout(){
+    deleteTokenLocalStorage();
+    router.push(routes.auth.login);
+    checkAuth();
+    toast("Sesión cerrada con exito.");
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -43,7 +58,9 @@ export function NavigationUserProfile() {
           <DropdownMenuItem>Ver Perfil</DropdownMenuItem>
           <DropdownMenuItem>Configuración</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive focus:text-destructive">
+          <DropdownMenuItem className="text-destructive focus:text-destructive"
+          onClick={ ()=> { handleLogout() } }
+          >
             Cerrar Sesión
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -3,7 +3,7 @@ import "./globals.css";
 import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NavigationMenuWrapper } from "@/components/navigation-menu-wrapper";
+import { AuthProvider } from "@/lib";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -22,23 +22,24 @@ export default function RootLayout({
   return (
     <html className="dark">
       <TooltipProvider>
-        <body className="bg-background text-foreground">
-          <div className="">
-            <NavigationMenuWrapper></NavigationMenuWrapper>
-            <DashBoardLayout>{children}</DashBoardLayout>
-          </div>
-          <Toaster
-            position="bottom-right"
-            richColors
-            toastOptions={{
-              style: {
-                background: "var(--color-card)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-lg)",
-              },
-            }}
-          />
-        </body>
+        <AuthProvider>
+          <body className="bg-background text-foreground">
+            <div>
+              <DashBoardLayout>{children}</DashBoardLayout>
+            </div>
+            <Toaster
+              position="bottom-right"
+              richColors
+              toastOptions={{
+                style: {
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                },
+              }}
+            />
+          </body>
+        </AuthProvider>
       </TooltipProvider>
     </html>
   );

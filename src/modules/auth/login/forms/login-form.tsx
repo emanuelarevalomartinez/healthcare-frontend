@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getErrorMessage, HEALTHCARE_ICON } from "@/lib";
+import { getErrorMessage, useAuth } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -23,6 +22,9 @@ import { useForm } from "react-hook-form";
 import { setTokenLocalStore } from "@/lib/utils/local-storage";
 
 export default function LoginForm() {
+  const { checkAuth } = useAuth();
+
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -51,6 +53,7 @@ export default function LoginForm() {
 
       if (response.status === 200) {
        setTokenLocalStore("true");
+      checkAuth();
         router.push(routes.root);
         toast("Inicio de sesión exitoso.");
       }
@@ -78,7 +81,7 @@ export default function LoginForm() {
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
       >
-        <div className="flex pt-[80%] md:pt-[40%]">
+        <div className="flex py-10 pt-[60%] md:pt-[30%]">
           <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">

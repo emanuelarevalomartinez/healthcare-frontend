@@ -3,10 +3,12 @@
 export const Dashboard = () => {
   return (
     <>
-    <div>
-      <div className="">Welcome to DashBoard</div>
+    <div className="">
+      <div>
+        <div className="">Welcome to DashBoard</div>
+      </div>
     </div>
+     
     </>
-   
   );
 };
