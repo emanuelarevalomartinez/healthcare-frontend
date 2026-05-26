@@ -3,7 +3,7 @@ import "./globals.css";
 import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/lib";
+import { AppProvider, AuthProvider } from "@/lib";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -23,6 +23,7 @@ export default function RootLayout({
     <html className="dark">
       <TooltipProvider>
         <AuthProvider>
+          <AppProvider>
           <body className="bg-background text-foreground">
             <div>
               <DashBoardLayout>{children}</DashBoardLayout>
@@ -39,6 +40,7 @@ export default function RootLayout({
               }}
             />
           </body>
+          </AppProvider>
         </AuthProvider>
       </TooltipProvider>
     </html>

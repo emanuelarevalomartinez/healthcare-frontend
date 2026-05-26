@@ -1,8 +1,9 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/customs/app-sidebar";
+import { SheetWrapper } from "@/components/customs/sheet-wrapper";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { useAuth } from "@/lib";
+import { useApp, useAuth } from "@/lib";
 import AuthGuard from "@/modules/auth/provider/auth-guard";
 import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
 import { PropsWithChildren } from "react";
@@ -11,6 +12,7 @@ export default function DashBoardLayout({
   children,
 }: Readonly<PropsWithChildren>) {
   const { isAuthenticated } = useAuth();
+  const { isSheetOpen, setIsSheetOpen } = useApp();
 
   return (
     <AuthGuard>
@@ -25,8 +27,9 @@ export default function DashBoardLayout({
               </div>
               {isAuthenticated && <NavigationMenu />}
             </div>
-            <hr className="border-b w-full border-border" />
+            <hr className="w-full border-border" />
             <div>{children}</div>
+            {isAuthenticated && <SheetWrapper open={isSheetOpen} onOpenChange={setIsSheetOpen}/>}
           </main>
         </SidebarProvider>
       </div>

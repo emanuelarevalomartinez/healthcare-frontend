@@ -1,7 +1,6 @@
 import { NavigationMenuSearch } from "@/modules/navigation-menu/items/navigation-menu-search";
 import { NavigationUserProfile } from "./items/navigation-user-profile";
 import { NavigationUserNotifications } from "./items/navigation-user-notifications";
-import { NavigationUserTheme } from "./items/navigation-user-theme";
 import { NavigationUserLanguage } from "./items/navigation-user-language";
 
 export function NavigationMenu() {
@@ -15,7 +14,6 @@ export function NavigationMenu() {
 
           <div className="flex items-center gap-3">
             <NavigationUserLanguage />
-            <NavigationUserTheme />
             <NavigationUserNotifications />
             <NavigationUserProfile />
           </div>

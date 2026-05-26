@@ -3,7 +3,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { HEALTHCARE_ICON } from "@/lib";
 import { NavigationUserLanguage } from "./items/navigation-user-language";
-import { NavigationUserTheme } from "./items/navigation-user-theme";
 
 
 export function NavigationMenuAuth(){
@@ -32,7 +31,6 @@ export function NavigationMenuAuth(){
 
             <div className="flex items-center gap-3">
               <NavigationUserLanguage />
-              <NavigationUserTheme />
             </div>
           </div>
         </header>

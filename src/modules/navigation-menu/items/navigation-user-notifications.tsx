@@ -1,10 +1,17 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
+import { useApp } from "@/lib";
 import { Bell } from "lucide-react";
 
 export function NavigationUserNotifications() {
+
+   const { isSheetOpen, setIsSheetOpen } = useApp();
+
   return (
     <>
       <Button
+      onClick={ ()=> { setIsSheetOpen(true) } }
         variant="outline"
         size="icon"
         className="relative h-11 w-11 rounded-xl bg-card"
