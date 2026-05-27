@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,9 +10,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { routes, useAuth, useLanguage } from "@/lib";
+import { routes, useLanguage } from "@/lib";
+import { deleteUserAuthCredentialsCookies } from "@/lib/utils/cookies";
 import {
-  deleteUserAuthCredentialsLocalStorage,
   deleteUserDataLocalStorage,
   getUserDataLocalStore,
 } from "@/lib/utils/local-storage";
@@ -21,7 +23,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function NavigationUserProfile() {
-  const { checkAuth } = useAuth();
   const { dictionary } = useLanguage();
   const router = useRouter();
 
@@ -31,12 +32,17 @@ export function NavigationUserProfile() {
     email: "",
   });
 
-  function handleLogout() {
-    deleteUserAuthCredentialsLocalStorage();
-    deleteUserDataLocalStorage();
-    router.push(routes.auth.login);
-    checkAuth();
-    toast("Sesión cerrada con exito.");
+  async function handleLogout() {
+    try {
+      // deleteUserAuthCredentialsLocalStorage();
+      await deleteUserAuthCredentialsCookies();
+      deleteUserDataLocalStorage();
+      router.push(routes.auth.login);
+      // checkAuth();
+      toast("Sesión cerrada con exito.");
+    } catch (error) {
+      console.error("Error to close session", error);
+    }
   }
 
   useEffect(() => {

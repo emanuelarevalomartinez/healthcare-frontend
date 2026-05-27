@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,15 +11,20 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { SystemAlert } from "./system-alert";
+import { useApp } from "@/lib";
 
 interface SheetContentWrapperProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function SheetWrapper({ open, onOpenChange }: SheetContentWrapperProps) {
+export function SheetWrapper() {
+
+   const { isSheetOpen, setIsSheetOpen } = useApp();
+
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetContent className="border-border">
         <SheetHeader>
           <SheetTitle>Notificaciones</SheetTitle>

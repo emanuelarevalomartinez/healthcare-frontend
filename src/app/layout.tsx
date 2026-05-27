@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   AppProvider,
-  AuthProvider,
   LanguageProvider,
 } from "@/lib";
 import { getCurrentLanguage } from "@/lib/language/language";
@@ -31,12 +29,9 @@ export default async function RootLayout({
     <html className="dark">
       <TooltipProvider>
         <LanguageProvider dictionary={dictionary}>
-          <AuthProvider>
             <AppProvider>
               <body className="bg-background text-foreground">
-                <div>
-                  <DashBoardLayout>{children}</DashBoardLayout>
-                </div>
+                 {children}
                 <Toaster
                   position="bottom-right"
                   richColors
@@ -50,7 +45,6 @@ export default async function RootLayout({
                 />
               </body>
             </AppProvider>
-          </AuthProvider>
         </LanguageProvider>
       </TooltipProvider>
     </html>
