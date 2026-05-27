@@ -1,6 +1,8 @@
 {
   "system": {
-    "subtitle": "Sistema Clínico Interno"
+    "subtitle": "Sistema Clínico Interno",
+    "language": "Idioma",
+    "miAccountLabel": "My Cuenta"
   },
   "auth": {
     "login": {

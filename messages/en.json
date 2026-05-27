@@ -1,6 +1,8 @@
 {
   "system": {
-    "subtitle": "Internal Clinical System"
+    "subtitle": "Internal Clinical System",
+    "language": "Language",
+    "miAccountLabel": "My Account"
   },
   "auth": {
     "login": {

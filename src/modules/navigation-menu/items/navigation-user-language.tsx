@@ -9,16 +9,19 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { Language } from "@/lib/language/language";
+import { useLanguage } from "@/lib";
 import Cookies from "js-cookie";
 import { Languages } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function NavigationUserLanguage() {
-  //
+
+  const { dictionary } = useLanguage();
+
   const router = useRouter();
 
-  const handleChangeLanguage = (newLanguage: Language) => {
+  // FIXME corregir este any por tipo de dato language
+  const handleChangeLanguage = (newLanguage: any) => {
     Cookies.set("language", newLanguage);
     router.refresh();
   };
@@ -35,8 +38,8 @@ export function NavigationUserLanguage() {
             <Languages className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40 rounded-xl">
-          <DropdownMenuLabel>Idioma / Language</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-40 rounded-xl bg-card">
+          <DropdownMenuLabel>{dictionary.system.language}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="flex items-center justify-between"

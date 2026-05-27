@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { HEALTHCARE_ICON, useLanguage, USER_ROLE } from "@/lib";
+import { HEALTHCARE_ICON, routes, useLanguage, USER_ROLE } from "@/lib";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 import {
   BarChart,
@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import Link from "next/link";
 
 interface MenuItem {
   label: string;
@@ -72,7 +73,7 @@ export function AppSidebar() {
     {
       label: "Pacientes",
       icon: Heart,
-      href: "/patients",
+      href: routes.patients,
       roles: [USER_ROLE.ADMIN, USER_ROLE.DOCTOR, USER_ROLE.RECEPTIONIST],
     },
     // Appointments (all roles)
@@ -169,10 +170,14 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href}>
+                    <Link href={item.href}>
+                    <item.icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                   {/*  <a href={item.href}>
                       <item.icon className="w-4 h-4" />
                       <span>{item.label}</span>
-                    </a>
+                    </a> */}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

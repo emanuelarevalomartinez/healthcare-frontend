@@ -8,8 +8,12 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
-import { routes, useAuth } from "@/lib";
-import { deleteUserAuthCredentialsLocalStorage, deleteUserDataLocalStorage, getUserDataLocalStore } from "@/lib/utils/local-storage";
+import { routes, useAuth, useLanguage } from "@/lib";
+import {
+  deleteUserAuthCredentialsLocalStorage,
+  deleteUserDataLocalStorage,
+  getUserDataLocalStore,
+} from "@/lib/utils/local-storage";
 import { UserDetailsInterface } from "@/modules/user/types";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,6 +22,7 @@ import { toast } from "sonner";
 
 export function NavigationUserProfile() {
   const { checkAuth } = useAuth();
+  const { dictionary } = useLanguage();
   const router = useRouter();
 
   const [userDetails, setUserDetails] = useState<UserDetailsInterface>({
@@ -35,15 +40,15 @@ export function NavigationUserProfile() {
   }
 
   useEffect(() => {
-  const userData = getUserDataLocalStore();
-  if (userData) {
-    setUserDetails({
-      username: userData.username,
-      role: userData.role,
-      email: userData.email,
-    });
-  }
-}, []);
+    const userData = getUserDataLocalStore();
+    if (userData) {
+      setUserDetails({
+        username: userData.username,
+        role: userData.role,
+        email: userData.email,
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -55,7 +60,11 @@ export function NavigationUserProfile() {
           >
             <Avatar className="h-9 w-9">
               <AvatarFallback className="bg-primary/10 font-semibold text-primary text-xs">
-                {`${userDetails.username.charAt(0).toUpperCase()}${userDetails.username.charAt(1).toUpperCase()}`}
+                {`${userDetails.username
+                  .charAt(0)
+                  .toUpperCase()}${userDetails.username
+                  .charAt(1)
+                  .toUpperCase()}`}
               </AvatarFallback>
             </Avatar>
 
@@ -71,8 +80,10 @@ export function NavigationUserProfile() {
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-56 rounded-xl">
-          <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-56 rounded-xl bg-card">
+          <DropdownMenuLabel>
+            {dictionary.system.miAccountLabel}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Ver Perfil</DropdownMenuItem>
           <DropdownMenuItem>Configuración</DropdownMenuItem>

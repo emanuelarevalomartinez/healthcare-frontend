@@ -28,7 +28,7 @@ export default function DashBoardLayout({
               {isAuthenticated && <NavigationMenu />}
             </div>
             <hr className="w-full border-border" />
-            <div>{children}</div>
+            <div className="p-4">{children}</div>
             {isAuthenticated && <SheetWrapper open={isSheetOpen} onOpenChange={setIsSheetOpen}/>}
           </main>
         </SidebarProvider>
