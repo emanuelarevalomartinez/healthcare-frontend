@@ -1,0 +1,13 @@
+{
+  "auth": {
+    "login": {
+      "title": "Inicia sesión en tu cuenta"
+    },
+    "register": {
+      "title": "Regístrate con nosotros"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenido"
+  }
+}

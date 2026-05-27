@@ -1,14 +1,16 @@
-"use client";
+import { getCurrentLanguage } from "@/lib/language/language";
 
-export const Dashboard = () => {
+export async function Dashboard() {
+  
+  const language = await getCurrentLanguage();
+
   return (
     <>
-    <div className="">
       <div>
-        <div className="">Welcome to DashBoard</div>
+        <div>
+          <div>{language.dashboard.welcome}</div>
+        </div>
       </div>
-    </div>
-     
     </>
   );
-};
+}

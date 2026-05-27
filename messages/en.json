@@ -1,0 +1,13 @@
+{
+  "auth": {
+    "login": {
+      "title": "Log in to your account"
+    },
+    "register": {
+      "title": "Sign up with us"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome"
+  }
+}

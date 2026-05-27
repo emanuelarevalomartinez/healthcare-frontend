@@ -1,3 +1,5 @@
+
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenuContent,
@@ -7,9 +9,20 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
+import { Language } from "@/lib/language/language";
+import Cookies from "js-cookie";
 import { Languages } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function NavigationUserLanguage() {
+  //
+  const router = useRouter();
+
+  const handleChangeLanguage = (newLanguage: Language) => {
+    Cookies.set("language", newLanguage);
+    router.refresh();
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -25,11 +38,17 @@ export function NavigationUserLanguage() {
         <DropdownMenuContent align="end" className="w-40 rounded-xl">
           <DropdownMenuLabel>Idioma / Language</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex items-center justify-between">
+          <DropdownMenuItem
+            className="flex items-center justify-between"
+            onClick={() => handleChangeLanguage("es")}
+          >
             <span>Español</span>
             <span className="text-xs text-muted-foreground">ES</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="flex items-center justify-between">
+          <DropdownMenuItem
+            className="flex items-center justify-between"
+            onClick={() => handleChangeLanguage("en")}
+          >
             <span>English</span>
             <span className="text-xs text-muted-foreground">EN</span>
           </DropdownMenuItem>

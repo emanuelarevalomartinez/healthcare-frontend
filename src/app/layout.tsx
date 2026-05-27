@@ -3,7 +3,12 @@ import "./globals.css";
 import DashBoardLayout from "@/components/layouts/dashboard/dashboard-layout";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppProvider, AuthProvider } from "@/lib";
+import {
+  AppProvider,
+  AuthProvider,
+  LanguageProvider,
+} from "@/lib";
+import { getLanguage } from "@/lib/language/language";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -14,34 +19,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const language = await getLanguage();
+
   return (
     <html className="dark">
       <TooltipProvider>
-        <AuthProvider>
-          <AppProvider>
-          <body className="bg-background text-foreground">
-            <div>
-              <DashBoardLayout>{children}</DashBoardLayout>
-            </div>
-            <Toaster
-              position="bottom-right"
-              richColors
-              toastOptions={{
-                style: {
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-lg)",
-                },
-              }}
-            />
-          </body>
-          </AppProvider>
-        </AuthProvider>
+        <LanguageProvider language={language}>
+          <AuthProvider>
+            <AppProvider>
+              <body className="bg-background text-foreground">
+                <div>
+                  <DashBoardLayout>{children}</DashBoardLayout>
+                </div>
+                <Toaster
+                  position="bottom-right"
+                  richColors
+                  toastOptions={{
+                    style: {
+                      background: "var(--color-card)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "var(--radius-lg)",
+                    },
+                  }}
+                />
+              </body>
+            </AppProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </TooltipProvider>
     </html>
   );
