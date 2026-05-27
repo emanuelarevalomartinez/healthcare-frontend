@@ -102,8 +102,8 @@ export default function LoginForm() {
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
       >
-        <div className="flex py-10 pt-[60%] md:pt-[30%]">
-          <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
+        <div className="flex py-10 md:pt-[30%]">
+          <Card className="bg-card border border-border rounded-lg w-full min-w-[90vw] md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">
                 Inicia sesión en tu cuenta

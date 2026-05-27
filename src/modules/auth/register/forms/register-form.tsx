@@ -89,8 +89,8 @@ export default function RegisterForm() {
         noValidate
         onSubmit={handleSubmit(onSubmit, handleFocusError)}
       >
-        <div className="flex py-10 pt-[20%] md:pt-[10%]">
-          <Card className="bg-card border border-border rounded-lg w-full max-w-sm md:min-w-lg">
+        <div className="flex py-10 md:pt-[10%]">
+          <Card className="bg-card border border-border rounded-lg w-full min-w-[90vw] md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">
                 Registrate con nosotros
