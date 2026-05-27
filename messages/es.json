@@ -1,13 +1,26 @@
 {
   "auth": {
     "login": {
-      "title": "Inicia sesión en tu cuenta"
+      "title": "Inicia sesión en tu cuenta",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "ejemplo@ejemplo.com",
+      "passwordLabel": "Contraseña",
+      "buttonSubmit": "Iniciar Sesión",
+      "buttonLoading": "Iniciando sesión...",
+      "buttonRegister": "No tengo cuenta - Registrarme",
+      "toastSuccess": "Inicio de sesión exitoso.",
+      "validation": {
+        "emailInvalid": "Por favor, ingresa un correo electrónico válido",
+        "emailMax": "El correo electrónico no puede exceder los 100 caracteres",
+        "passwordMin": "La contraseña debe tener al menos 8 caracteres",
+        "passwordMax": "La contraseña no puede exceder los 100 caracteres"
+      }
     },
     "register": {
-      "title": "Regístrate con nosotros"
+      "title": "Crea tu cuenta con nosotros"
     }
   },
   "dashboard": {
-    "welcome": "Bienvenido"
+    "welcome": "Bienvenido a tu panel de control"
   }
 }

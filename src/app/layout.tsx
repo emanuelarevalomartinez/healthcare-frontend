@@ -8,7 +8,7 @@ import {
   AuthProvider,
   LanguageProvider,
 } from "@/lib";
-import { getLanguage } from "@/lib/language/language";
+import { getCurrentLanguage } from "@/lib/language/language";
 
 export const metadata: Metadata = {
   title: "HealthCare",
@@ -25,12 +25,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const language = await getLanguage();
+  const dictionary = await getCurrentLanguage();
 
   return (
     <html className="dark">
       <TooltipProvider>
-        <LanguageProvider language={language}>
+        <LanguageProvider dictionary={dictionary}>
           <AuthProvider>
             <AppProvider>
               <body className="bg-background text-foreground">

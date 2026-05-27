@@ -1,13 +1,26 @@
 {
   "auth": {
     "login": {
-      "title": "Log in to your account"
+      "title": "Log in to your account",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "example@example.com",
+      "passwordLabel": "Password",
+      "buttonSubmit": "Log In",
+      "buttonLoading": "Logging in...",
+      "buttonRegister": "Don't have an account? - Register",
+      "toastSuccess": "Login successful.",
+      "validation": {
+        "emailInvalid": "Please enter a valid email address",
+        "emailMax": "Email address cannot exceed 100 characters",
+        "passwordMin": "Password must be at least 8 characters long",
+        "passwordMax": "Password cannot exceed 100 characters"
+      }
     },
     "register": {
       "title": "Sign up with us"
     }
   },
   "dashboard": {
-    "welcome": "Welcome"
+    "welcome": "Welcome to your dashboard"
   }
 }

@@ -1,12 +1,11 @@
 "use client";
 
-import { getLanguage } from "@/lib/language/language";
 import { createContext, useContext } from "react";
 
-type Language = Awaited<ReturnType<typeof getLanguage>>;
+type TranslationDictionary = typeof import("../../../../messages/en.json");
 
 interface LanguageContextType {
-  language: Language;
+  dictionary: TranslationDictionary;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
@@ -14,14 +13,14 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({
-  language,
+  dictionary,
   children,
 }: {
-  language: Language;
+  dictionary: TranslationDictionary;
   children: React.ReactNode;
 }) {
   return (
-    <LanguageContext.Provider value={{ language }}>
+    <LanguageContext.Provider value={{ dictionary }}>
       {children}
     </LanguageContext.Provider>
   );

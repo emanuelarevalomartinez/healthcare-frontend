@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getErrorMessage, useAuth } from "@/lib";
+import { getErrorMessage, useAuth, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,8 @@ import {
 export default function LoginForm() {
   const { checkAuth } = useAuth();
 
+  const { dictionary } = useLanguage();
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +45,7 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginUserSchema>({
-    resolver: zodResolver(getLoginUserSchema()),
+    resolver: zodResolver(getLoginUserSchema(dictionary.auth.login.validation)),
     defaultValues: {
       email: "",
       password: "",
@@ -62,7 +64,6 @@ export default function LoginForm() {
         };
 
         setUserAuthCredentialsLocalStore(userAuthCredentialsInfo);
-        console.log("response", response.data);
 
         const userInfo: UserDataLocalStorageInterface = {
           username: response.data.username,
@@ -74,7 +75,7 @@ export default function LoginForm() {
         checkAuth();
 
         router.push(routes.root);
-        toast("Inicio de sesión exitoso.");
+        toast(dictionary.auth.login.toastSuccess);
       }
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -104,17 +105,19 @@ export default function LoginForm() {
           <Card className="bg-card border border-border rounded-lg w-full min-w-[90vw] md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">
-                Inicia sesión en tu cuenta
+                {dictionary.auth.login.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Correo Electrónico</Label>
+                  <Label htmlFor="email">
+                    {dictionary.auth.login.emailLabel}
+                  </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="ejemplo@ejemplo.com"
+                    placeholder={dictionary.auth.login.emailPlaceholder}
                     required
                     {...register("email")}
                     aria-invalid={errors.email ? "true" : "false"}
@@ -126,7 +129,9 @@ export default function LoginForm() {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password">
+                    {dictionary.auth.login.passwordLabel}
+                  </Label>
                   <Input
                     id="password"
                     type="password"
@@ -149,7 +154,9 @@ export default function LoginForm() {
                 disabled={isLoading}
                 className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
               >
-                {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                {isLoading
+                  ? `${dictionary.auth.login.buttonLoading}`
+                  : `${dictionary.auth.login.buttonSubmit}`}
               </Button>
               <Button
                 type="button"
@@ -158,7 +165,7 @@ export default function LoginForm() {
                 onClick={handleGoTORegisterView}
                 className="w-full"
               >
-                No tengo cuenta - Registrarme
+                {dictionary.auth.login.buttonRegister}
               </Button>
             </CardFooter>
           </Card>
