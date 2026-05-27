@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { HEALTHCARE_ICON, USER_ROLE } from "@/lib";
+import { HEALTHCARE_ICON, useLanguage, USER_ROLE } from "@/lib";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 import {
   BarChart,
@@ -34,6 +34,9 @@ interface MenuItem {
 }
 
 export function AppSidebar() {
+
+  const { dictionary } = useLanguage();
+
   const [userRole, setUserRole] = useState<USER_ROLE | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -150,7 +153,7 @@ export function AppSidebar() {
               HealthCare
             </span>
             <span className="text-xs text-muted-foreground">
-              Sistema Clínico Interno
+              {dictionary.system.subtitle}
             </span>
           </div>
         </div>

@@ -1,11 +1,13 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { HEALTHCARE_ICON } from "@/lib";
+import { HEALTHCARE_ICON, useLanguage } from "@/lib";
 import { NavigationUserLanguage } from "./items/navigation-user-language";
 
 
 export function NavigationMenuAuth(){
+
+  const { dictionary } = useLanguage();
 
     return(
         <>
@@ -24,7 +26,7 @@ export function NavigationMenuAuth(){
                     HealthCare
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    Sistema Clínico Interno
+                    {dictionary.system.subtitle}
                   </span>
                 </div>
               </div>

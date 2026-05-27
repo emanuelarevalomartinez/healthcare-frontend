@@ -1,4 +1,7 @@
 {
+  "system": {
+    "subtitle": "Sistema Clínico Interno"
+  },
   "auth": {
     "login": {
       "title": "Inicia sesión en tu cuenta",
@@ -17,7 +20,38 @@
       }
     },
     "register": {
-      "title": "Crea tu cuenta con nosotros"
+      "title": "Registrate con nosotros",
+      "usernameLabel": "Nombre de usuario",
+      "usernamePlaceholder": "ana",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "ejemplo@ejemplo.com",
+      "roleLabel": "Rol",
+      "rolePlaceholder": "Selecciona un rol",
+      "roleOptions": {
+        "admin": "ADMINISTRADOR",
+        "doctor": "DOCTOR",
+        "receptionist": "RECEPCIONISTA"
+      },
+      "passwordLabel": "Contraseña",
+      "confirmPasswordLabel": "Confirmar Contraseña",
+      "buttonSubmit": "Registrarse",
+      "buttonLoading": "Registrando...",
+      "buttonLogin": "Ya tengo cuenta - Autenticarse",
+      "toastSuccess": "Registro completado exitosamente.",
+      "validation": {
+        "usernameMin": "El nombre de usuario debe tener al menos 3 caracteres",
+        "usernameMax": "El nombre de usuario no puede exceder los 50 caracteres",
+        "usernameRegex": "El nombre de usuario solo puede contener letras, números y guiones bajos",
+        "emailInvalid": "Por favor, ingresa un correo electrónico válido",
+        "emailMax": "El correo electrónico no puede exceder los 100 caracteres",
+        "passwordMin": "La contraseña debe tener al menos 8 caracteres",
+        "passwordMax": "La contraseña no puede exceder los 100 caracteres",
+        "passwordRegex": "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)",
+        "confirmPasswordMin": "La confirmación de contraseña debe tener al menos 8 caracteres",
+        "confirmPasswordMax": "La confirmación de contraseña no puede exceder los 100 caracteres",
+        "roleRequired": "Por favor, selecciona un rol válido",
+        "passwordMismatch": "Las contraseñas no coinciden"
+      }
     }
   },
   "dashboard": {

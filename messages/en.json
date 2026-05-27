@@ -1,4 +1,7 @@
 {
+  "system": {
+    "subtitle": "Internal Clinical System"
+  },
   "auth": {
     "login": {
       "title": "Log in to your account",
@@ -17,7 +20,38 @@
       }
     },
     "register": {
-      "title": "Sign up with us"
+      "title": "Sign up with us",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "ann",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "example@example.com",
+      "roleLabel": "Role",
+      "rolePlaceholder": "Select a role",
+      "roleOptions": {
+        "admin": "ADMINISTRATOR",
+        "doctor": "DOCTOR",
+        "receptionist": "RECEPTIONIST"
+      },
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "buttonSubmit": "Register",
+      "buttonLoading": "Registering...",
+      "buttonLogin": "Already have an account? - Log In",
+      "toastSuccess": "Registration completed successfully.",
+      "validation": {
+        "usernameMin": "Username must be at least 3 characters long",
+        "usernameMax": "Username cannot exceed 50 characters",
+        "usernameRegex": "Username can only contain letters, numbers, and underscores",
+        "emailInvalid": "Please enter a valid email address",
+        "emailMax": "Email address cannot exceed 100 characters",
+        "passwordMin": "Password must be at least 8 characters long",
+        "passwordMax": "Password cannot exceed 100 characters",
+        "passwordRegex": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)",
+        "confirmPasswordMin": "Confirm password must be at least 8 characters long",
+        "confirmPasswordMax": "Confirm password cannot exceed 100 characters",
+        "roleRequired": "Please select a valid role",
+        "passwordMismatch": "Passwords do not match"
+      }
     }
   },
   "dashboard": {

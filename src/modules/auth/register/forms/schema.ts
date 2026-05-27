@@ -1,43 +1,56 @@
 import { USER_ROLE } from "@/lib";
 import { z } from "zod";
 
-export const getRegisterUserSchema = () => {
+type ValidationDictionary = {
+  usernameMin: string;
+  usernameMax: string;
+  usernameRegex: string;
+  emailInvalid: string;
+  emailMax: string;
+  passwordMin: string;
+  passwordMax: string;
+  passwordRegex: string;
+  confirmPasswordMin: string;
+  confirmPasswordMax: string;
+  roleRequired: string;
+  passwordMismatch: string;
+};
+
+export const getRegisterUserSchema = (dictionary: ValidationDictionary) => {
   return z
     .object({
       username: z
         .string()
         .trim()
         .min(3, {
-          message: "El nombre de usuario debe tener al menos 3 caracteres",
+          message: dictionary.usernameMin,
         })
         .max(50, {
-          message: "El nombre de usuario no puede exceder los 50 caracteres",
+          message: dictionary.usernameMax,
         })
         .regex(/^[a-zA-Z0-9_]+$/, {
-          message:
-            "El nombre de usuario solo puede contener letras, números y guiones bajos",
+          message: dictionary.usernameRegex,
         }),
 
       email: z
         .string()
         .trim()
-        .email({ message: "Por favor, ingresa un correo electrónico válido" })
+        .email({ message: dictionary.emailInvalid })
         .max(100, {
-          message: "El correo electrónico no puede exceder los 100 caracteres",
+          message: dictionary.emailMax,
         }),
 
       password: z
         .string()
         .trim()
-        .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+        .min(8, { message: dictionary.passwordMin })
         .max(100, {
-          message: "La contraseña no puede exceder los 100 caracteres",
+          message: dictionary.passwordMax,
         })
         .regex(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
           {
-            message:
-              "La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)",
+            message: dictionary.passwordRegex,
           }
         ),
 
@@ -45,20 +58,18 @@ export const getRegisterUserSchema = () => {
         .string()
         .trim()
         .min(8, {
-          message:
-            "La confirmación de contraseña debe tener al menos 8 caracteres",
+          message: dictionary.confirmPasswordMin,
         })
         .max(100, {
-          message:
-            "La confirmación de contraseña no puede exceder los 100 caracteres",
+          message: dictionary.confirmPasswordMax,
         }),
 
       role: z.enum(USER_ROLE, {
-        error: () => ({ message: "Por favor, selecciona un rol válido" }),
+        error: () => ({ message: dictionary.roleRequired }),
       }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Las contraseñas no coinciden",
+      message: dictionary.passwordMismatch,
       path: ["confirmPassword"],
     });
 };

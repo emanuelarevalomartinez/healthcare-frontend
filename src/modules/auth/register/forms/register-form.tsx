@@ -26,10 +26,12 @@ import { registerUser } from "../services";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getErrorMessage, USER_ROLE } from "@/lib";
+import { getErrorMessage, useLanguage, USER_ROLE } from "@/lib";
 import { toast } from "sonner";
 
 export default function RegisterForm() {
+  const { dictionary } = useLanguage();
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +42,9 @@ export default function RegisterForm() {
     setValue,
     watch,
   } = useForm<RegisterUserSchema>({
-    resolver: zodResolver(getRegisterUserSchema()),
+    resolver: zodResolver(
+      getRegisterUserSchema(dictionary.auth.register.validation)
+    ),
     defaultValues: {
       username: "",
       email: "",
@@ -63,7 +67,7 @@ export default function RegisterForm() {
 
       if (response.status === 201) {
         router.push(routes.auth.login);
-        toast("Registro completado exitosamente.");
+        toast(dictionary.auth.register.toastSuccess);
       }
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -93,17 +97,19 @@ export default function RegisterForm() {
           <Card className="bg-card border border-border rounded-lg w-full min-w-[90vw] md:min-w-lg">
             <CardHeader>
               <CardTitle className="text-foreground text-center">
-                Registrate con nosotros
+                {dictionary.auth.register.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="username">Nombre de usuario</Label>
+                  <Label htmlFor="username">
+                    {dictionary.auth.register.usernameLabel}
+                  </Label>
                   <Input
                     id="username"
                     type="text"
-                    placeholder="ana"
+                    placeholder={dictionary.auth.register.usernamePlaceholder}
                     required
                     {...register("username")}
                     aria-invalid={errors.username ? "true" : "false"}
@@ -116,11 +122,13 @@ export default function RegisterForm() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Correo Electrónico</Label>
+                  <Label htmlFor="email">
+                    {dictionary.auth.register.emailLabel}
+                  </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="ejemplo@ejemplo.com"
+                    placeholder={dictionary.auth.register.emailPlaceholder}
                     required
                     {...register("email")}
                     aria-invalid={errors.email ? "true" : "false"}
@@ -133,7 +141,7 @@ export default function RegisterForm() {
                 </div>
 
                 <Field className="w-full">
-                  <FieldLabel>Rol</FieldLabel>
+                  <FieldLabel>{dictionary.auth.register.roleLabel}</FieldLabel>
                   <Select
                     onValueChange={(value) =>
                       setValue("role", value as USER_ROLE)
@@ -141,15 +149,24 @@ export default function RegisterForm() {
                     defaultValue={watch("role")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecciona un rol" />
+                      <SelectValue
+                        placeholder={dictionary.auth.register.rolePlaceholder}
+                      />
                     </SelectTrigger>
                     <SelectContent className="bg-secondary">
                       <SelectGroup>
-                        <SelectItem value="ADMIN">ADMINISTRADOR</SelectItem>
-                        <SelectItem value="DOCTOR">DOCTOR</SelectItem>
-                        <SelectItem value="RECEPTIONIST">
-                          RECEPCIONISTA
-                        </SelectItem>
+                        {Object.values(USER_ROLE).map((role) => {
+                          const roleKey = role.toLowerCase() as
+                            | "admin"
+                            | "doctor"
+                            | "receptionist";
+
+                          return (
+                            <SelectItem key={role} value={role}>
+                              {dictionary.auth.register.roleOptions[roleKey]}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -162,7 +179,9 @@ export default function RegisterForm() {
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Contraseña</Label>
+                    <Label htmlFor="password">
+                      {dictionary.auth.register.passwordLabel}
+                    </Label>
                   </div>
                   <Input
                     id="password"
@@ -180,7 +199,9 @@ export default function RegisterForm() {
 
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                    <Label htmlFor="confirmPassword">
+                      {dictionary.auth.register.confirmPasswordLabel}
+                    </Label>
                   </div>
                   <Input
                     id="confirmPassword"
@@ -204,7 +225,9 @@ export default function RegisterForm() {
                 disabled={isLoading}
                 className="bg-primary text-primary-foreground hover:bg-primary/60 w-full"
               >
-                {isLoading ? "Registrando..." : "Registrarse"}
+                {isLoading
+                  ? `${dictionary.auth.register.buttonLoading}`
+                  : `${dictionary.auth.register.buttonSubmit}`}
               </Button>
               <Button
                 type="button"
@@ -213,7 +236,7 @@ export default function RegisterForm() {
                 onClick={handleGoToLoginView}
                 className="w-full"
               >
-                Ya tengo cuenta - Autenticarse
+                {dictionary.auth.register.buttonLogin}
               </Button>
             </CardFooter>
           </Card>
