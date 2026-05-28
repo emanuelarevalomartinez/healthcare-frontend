@@ -4,3 +4,6 @@
  // hacer un mejor responsive de las vistas de autenticacion
  // añadir un contrlador de estado global para cuando el usario se registra con exito mostrar cierto contenido en el dasboard
  // corregir que si existen credenciales del sistema aun asi cuando se regargue el navegador y este el las rutas de auth no recargue el alter-sidebar
+
+ // verificar que el fetchet ejecute la accion de usar el refresh token correctamente
+ // quitar el create by de la api par usar el del usuario logeado

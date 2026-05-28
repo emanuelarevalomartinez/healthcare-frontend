@@ -1,34 +1,15 @@
-/* "use server";
-
-export const fetcher = async (url: string, options: RequestInit = {}) => {
-  const defaultOptions: RequestInit = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    ...options,
-  };
-
-  const response = await fetch(url, defaultOptions);
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Error en la petición");
-  }
-
-  return data;
-}; */
-
 "use server";
 
 import { cookies } from "next/headers";
 import { apiRoutes } from "../routes";
+import { COOKIE_KEYS } from "../utils/cookies-types";
 
 export const fetcher = async (url: string, options: RequestInit = {}): Promise<any> => {
   const cookieStore = await cookies();
   
   // 1. Obtener los tokens desde las Cookies del Servidor
-  const accessToken = cookieStore.get("accessToken")?.value;
-  const refreshToken = cookieStore.get("refreshToken")?.value;
+  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
+  const refreshToken = cookieStore.get(COOKIE_KEYS.REFRESH_TOKEN)?.value;
 
   // 2. Configurar los Headers de la petición
   const headers = new Headers(options.headers);
