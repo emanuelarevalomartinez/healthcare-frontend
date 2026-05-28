@@ -1,77 +1,131 @@
 "use client";
 
-import { TableWrapper } from "@/components/customs/table-wrapper";
+import {
+  TableAction,
+  TableColumn,
+  TableWrapper,
+} from "@/components/customs/table-wrapper";
 import { useEffect, useState } from "react";
 import { getAllPatients } from "../services";
-
-export interface ApiResponse {
-  status: number;
-  type: null;
-  message: null;
-  origin: null;
-  data: Data;
-  error: null;
-}
-
-export interface Data {
-  content: Content[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
-
-export interface Content {
-  id: string;
-  medicalRecordNumber: string;
-  fullName: string;
-  documentType: string;
-  documentNumber: string;
-  birthDate: Date;
-  sex: string;
-  phone: string;
-  email: string;
-  address: string;
-  notes: string;
-  createdById: string;
-  createdAt: Date;
-}
+import { PatientApiResponse } from "../types";
+import { PaginatedData } from "@/lib/server/api-response";
 
 export function PatientList() {
-  const [patients, setPatients] = useState<Data>();
+  const [patients, setPatients] = useState<PaginatedData<PatientApiResponse>>();
+
+  const patientColumns: TableColumn<PatientApiResponse>[] = [
+    {
+      header: "Nº Historial",
+      accessor: "medicalRecordNumber",
+    },
+    {
+      header: "Nombre Completo",
+      accessor: "fullName",
+    },
+    {
+      header: "Teléfono",
+      accessor: "phone",
+    },
+    {
+      header: "F. Registro",
+      accessor: (patient) => new Date(patient.createdAt).toLocaleDateString(),
+    },
+  ];
+
+  /*   const patientColumns: TableColumn<PatientApiResponse>[] = [
+  { 
+    header: "ID", 
+    accessor: "id" 
+  },
+  { 
+    header: "Nº Historial", 
+    accessor: "medicalRecordNumber" 
+  },
+  { 
+    header: "Nombre Completo", 
+    accessor: "fullName" 
+  },
+  { 
+    header: "Tipo Doc.", 
+    accessor: "documentType" 
+  },
+  { 
+    header: "Nº Documento", 
+    accessor: "documentNumber" 
+  },
+  { 
+    header: "F. Nacimiento", 
+    accessor: (patient) => new Date(patient.birthDate).toLocaleDateString()
+  },
+  { 
+    header: "Sexo", 
+    accessor: "sex" 
+  },
+  { 
+    header: "Teléfono", 
+    accessor: "phone" 
+  },
+  { 
+    header: "Email", 
+    accessor: "email" 
+  },
+  { 
+    header: "Dirección", 
+    accessor: "address" 
+  },
+  { 
+    header: "Notas", 
+    accessor: "notes" 
+  },
+  { 
+    header: "Creado Por (ID)", 
+    accessor: "createdById" 
+  },
+  { 
+    header: "F. Registro", 
+    accessor: (patient) => new Date(patient.createdAt).toLocaleDateString(),
+    className: "text-gray-500"
+  }
+]; */
+
+  const patientActions: TableAction<PatientApiResponse>[] = [
+    {
+      label: "Ver Detalles",
+      onClick: (patient) => console.log("Abriendo detalles de:", patient.id),
+    },
+    {
+      label: "Editar",
+      onClick: (patient) => console.log("Editando paciente:", patient.fullName),
+    },
+    {
+      label: "Eliminar",
+      variant: "destructive",
+      separatorBefore: true,
+      onClick: (patient) => console.warn("Eliminando id:", patient.id),
+    },
+  ];
 
   useEffect(() => {
-    const response = async () => {
-      const data = await getAllPatients();
-      setPatients(data.data);
+    const fetchPatients = async () => {
+      try {
+        const response = await getAllPatients();
+        setPatients(response.data);
+      } catch (error) {
+        console.error("Error al cargar pacientes:", error);
+      }
     };
-    response();
+    fetchPatients();
   }, []);
 
   return (
     <>
       <div>Pacientes</div>
       <div>
-        <TableWrapper />
-      </div>
-      <div>
-        {patients?.content?.map((patient) => (
-          <div className="flex flex-col" key={patient.id}>
-            {patient.address}
-            {new Date(patient.birthDate).toLocaleDateString()}
-            {new Date(patient.createdAt).toLocaleDateString()}
-            {patient.createdById}
-            {patient.documentNumber}
-            {patient.documentType}
-            {patient.email}
-            {patient.fullName}
-            {patient.id}
-            {patient.medicalRecordNumber}
-            {patient.notes}
-            {patient.phone}
-            {patient.sex}
-          </div>
-        ))}
+        <TableWrapper
+          cols={patientColumns}
+          data={patients?.content || []}
+          actions={patientActions}
+        />
       </div>
     </>
   );

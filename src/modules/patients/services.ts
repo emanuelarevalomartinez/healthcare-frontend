@@ -1,11 +1,11 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS } from "@/lib";
-import { ApiResponse } from "./list/patient-list";
+import { PaginatedData } from "@/lib/server/api-response";
+import { PatientApiResponse } from "./types";
 
-export const getAllPatients = async (): Promise<ApiResponse> => {
-  const response = await fetcher(apiRoutes.patients.list, {
+export const getAllPatients = async () => {
+  return await fetcher<PaginatedData<PatientApiResponse>>(apiRoutes.patients.list, {
     ...GET_OPTIONS,
   });
-  return response;
 };
