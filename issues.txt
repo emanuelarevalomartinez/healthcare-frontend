@@ -7,3 +7,7 @@
 
  // verificar que el fetchet ejecute la accion de usar el refresh token correctamente
  // quitar el create by de la api par usar el del usuario logeado
+
+ // añadir un loading mientras los datos llegan desde el backend
+ // hacer que la data se cargue desde cache en lugar de pedir al backend si no a cambiado
+ // redefinir todo para que sea reutilizable en la paginacion y en las tablas para usarlo en todos lados asi como el sectionHeader y añadir la traduccion de dichas secciones

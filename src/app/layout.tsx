@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import {
-  AppProvider,
-  LanguageProvider,
-} from "@/lib";
+import { AppProvider, LanguageProvider } from "@/lib";
 import { getCurrentLanguage } from "@/lib/language/language";
 
 export const metadata: Metadata = {
@@ -22,31 +18,28 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   const dictionary = await getCurrentLanguage();
 
   return (
     <html className="dark">
-      <TooltipProvider>
-        <LanguageProvider dictionary={dictionary}>
-            <AppProvider>
-              <body className="bg-background text-foreground">
-                 {children}
-                <Toaster
-                  position="bottom-right"
-                  richColors
-                  toastOptions={{
-                    style: {
-                      background: "var(--color-card)",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "var(--radius-lg)",
-                    },
-                  }}
-                />
-              </body>
-            </AppProvider>
-        </LanguageProvider>
-      </TooltipProvider>
+      <LanguageProvider dictionary={dictionary}>
+        <AppProvider>
+          <body className="bg-background text-foreground">
+            {children}
+            <Toaster
+              position="bottom-right"
+              richColors
+              toastOptions={{
+                style: {
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-lg)",
+                },
+              }}
+            />
+          </body>
+        </AppProvider>
+      </LanguageProvider>
     </html>
   );
 }

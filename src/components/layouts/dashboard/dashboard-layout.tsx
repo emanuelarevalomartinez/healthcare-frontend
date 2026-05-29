@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/customs/app-sidebar";
 import { SheetWrapper } from "@/components/customs/sheet-wrapper";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { routes } from "@/lib";
 import { COOKIE_KEYS } from "@/lib/utils/cookies-types";
 import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
@@ -19,22 +20,27 @@ export default async function DashBoardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
+    <TooltipProvider>
+      <SidebarProvider>
+        <AppSidebar />
 
-      <main className="w-full">
-        <div className="flex w-full">
-          <div className="flex rounded-xl h-12 w-12 items-center justify-center bg-card mt-4 mx-2">
-            <SidebarTrigger size="icon" className="items-center" />
+        <main className="w-full">
+          <div className="flex flex-col w-full sticky top-0 z-20 bg-background">
+            <div className="flex">
+              <div className="flex rounded-xl h-12 w-12 items-center justify-center bg-card mt-4 mx-2">
+                <SidebarTrigger size="icon" className="items-center" />
+              </div>
+              <NavigationMenu />
+            </div>
+
+            <hr className="w-full bg-red-500 border-border" />
           </div>
-          <NavigationMenu />
-        </div>
 
-        <hr className="w-full border-border" />
-        <div className="p-4">{children}</div>
+          <div className="p-4">{children}</div>
 
-        <SheetWrapper />
-      </main>
-    </SidebarProvider>
+          <SheetWrapper />
+        </main>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }
