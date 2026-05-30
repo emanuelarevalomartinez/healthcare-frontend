@@ -1,4 +1,4 @@
-import { MoreHorizontalIcon, InboxIcon } from "lucide-react";
+import { MoreHorizontalIcon, InboxIcon, Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useLanguage } from "@/lib";
 
 export interface TableColumn<T> {
   header: string;
@@ -33,10 +34,21 @@ interface TableWrapperProps<T> {
   cols: TableColumn<T>[];
   data: T[];
   actions?: TableAction<T>[];
+  isLoading?: boolean;
 }
 
-export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
-  const totalColumns = actions && actions.length > 0 ? cols.length + 1 : cols.length;
+export function TableWrapper<T>({
+  cols,
+  data,
+  actions,
+  isLoading = false,
+}: TableWrapperProps<T>) {
+  const { dictionary } = useLanguage();
+
+  const t = dictionary.components.table;
+
+  const totalColumns =
+    actions && actions.length > 0 ? cols.length + 1 : cols.length;
   const isEmpty = !data || data.length === 0;
 
   const EmptyState = () => (
@@ -45,10 +57,19 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
         <InboxIcon className="size-12 stroke-[1.5]" />
       </div>
       <h3 className="text-lg font-semibold tracking-tight text-foreground">
-        No hay elementos disponibles
+        {t.emptyTitle}
       </h3>
       <p className="text-sm text-muted-foreground max-w-sm mt-1">
-        Actualmente no existen registros para mostrar en esta tabla.
+        {t.emptyDescription}
+      </p>
+    </div>
+  );
+
+  const LoadingState = () => (
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center min-h-[50vh] w-full">
+      <Loader2Icon className="size-10 animate-spin text-primary mb-4" />
+      <p className="text-sm text-muted-foreground animate-pulse">
+        {t.loadingText}
       </p>
     </div>
   );
@@ -57,7 +78,11 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
     <div className="w-full">
       {/* Mobile View */}
       <div className="block lg:hidden space-y-4">
-        {isEmpty ? (
+        {isLoading ? (
+          <div className="border border-border bg-card text-card-foreground rounded-2xl shadow-sm">
+            <LoadingState />
+          </div>
+        ) : isEmpty ? (
           <div className="border border-border bg-card text-card-foreground rounded-2xl shadow-sm">
             <EmptyState />
           </div>
@@ -73,7 +98,6 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="size-8">
                         <MoreHorizontalIcon />
-                        <span className="sr-only">Abrir menú</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-card" align="end">
@@ -100,7 +124,7 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
                 {cols.map((col, colIndex) => (
                   <div
                     key={colIndex}
-                    className="flex flex-col sm:flex-row sm:justify-between border-b border-border/50 pb-1 last:border-0"
+                    className="flex flex-col sm:flex-row md:justify-between border-b border-border/50 pb-1 last:border-0"
                   >
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider sm:mb-0">
                       {col.header}
@@ -129,12 +153,18 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
                 </TableHead>
               ))}
               {actions && actions.length > 0 && (
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead className="text-right">{t.actionsLabel}</TableHead>
               )}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isEmpty ? (
+            {isLoading ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={totalColumns} className="p-0">
+                  <LoadingState />
+                </TableCell>
+              </TableRow>
+            ) : isEmpty ? (
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={totalColumns} className="p-0">
                   <EmptyState />
@@ -158,7 +188,11 @@ export function TableWrapper<T>({ cols, data, actions }: TableWrapperProps<T>) {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="size-8">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                          >
                             <MoreHorizontalIcon />
                           </Button>
                         </DropdownMenuTrigger>

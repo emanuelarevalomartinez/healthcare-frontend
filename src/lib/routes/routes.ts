@@ -6,6 +6,9 @@ export const routes = {
     register: "/auth/register",
     logout: "/auth/logout",
   },
-  patients: "/patients",
+  patients: {
+    root: "/patients",
+    create: "/patients/create",
+  },
   root: "/"
 } satisfies Routes;

@@ -75,7 +75,7 @@ export function AppSidebar() {
     {
       label: "Pacientes",
       icon: Heart,
-      href: routes.patients,
+      href: routes.patients.root,
       roles: [USER_ROLE.ADMIN, USER_ROLE.DOCTOR, USER_ROLE.RECEPTIONIST],
     },
     // Appointments (all roles)

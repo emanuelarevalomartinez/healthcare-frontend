@@ -8,6 +8,10 @@
  // verificar que el fetchet ejecute la accion de usar el refresh token correctamente
  // quitar el create by de la api par usar el del usuario logeado
 
- // añadir un loading mientras los datos llegan desde el backend
- // hacer que la data se cargue desde cache en lugar de pedir al backend si no a cambiado
+
  // redefinir todo para que sea reutilizable en la paginacion y en las tablas para usarlo en todos lados asi como el sectionHeader y añadir la traduccion de dichas secciones
+
+ // añadir las traducciones que falta en la seccion de la tabla de pacientes en los toast y las columnas
+ // implementar el actualizar y ver detalles de los pacientes
+ // tener en cuenta cuales usuarios pueden hacer el CRUD completo sobre los pacientes
+ // icluir una confirmacion antes de eliminar un paciente

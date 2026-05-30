@@ -4,6 +4,73 @@
     "language": "Language",
     "miAccountLabel": "My Account"
   },
+  "dashboard": {
+    "welcome": "Welcome to your dashboard",
+    "patients": {
+      "tableSectionTitle": "Patients",
+      "tableSectionSubtitle": "Manage clinical records, contact details, and histories of registered patients.",
+      "createSectionTitle": "Register Patient",
+      "createSectionSubtitle": "Enter the details of the new patient to register them in the clinical system.",
+      "createNewPatientButton": "New Patient",
+      "save": "Save",
+      "medicalRecordNumberLabel": "Medical Record Number",
+      "medicalRecordNumberPlaceholder": "E.g., MRN-2026-001",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "E.g., John Doe Smith",
+      "documentTypeLabel": "Document Type",
+      "documentTypePlaceholder": "Select a document type",
+      "documentTypeOptions": {
+        "dni": "National ID / DNI",
+        "passport": "Passport",
+        "id_card": "State / National Identity Card",
+        "other": "Other identification"
+      },
+      "documentNumberLabel": "Document Number",
+      "documentNumberPlaceholder": "E.g., 12345678-A",
+      "birthDateLabel": "Date of Birth",
+      "sexLabel": "Sex",
+      "sexTypePlaceholder": "Select sex",
+      "sexTypeOptions": {
+        "male": "Male",
+        "female": "Female",
+        "other": "Other"
+      },
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "E.g., +1 (555) 0199",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "patient@example.com",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Street, Number, City and Zip Code",
+      "notesLabel": "Observations / Medical Notes",
+      "notesPlaceholder": "Relevant history, allergies, or additional comments...",
+      "selectPlaceholder": "Select an option",
+      "buttonSubmit": "Save",
+      "buttonLoading": "Saving...",
+      "buttonCancel": "Cancel",
+      "toastSuccess": "Patient successfully created.",
+      "validation": {
+        "medicalRecordNumberRequired": "Medical record number is required",
+        "medicalRecordNumberMax": "Medical record number cannot exceed 50 characters",
+        "fullNameRequired": "Full name is required",
+        "fullNameMin": "Full name must be at least 3 characters long",
+        "fullNameMax": "Full name cannot exceed 150 characters",
+        "documentTypeRequired": "Please select a valid document type",
+        "documentNumberRequired": "Document number is required",
+        "documentNumberMax": "Document number cannot exceed 50 characters",
+        "birthDateRequired": "Date of birth is required",
+        "birthDatePast": "Date of birth must be a past date",
+        "sexRequired": "Please select a valid sex",
+        "phoneRequired": "Phone number is required",
+        "phoneMax": "Phone number cannot exceed 30 characters",
+        "phoneInvalid": "Phone number contains invalid characters",
+        "emailInvalid": "Please enter a valid email address",
+        "emailMax": "Email address cannot exceed 100 characters",
+        "addressRequired": "Address is required",
+        "addressMax": "Address cannot exceed 255 characters",
+        "notesMax": "Observations cannot exceed 1000 characters"
+      }
+    }
+  },
   "auth": {
     "login": {
       "title": "Log in to your account",
@@ -56,7 +123,20 @@
       }
     }
   },
-  "dashboard": {
-    "welcome": "Welcome to your dashboard"
+  "components": {
+    "table": {
+      "actionsLabel": "Actions",
+      "emptyTitle": "No items available",
+      "emptyDescription": "There are currently no records to display in this table.",
+      "loadingText": "Loading table records..."
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "results": "results",
+      "previous": "Previous",
+      "next": "Next"
+    }
   }
 }
