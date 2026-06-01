@@ -10,12 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { getErrorMessage, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
@@ -31,6 +26,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SectionHeader } from "@/components/customs/secction-header";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function PatientForm() {
   const { dictionary } = useLanguage();
@@ -44,6 +48,7 @@ export function PatientForm() {
     handleSubmit,
     setValue,
     watch,
+    trigger,
     formState: { errors },
   } = useForm<CreatePatientSchema>({
     resolver: zodResolver(getCreatePatientSchema(t.validation)),
@@ -60,6 +65,11 @@ export function PatientForm() {
       notes: "",
     },
   });
+
+  const birthDateValue = watch("birthDate");
+
+  // Convertimos el string guardado a un objeto Date para que el Calendar lo entienda
+  const selectedDate = birthDateValue ? new Date(birthDateValue) : undefined;
 
   async function onSubmit(data: CreatePatientSchema) {
     setIsLoading(true);
@@ -116,8 +126,7 @@ export function PatientForm() {
         </Button>
       </SectionHeader>
 
-      <Card className="bg-card border border-border rounded-lg w-full">
-
+      <Card className=" border border-border rounded-lg w-full">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="grid gap-2">
             <Label htmlFor="medicalRecordNumber">
@@ -202,12 +211,42 @@ export function PatientForm() {
 
           <div className="grid gap-2">
             <Label htmlFor="birthDate">{t.birthDateLabel}</Label>
-            <Input
-              id="birthDate"
-              type="date"
-              {...register("birthDate")}
-              aria-invalid={errors.birthDate ? "true" : "false"}
-            />
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="birthDate"
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal px-3",
+                    !birthDateValue && "text-muted-foreground"
+                  )}
+                  aria-invalid={errors.birthDate ? "true" : "false"}
+                >
+                  <CalendarIcon className="mr-2 size-4 text-muted-foreground" />
+                  {birthDateValue ? (
+                    format(new Date(birthDateValue), "MM/dd/yyyy")
+                  ) : (
+                    <span>{t.birthDateLabel}</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-auto p-0 bg-card" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    setValue("birthDate", date ? date.toISOString() : "");
+                    trigger("birthDate");
+                  }}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                />
+              </PopoverContent>
+            </Popover>
+
             {errors.birthDate && (
               <p className="text-sm text-red-500">{errors.birthDate.message}</p>
             )}
