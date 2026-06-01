@@ -16,6 +16,7 @@ import { TablePagination } from "@/components/customs/table-pagination";
 import { useRouter } from "next/navigation";
 import { routes, useLanguage } from "@/lib";
 import { toast } from "sonner";
+import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
 
 export function PatientList() {
   const [patients, setPatients] = useState<PaginatedData<PatientApiResponse>>();
@@ -27,6 +28,8 @@ export function PatientList() {
   const pageSize = 10;
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [patientToDelete, setPatientToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const fetchPatients = useCallback(async () => {
     setIsLoading(true);
@@ -43,7 +46,17 @@ export function PatientList() {
   useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
-  const handleDelete = async (id: string, name: string) => {
+
+  const handleOpenDeleteConfirm = (id: string, name: string) => {
+    setPatientToDelete({ id, name });
+    setIsAlertOpen(true);
+  };
+
+  const handleExecuteDelete = async () => {
+    if (!patientToDelete) return;
+
+    const { id, name } = patientToDelete;
+
     try {
       const response = await deletePatient(id);
       
@@ -58,6 +71,8 @@ export function PatientList() {
     } catch (error) {
       console.error("Error al eliminar:", error);
       toast.error("No se pudo eliminar al paciente.");
+    } finally {
+      setPatientToDelete(null);
     }
   };
 
@@ -93,7 +108,7 @@ export function PatientList() {
       label: "Eliminar",
       variant: "destructive",
       separatorBefore: true,
-      onClick: (patient) => handleDelete(patient.id, patient.fullName),
+      onClick: (patient) => handleOpenDeleteConfirm(patient.id, patient.fullName),
     },
   ];
 
@@ -134,6 +149,18 @@ export function PatientList() {
           />
         )}
       </div>
+      <SystemAlertDialog
+        isOpen={isAlertOpen}
+        onClose={() => {
+          setIsAlertOpen(false);
+          setPatientToDelete(null);
+        }}
+        onConfirm={handleExecuteDelete}
+        title={"¿Estás absolutamente seguro?"}
+        description={`"Esta acción no se puede deshacer. Se eliminará permanentemente al paciente"} ${patientToDelete?.name ? `"${patientToDelete.name}"` : ""}.`}
+        cancelText={"Cancelar"}
+        confirmText={"Eliminar"}
+      />
     </>
   );
 }
