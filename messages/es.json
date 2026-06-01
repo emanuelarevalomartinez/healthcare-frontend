@@ -44,6 +44,7 @@
       "notesLabel": "Observaciones / Notas Médicas",
       "notesPlaceholder": "Historial relevante, alergias, o comentarios adicionales...",
       "selectPlaceholder": "Seleccione una opción",
+      "registrationDateLabel": "F. Registro",
       "buttonSubmit": "Guardar",
       "buttonLoading": "Guardando...",
       "buttonCancel": "Cancelar",
@@ -68,7 +69,9 @@
         "addressRequired": "La dirección es obligatoria",
         "addressMax": "La dirección no puede exceder los 255 caracteres",
         "notesMax": "Las observaciones no pueden exceder los 1000 caracteres"
-      }
+      },
+      "successDeletePatientToast": "eliminado con éxito.",
+      "errordeletePatientToast": "No se pudo eliminar al paciente."
     }
   },
   "auth": {
@@ -137,6 +140,11 @@
       "results": "resultados",
       "previous": "Anterior",
       "next": "Siguiente"
+    },
+    "actions": {
+      "viewDetails": "Ver Detalles",
+      "edit": "Editar",
+      "delete": "Eliminar"
     }
   }
 }

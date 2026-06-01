@@ -44,6 +44,7 @@
       "notesLabel": "Observations / Medical Notes",
       "notesPlaceholder": "Relevant history, allergies, or additional comments...",
       "selectPlaceholder": "Select an option",
+      "registrationDateLabel": "Registration Date",
       "buttonSubmit": "Save",
       "buttonLoading": "Saving...",
       "buttonCancel": "Cancel",
@@ -68,7 +69,9 @@
         "addressRequired": "Address is required",
         "addressMax": "Address cannot exceed 255 characters",
         "notesMax": "Observations cannot exceed 1000 characters"
-      }
+      },
+      "successDeletePatientToast": "successfully deleted.",
+      "errordeletePatientToast": "Could not delete the patient."
     }
   },
   "auth": {
@@ -137,6 +140,11 @@
       "results": "results",
       "previous": "Previous",
       "next": "Next"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "delete": "Delete"
     }
   }
 }

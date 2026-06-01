@@ -1,116 +1,40 @@
 "use client";
 
-import {
-  TableAction,
-  TableColumn,
-  TableWrapper,
-} from "@/components/customs/table-wrapper";
-import { useEffect, useState, useCallback } from "react";
-import { deletePatient, getAllPatients } from "../services";
-import { PatientApiResponse } from "../types";
-import { PaginatedData } from "@/lib/server/api-response";
+import { useEffect } from "react";
+import { TableWrapper } from "@/components/customs/table-wrapper";
 import { Button } from "@/components/ui/button";
 import { UserPlusIcon } from "lucide-react";
 import { SectionHeader } from "@/components/customs/secction-header";
 import { TablePagination } from "@/components/customs/table-pagination";
 import { useRouter } from "next/navigation";
 import { routes, useLanguage } from "@/lib";
-import { toast } from "sonner";
 import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
+import { usePatientsActions } from "./patients-actions";
+import { getPatientColumns } from "./patients-columns";
 
 export function PatientList() {
-  const [patients, setPatients] = useState<PaginatedData<PatientApiResponse>>();
-
+  const router = useRouter();
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.patients;
+  const columns = getPatientColumns(t);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10;
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [patientToDelete, setPatientToDelete] = useState<{ id: string; name: string } | null>(null);
-
-  const fetchPatients = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await getAllPatients(currentPage, pageSize);
-      setPatients(response.data);
-    } catch (error) {
-      console.error("Error al cargar pacientes:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage, pageSize]);
+  const {
+    patients,
+    isAlertOpen,
+    setIsAlertOpen,
+    currentPage,
+    setCurrentPage,
+    patientToDelete,
+    setPatientToDelete,
+    isLoading,
+    patientActions,
+    fetchPatients,
+    handleExecuteDelete,
+  } = usePatientsActions(dictionary);
 
   useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
-
-  const handleOpenDeleteConfirm = (id: string, name: string) => {
-    setPatientToDelete({ id, name });
-    setIsAlertOpen(true);
-  };
-
-  const handleExecuteDelete = async () => {
-    if (!patientToDelete) return;
-
-    const { id, name } = patientToDelete;
-
-    try {
-      const response = await deletePatient(id);
-      
-      if (response.status === 200 || response.status === 204) {
-        toast.success(`Paciente ${name} eliminado con éxito.`);
-        if (patients?.content.length === 1 && currentPage > 0) {
-          setCurrentPage((prev) => prev - 1);
-        } else {
-          await fetchPatients();
-        }
-      }
-    } catch (error) {
-      console.error("Error al eliminar:", error);
-      toast.error("No se pudo eliminar al paciente.");
-    } finally {
-      setPatientToDelete(null);
-    }
-  };
-
-  const patientColumns: TableColumn<PatientApiResponse>[] = [
-    {
-      header: "Nº Historial",
-      accessor: "medicalRecordNumber",
-    },
-    {
-      header: "Nombre Completo",
-      accessor: "fullName",
-    },
-    {
-      header: "Teléfono",
-      accessor: "phone",
-    },
-    {
-      header: "F. Registro",
-      accessor: (patient) => new Date(patient.createdAt).toLocaleDateString(),
-    },
-  ];
-
-  const patientActions: TableAction<PatientApiResponse>[] = [
-    {
-      label: "Ver Detalles",
-      onClick: (patient) => console.log("Abriendo detalles de:", patient.id),
-    },
-    {
-      label: "Editar",
-      onClick: (patient) => console.log("Editando paciente:", patient.fullName),
-    },
-    {
-      label: "Eliminar",
-      variant: "destructive",
-      separatorBefore: true,
-      onClick: (patient) => handleOpenDeleteConfirm(patient.id, patient.fullName),
-    },
-  ];
 
   const handleGoToCreatePatient = () => {
     router.push(routes.patients.create);
@@ -119,26 +43,22 @@ export function PatientList() {
   return (
     <>
       <div className="space-y-4 p-1">
-        <SectionHeader
-          title={t.tableSectionTitle}
-          description={t.tableSectionSubtitle}
-        >
-          <Button
-            onClick={handleGoToCreatePatient}
-            className="w-full sm:w-auto shadow-sm"
-          >
+        <SectionHeader title={t.tableSectionTitle} description={t.tableSectionSubtitle}>
+          <Button onClick={handleGoToCreatePatient} className="w-full sm:w-auto shadow-sm">
             <UserPlusIcon className="mr-2 size-4" />
             {t.createNewPatientButton}
           </Button>
         </SectionHeader>
+        
         <div>
           <TableWrapper
-            cols={patientColumns}
+            cols={columns}
             data={patients?.content || []}
             actions={patientActions}
             isLoading={isLoading}
           />
         </div>
+        
         {patients && (
           <TablePagination
             page={patients.page}
@@ -149,6 +69,7 @@ export function PatientList() {
           />
         )}
       </div>
+
       <SystemAlertDialog
         isOpen={isAlertOpen}
         onClose={() => {
