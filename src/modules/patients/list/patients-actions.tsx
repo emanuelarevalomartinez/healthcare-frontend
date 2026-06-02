@@ -3,15 +3,22 @@
 import { useState, useCallback } from "react";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { PatientApiResponse } from "../types";
-import { deletePatient, getAllPatients } from "../services";
+import { deletePatient, findPatientById, getAllPatients } from "../services";
 import { toast } from "sonner";
 import { PaginatedData } from "@/lib/server/api-response";
+import { useRouter } from "next/navigation";
+import { routes } from "@/lib";
 
 export function usePatientsActions(t: any) {
+  const router = useRouter();
+
   const [patients, setPatients] = useState<PaginatedData<PatientApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [patientToDelete, setPatientToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [patientToDelete, setPatientToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const pageSize = 10;
 
@@ -21,7 +28,7 @@ export function usePatientsActions(t: any) {
       const response = await getAllPatients(currentPage, pageSize);
       setPatients(response.data);
     } catch (error) {
-      console.error("Error al cargar pacientes:", error);
+      console.error("Error to load the patients: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -32,14 +39,19 @@ export function usePatientsActions(t: any) {
     setIsAlertOpen(true);
   };
 
+  const handleEditPatient = async (id: string) => {
+    const editUrl = routes.patients.edit.replace(":id", id);
+    router.push(editUrl);
+  };
+
   const handleExecuteDelete = async () => {
     if (!patientToDelete) return;
 
-    const { id, name } = patientToDelete;
+    const { id } = patientToDelete;
 
     try {
       const response = await deletePatient(id);
-      
+
       if (response.status === 200 || response.status === 204) {
         toast.success(t.dashboard.patients.successDeletePatientToast);
         if (patients?.content.length === 1 && currentPage > 0) {
@@ -63,13 +75,14 @@ export function usePatientsActions(t: any) {
     },
     {
       label: t.components.actions.edit,
-      onClick: (patient) => console.log("Editando paciente:", patient.fullName),
+      onClick: (patient) => handleEditPatient(patient.id),
     },
     {
       label: t.components.actions.delete,
       variant: "destructive",
       separatorBefore: true,
-      onClick: (patient) => handleOpenDeleteConfirm(patient.id, patient.fullName),
+      onClick: (patient) =>
+        handleOpenDeleteConfirm(patient.id, patient.fullName),
     },
   ];
 
@@ -84,6 +97,6 @@ export function usePatientsActions(t: any) {
     isLoading,
     patientActions,
     fetchPatients,
-    handleExecuteDelete
+    handleExecuteDelete,
   };
 }

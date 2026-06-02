@@ -1,7 +1,7 @@
 import { PatientForm } from "@/modules/patients/forms/patient-form";
 
 interface PageProps {
-  params: Promise<{ id: string }>; // En Next.js 14/15/16 params es asíncrono
+  params: Promise<{ id: string }>;
 }
 
 export default async function NewPatientPage({ params }: PageProps) {
@@ -9,7 +9,23 @@ export default async function NewPatientPage({ params }: PageProps) {
 
   return (
     <div>
-      <PatientForm />
+      <PatientForm
+        patient={{
+          id: "",
+          medicalRecordNumber: "",
+          fullName: "",
+          documentType: "",
+          documentNumber: "",
+          birthDate: new Date(),
+          sex: "",
+          phone: "",
+          email: "",
+          address: "",
+          notes: "",
+          createdById: "",
+          createdAt: new Date(),
+        }}
+      />
     </div>
   );
 }

@@ -77,10 +77,10 @@ export function PatientList() {
           setPatientToDelete(null);
         }}
         onConfirm={handleExecuteDelete}
-        title={"¿Estás absolutamente seguro?"}
-        description={`"Esta acción no se puede deshacer. Se eliminará permanentemente al paciente"} ${patientToDelete?.name ? `"${patientToDelete.name}"` : ""}.`}
-        cancelText={"Cancelar"}
-        confirmText={"Eliminar"}
+        title={t.deleteAlertTitle}
+        description={`${t.deleteAlertDescription} ${patientToDelete?.name ? `"${patientToDelete.name}"` : ""}.`}
+        cancelText={t.cancel}
+        confirmText={t.confirm}
       />
     </>
   );

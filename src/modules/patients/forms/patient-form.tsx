@@ -16,7 +16,11 @@ import { getErrorMessage, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { getCreatePatientSchema, CreatePatientSchema } from "./schema";
 import { createPatient } from "../services";
-import { PATIENT_DOCUMENT_TYPE, PATIENT_SEX } from "../types";
+import {
+  PATIENT_DOCUMENT_TYPE,
+  PATIENT_SEX,
+  PatientApiResponse,
+} from "../types";
 import {
   Select,
   SelectContent,
@@ -36,7 +40,11 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function PatientForm() {
+interface Props {
+  patient: PatientApiResponse;
+}
+
+export function PatientForm({ patient }: Props) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -53,23 +61,25 @@ export function PatientForm() {
   } = useForm<CreatePatientSchema>({
     resolver: zodResolver(getCreatePatientSchema(t.validation)),
     defaultValues: {
-      medicalRecordNumber: "",
-      fullName: "",
-      documentType: undefined,
-      documentNumber: "",
-      birthDate: "",
-      sex: undefined,
-      phone: "",
-      email: "",
-      address: "",
-      notes: "",
+      medicalRecordNumber: patient.medicalRecordNumber,
+      fullName: patient.fullName,
+      documentType: patient.documentType as PATIENT_DOCUMENT_TYPE,
+      documentNumber: patient.documentNumber,
+      birthDate: patient.birthDate
+        ? new Date(patient.birthDate).toISOString()
+        : "",
+      sex: patient.sex as PATIENT_SEX,
+      phone: patient.phone,
+      email: patient.email,
+      address: patient.address,
+      notes: patient.notes,
     },
   });
 
   const birthDateValue = watch("birthDate");
-
-  // Convertimos el string guardado a un objeto Date para que el Calendar lo entienda
   const selectedDate = birthDateValue ? new Date(birthDateValue) : undefined;
+  const currentDocumentType = watch("documentType");
+  const currentSex = watch("sex");
 
   async function onSubmit(data: CreatePatientSchema) {
     setIsLoading(true);
@@ -162,9 +172,11 @@ export function PatientForm() {
             <Label htmlFor="documentType">{t.documentTypeLabel}</Label>
             <Select
               onValueChange={(value) =>
-                setValue("documentType", value as PATIENT_DOCUMENT_TYPE)
+                setValue("documentType", value as PATIENT_DOCUMENT_TYPE, {
+                  shouldValidate: true,
+                })
               }
-              defaultValue={watch("documentType")}
+              value={currentDocumentType}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t.documentTypePlaceholder} />
@@ -237,7 +249,9 @@ export function PatientForm() {
                   mode="single"
                   selected={selectedDate}
                   onSelect={(date) => {
-                    setValue("birthDate", date ? date.toISOString() : "");
+                    setValue("birthDate", date ? date.toISOString() : "", {
+                      shouldValidate: true,
+                    });
                     trigger("birthDate");
                   }}
                   disabled={(date) =>
@@ -251,11 +265,14 @@ export function PatientForm() {
               <p className="text-sm text-red-500">{errors.birthDate.message}</p>
             )}
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="sex">{t.sexLabel}</Label>
             <Select
-              onValueChange={(value) => setValue("sex", value as PATIENT_SEX)}
-              defaultValue={watch("sex")}
+              onValueChange={(value) =>
+                setValue("sex", value as PATIENT_SEX, { shouldValidate: true })
+              }
+              value={currentSex}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t.sexTypePlaceholder} />
@@ -281,6 +298,7 @@ export function PatientForm() {
               <p className="text-sm text-red-500">{errors.sex.message}</p>
             )}
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="phone">{t.phoneLabel}</Label>
             <Input
@@ -308,6 +326,7 @@ export function PatientForm() {
               <p className="text-sm text-red-500">{errors.email.message}</p>
             )}
           </div>
+
           <div className="grid gap-2 md:col-span-2">
             <Label htmlFor="address">{t.addressLabel}</Label>
             <Input
@@ -320,6 +339,7 @@ export function PatientForm() {
               <p className="text-sm text-red-500">{errors.address.message}</p>
             )}
           </div>
+
           <div className="grid gap-2 md:col-span-2">
             <Label htmlFor="notes">{t.notesLabel}</Label>
             <Textarea

@@ -71,7 +71,11 @@
         "notesMax": "Observations cannot exceed 1000 characters"
       },
       "successDeletePatientToast": "successfully deleted.",
-      "errordeletePatientToast": "Could not delete the patient."
+      "errordeletePatientToast": "Could not delete the patient.",
+      "deleteAlertTitle": "Are you absolutely sure?",
+      "deleteAlertDescription": "This action cannot be undone. This will permanently delete the patient",
+      "cancel": "Cancel",
+      "confirm": "Delete"
     }
   },
   "auth": {

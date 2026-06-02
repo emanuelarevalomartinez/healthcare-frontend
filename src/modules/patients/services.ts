@@ -5,7 +5,6 @@ import { PaginatedData } from "@/lib/server/api-response";
 import { PatientApiResponse, PatientCreateRequest } from "./types";
 
 export const getAllPatients = async (page: number = 0, size: number = 10) => {
-  
   const queryParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
@@ -19,7 +18,6 @@ export const getAllPatients = async (page: number = 0, size: number = 10) => {
 };
 
 export const createPatient = async (data: PatientCreateRequest) => {
-
   const response = await fetcher(apiRoutes.patients.create, {
     ...POST_OPTIONS,
     body: JSON.stringify(data),
@@ -27,12 +25,19 @@ export const createPatient = async (data: PatientCreateRequest) => {
   return response;
 };
 
-export const deletePatient = async (id: string) => {
-  const response = await fetcher(
-    apiRoutes.patients.delete.replace(":id", id),
+export const findPatientById = async (id: string) => {
+  const response = await fetcher<PatientApiResponse>(
+    apiRoutes.patients.details.replace(":id", id),
     {
-      method: "DELETE",
-    },
+      ...GET_OPTIONS,
+    }
   );
+  return response;
+};
+
+export const deletePatient = async (id: string) => {
+  const response = await fetcher(apiRoutes.patients.delete.replace(":id", id), {
+    method: "DELETE",
+  });
   return response;
 };

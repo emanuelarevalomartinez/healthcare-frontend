@@ -71,7 +71,11 @@
         "notesMax": "Las observaciones no pueden exceder los 1000 caracteres"
       },
       "successDeletePatientToast": "eliminado con éxito.",
-      "errordeletePatientToast": "No se pudo eliminar al paciente."
+      "errordeletePatientToast": "No se pudo eliminar al paciente.",
+      "deleteAlertTitle": "¿Estás absolutamente seguro?",
+      "deleteAlertDescription": "Esta acción no se puede deshacer. Se eliminará permanentemente al paciente",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
     }
   },
   "auth": {
