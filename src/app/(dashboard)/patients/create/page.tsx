@@ -16,7 +16,7 @@ export default async function NewPatientPage({ params }: PageProps) {
           fullName: "",
           documentType: "",
           documentNumber: "",
-          birthDate: new Date(),
+          birthDate: undefined as unknown as Date,
           sex: "",
           phone: "",
           email: "",

@@ -27,6 +27,20 @@ export interface PatientCreateRequest {
   notes: string | null;
 }
 
+export interface PatientUpdateRequest {
+  medicalRecordNumber: string;
+  fullName: string;
+  documentType: PATIENT_DOCUMENT_TYPE;
+  documentNumber: string;
+  birthDate: Date;
+  sex: PATIENT_SEX;
+  phone: string;
+  email: string;
+  address: string | null;
+  notes: string | null;
+}
+
+
 export enum PATIENT_DOCUMENT_TYPE {
   DNI='DNI',
   PASSPORT='PASSPORT',

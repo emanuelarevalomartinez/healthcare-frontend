@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { PaginatedData } from "@/lib/server/api-response";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib";
+import { format, parseISO } from "date-fns";
 
 export function usePatientsActions(t: any) {
   const router = useRouter();
@@ -26,7 +27,37 @@ export function usePatientsActions(t: any) {
     setIsLoading(true);
     try {
       const response = await getAllPatients(currentPage, pageSize);
-      setPatients(response.data);
+      
+      if (response.data && response.data.content) {
+        const sanitizedContent = response.data.content.map((patient) => {
+          let formattedCreatedAt = "";
+
+          if (patient.createdAt) {
+            const isoString = String(patient.createdAt).replace(" ", "T");
+            
+            try {
+              const parsedDate = parseISO(isoString);
+              formattedCreatedAt = format(parsedDate, "yyyy-MM-dd HH:mm");
+            } catch (e) {
+              console.error("Unexpected error parsing date:", e);
+              formattedCreatedAt = String(patient.createdAt);
+            }
+          }
+
+          return {
+            ...patient,
+            createdAt: formattedCreatedAt as unknown as Date, 
+          };
+        });
+
+        setPatients({
+          ...response.data,
+          content: sanitizedContent,
+        });
+      } else {
+        setPatients(response.data);
+      }
+
     } catch (error) {
       console.error("Error to load the patients: ", error);
     } finally {

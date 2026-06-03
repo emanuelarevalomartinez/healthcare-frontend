@@ -74,8 +74,7 @@ export const getCreatePatientSchema = (
       .string()
       .trim()
       .max(100, { message: dictionary.emailMax })
-      .email({ message: dictionary.emailInvalid })
-      .or(z.literal("")),
+      .email({ message: dictionary.emailInvalid }),
 
     address: z
       .string()
@@ -95,3 +94,79 @@ export const getCreatePatientSchema = (
 export type CreatePatientSchema = z.infer<
   ReturnType<typeof getCreatePatientSchema>
 >;
+
+export const getUpdatePatientSchema = (
+  dictionary: PatientValidationDictionary
+) => {
+  return z.object({
+    medicalRecordNumber: z
+      .string()
+      .trim()
+      .min(1, { message: dictionary.medicalRecordNumberRequired })
+      .max(50, { message: dictionary.medicalRecordNumberMax }),
+    fullName: z
+      .string()
+      .trim()
+      .min(3, { message: dictionary.fullNameMin })
+      .max(150, { message: dictionary.fullNameMax }),
+
+    documentType: z.enum(PATIENT_DOCUMENT_TYPE, {
+      error: () => ({ message: dictionary.documentTypeRequired }),
+    }),
+
+    documentNumber: z
+      .string()
+      .trim()
+      .min(1, { message: dictionary.documentNumberRequired })
+      .max(50, { message: dictionary.documentNumberMax }),
+
+    birthDate: z
+      .string()
+      .min(1, { message: dictionary.birthDateRequired })
+      .refine(
+        (val) => {
+          if (!val) return false;
+          const date = new Date(val);
+          return date < new Date();
+        },
+        { message: dictionary.birthDatePast }
+      ),
+
+    sex: z.enum(PATIENT_SEX, {
+      error: () => ({ message: dictionary.sexRequired }),
+    }),
+
+    phone: z
+      .string()
+      .trim()
+      .min(1, { message: dictionary.phoneRequired })
+      .max(30, { message: dictionary.phoneMax })
+      .regex(/^[0-9+()\-\s]+$/, { message: dictionary.phoneInvalid }),
+    email: z
+      .string()
+      .trim()
+      .min(1, { message: dictionary.emailInvalid })
+      .max(100, { message: dictionary.emailMax })
+      .email({ message: dictionary.emailInvalid }),
+    address: z
+      .string()
+      .trim()
+      .min(1, { message: dictionary.addressRequired })
+      .max(255, { message: dictionary.addressMax })
+      .nullable(),
+
+    notes: z
+      .string()
+      .trim()
+      .max(1000, { message: dictionary.notesMax })
+      .nullable()
+      .optional()
+      .or(z.literal("")),
+  });
+};
+
+export type UpdatePatientSchema = z.infer<
+  ReturnType<typeof getUpdatePatientSchema>
+>;
+
+export type PatientSchema = CreatePatientSchema | UpdatePatientSchema;

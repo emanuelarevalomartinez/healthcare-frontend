@@ -1,8 +1,28 @@
 "use server";
 
-import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS } from "@/lib";
+import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
-import { PatientApiResponse, PatientCreateRequest } from "./types";
+import {
+  PatientApiResponse,
+  PatientCreateRequest,
+  PatientUpdateRequest,
+} from "./types";
+
+export const createPatient = async (data: PatientCreateRequest) => {
+  const response = await fetcher(apiRoutes.patients.create, {
+    ...POST_OPTIONS,
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const updatePatient = async (id: string, data: PatientUpdateRequest) => {
+  const response = await fetcher(apiRoutes.patients.edit.replace(":id", id), {
+    ...PUT_OPTIONS,
+    body: JSON.stringify(data),
+  });
+  return response;
+};
 
 export const getAllPatients = async (page: number = 0, size: number = 10) => {
   const queryParams = new URLSearchParams({
@@ -15,14 +35,6 @@ export const getAllPatients = async (page: number = 0, size: number = 10) => {
   return await fetcher<PaginatedData<PatientApiResponse>>(urlWithParams, {
     ...GET_OPTIONS,
   });
-};
-
-export const createPatient = async (data: PatientCreateRequest) => {
-  const response = await fetcher(apiRoutes.patients.create, {
-    ...POST_OPTIONS,
-    body: JSON.stringify(data),
-  });
-  return response;
 };
 
 export const findPatientById = async (id: string) => {

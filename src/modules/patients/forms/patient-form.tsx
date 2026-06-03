@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState, useMemo } from "react";
+import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -14,8 +14,12 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { getErrorMessage, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
-import { getCreatePatientSchema, CreatePatientSchema } from "./schema";
-import { createPatient } from "../services";
+import {
+  getCreatePatientSchema,
+  getUpdatePatientSchema,
+  PatientSchema,
+} from "./schema";
+import { createPatient, updatePatient } from "../services";
 import {
   PATIENT_DOCUMENT_TYPE,
   PATIENT_SEX,
@@ -31,7 +35,7 @@ import {
 } from "@/components/ui/select";
 import { SectionHeader } from "@/components/customs/secction-header";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import {
   Popover,
   PopoverContent,
@@ -48,8 +52,22 @@ export function PatientForm({ patient }: Props) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const t = dictionary.dashboard.patients;
+  const isEditMode = !!patient?.id && patient.id.trim() !== "";
+  const currentSchema = isEditMode
+    ? getUpdatePatientSchema(t.validation)
+    : getCreatePatientSchema(t.validation);
+
+  const initialBirthDate = useMemo(() => {
+    if (!patient?.birthDate) return "";
+    const isoString =
+      patient.birthDate instanceof Date
+        ? patient.birthDate.toISOString()
+        : String(patient.birthDate);
+    return isoString.split("T")[0];
+  }, [patient?.birthDate]);
 
   const {
     register,
@@ -58,45 +76,52 @@ export function PatientForm({ patient }: Props) {
     watch,
     trigger,
     formState: { errors },
-  } = useForm<CreatePatientSchema>({
-    resolver: zodResolver(getCreatePatientSchema(t.validation)),
+  } = useForm<PatientSchema>({
+    resolver: zodResolver(currentSchema),
     defaultValues: {
-      medicalRecordNumber: patient.medicalRecordNumber,
-      fullName: patient.fullName,
+      medicalRecordNumber: patient.medicalRecordNumber || "",
+      fullName: patient.fullName || "",
       documentType: patient.documentType as PATIENT_DOCUMENT_TYPE,
-      documentNumber: patient.documentNumber,
-      birthDate: patient.birthDate
-        ? new Date(patient.birthDate).toISOString()
-        : "",
+      documentNumber: patient.documentNumber || "",
+      birthDate: initialBirthDate,
       sex: patient.sex as PATIENT_SEX,
-      phone: patient.phone,
-      email: patient.email,
-      address: patient.address,
-      notes: patient.notes,
+      phone: patient.phone || "",
+      email: patient.email || "",
+      address: patient.address || "",
+      notes: patient.notes || "",
     },
   });
 
   const birthDateValue = watch("birthDate");
-  const selectedDate = birthDateValue ? new Date(birthDateValue) : undefined;
+  const selectedDate = useMemo(() => {
+    if (!birthDateValue) return undefined;
+    return parse(birthDateValue, "yyyy-MM-dd", new Date());
+  }, [birthDateValue]);
+
   const currentDocumentType = watch("documentType");
   const currentSex = watch("sex");
 
-  async function onSubmit(data: CreatePatientSchema) {
+  async function onSubmit(data: PatientSchema) {
     setIsLoading(true);
     try {
-      const newPatient = {
+      const payload = {
         ...data,
-        email: data.email,
-        notes: data.notes || null,
+        email: data.email || "",
+        notes: data.notes || "",
+        address: data.address || null,
         documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
         sex: data.sex as PATIENT_SEX,
-        birthDate: new Date(data.birthDate),
+        birthDate: data.birthDate || null,
       };
 
-      const response = await createPatient(newPatient);
+      const response = isEditMode
+        ? await updatePatient(patient.id, payload as any)
+        : await createPatient(payload as any);
 
       if (response.status === 201 || response.status === 200) {
-        toast.success(t.toastSuccess);
+        toast.success(
+          isEditMode ? "Patient updated successfully" : t.toastSuccess
+        );
         router.push(routes.patients.root);
       }
     } catch (error) {
@@ -107,8 +132,8 @@ export function PatientForm({ patient }: Props) {
     }
   }
 
-  const handleFocusError = (errors: any) => {
-    const firstError = Object.keys(errors)[0];
+  const handleFocusError = (formErrors: FieldErrors<PatientSchema>) => {
+    const firstError = Object.keys(formErrors)[0];
     const element = document.getElementById(firstError);
     if (element) {
       element.focus();
@@ -117,14 +142,14 @@ export function PatientForm({ patient }: Props) {
 
   return (
     <form
-      id="create-patient-form"
+      id="patient-form"
       noValidate
       onSubmit={handleSubmit(onSubmit, handleFocusError)}
       className="container mx-auto"
     >
       <SectionHeader
-        title={t.createSectionTitle}
-        description={t.createSectionSubtitle}
+        title={isEditMode ? "Edit Patient" : t.createSectionTitle}
+        description={isEditMode ? "Update details" : t.createSectionSubtitle}
         onBack={() => router.back()}
       >
         <Button
@@ -136,8 +161,8 @@ export function PatientForm({ patient }: Props) {
         </Button>
       </SectionHeader>
 
-      <Card className=" border border-border rounded-lg w-full">
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="border border-border rounded-lg w-full">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
           <div className="grid gap-2">
             <Label htmlFor="medicalRecordNumber">
               {t.medicalRecordNumberLabel}
@@ -150,7 +175,7 @@ export function PatientForm({ patient }: Props) {
             />
             {errors.medicalRecordNumber && (
               <p className="text-sm text-red-500">
-                {errors.medicalRecordNumber.message}
+                {errors.medicalRecordNumber.message as string}
               </p>
             )}
           </div>
@@ -164,7 +189,9 @@ export function PatientForm({ patient }: Props) {
               aria-invalid={errors.fullName ? "true" : "false"}
             />
             {errors.fullName && (
-              <p className="text-sm text-red-500">{errors.fullName.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.fullName.message as string}
+              </p>
             )}
           </div>
 
@@ -183,16 +210,15 @@ export function PatientForm({ patient }: Props) {
               </SelectTrigger>
               <SelectContent className="bg-secondary">
                 <SelectGroup>
-                  {Object.values(PATIENT_DOCUMENT_TYPE).map((documentType) => {
-                    const documentTypeKey = documentType.toLowerCase() as
+                  {Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
+                    const docTypeKey = docType.toLowerCase() as
                       | "dni"
                       | "passport"
                       | "id_card"
                       | "other";
-
                     return (
-                      <SelectItem key={documentType} value={documentType}>
-                        {t.documentTypeOptions[documentTypeKey]}
+                      <SelectItem key={docType} value={docType}>
+                        {t.documentTypeOptions[docTypeKey]}
                       </SelectItem>
                     );
                   })}
@@ -201,7 +227,7 @@ export function PatientForm({ patient }: Props) {
             </Select>
             {errors.documentType && (
               <p className="text-sm text-red-500">
-                {errors.documentType.message}
+                {errors.documentType.message as string}
               </p>
             )}
           </div>
@@ -216,19 +242,18 @@ export function PatientForm({ patient }: Props) {
             />
             {errors.documentNumber && (
               <p className="text-sm text-red-500">
-                {errors.documentNumber.message}
+                {errors.documentNumber.message as string}
               </p>
             )}
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="birthDate">{t.birthDateLabel}</Label>
-
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   id="birthDate"
-                  variant={"outline"}
+                  variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal px-3",
                     !birthDateValue && "text-muted-foreground"
@@ -237,7 +262,7 @@ export function PatientForm({ patient }: Props) {
                 >
                   <CalendarIcon className="mr-2 size-4 text-muted-foreground" />
                   {birthDateValue ? (
-                    format(new Date(birthDateValue), "MM/dd/yyyy")
+                    birthDateValue
                   ) : (
                     <span>{t.birthDateLabel}</span>
                   )}
@@ -249,20 +274,28 @@ export function PatientForm({ patient }: Props) {
                   mode="single"
                   selected={selectedDate}
                   onSelect={(date) => {
-                    setValue("birthDate", date ? date.toISOString() : "", {
-                      shouldValidate: true,
-                    });
+                    if (date) {
+                      const pureString = format(date, "yyyy-MM-dd");
+                      setValue("birthDate", pureString, {
+                        shouldValidate: true,
+                      });
+                    } else {
+                      setValue("birthDate", "");
+                    }
                     trigger("birthDate");
+                    setIsCalendarOpen(false);
                   }}
                   disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
+                    date >= new Date(new Date().setHours(0, 0, 0, 0)) ||
+                    date < new Date("1900-01-01")
                   }
                 />
               </PopoverContent>
             </Popover>
-
             {errors.birthDate && (
-              <p className="text-sm text-red-500">{errors.birthDate.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.birthDate.message as string}
+              </p>
             )}
           </div>
 
@@ -279,14 +312,13 @@ export function PatientForm({ patient }: Props) {
               </SelectTrigger>
               <SelectContent className="bg-secondary">
                 <SelectGroup>
-                  {Object.values(PATIENT_SEX).map((sex) => {
-                    const sexKey = sex.toLowerCase() as
+                  {Object.values(PATIENT_SEX).map((sexItem) => {
+                    const sexKey = sexItem.toLowerCase() as
                       | "male"
                       | "female"
                       | "other";
-
                     return (
-                      <SelectItem key={sex} value={sex}>
+                      <SelectItem key={sexItem} value={sexItem}>
                         {t.sexTypeOptions[sexKey]}
                       </SelectItem>
                     );
@@ -295,7 +327,9 @@ export function PatientForm({ patient }: Props) {
               </SelectContent>
             </Select>
             {errors.sex && (
-              <p className="text-sm text-red-500">{errors.sex.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.sex.message as string}
+              </p>
             )}
           </div>
 
@@ -309,7 +343,9 @@ export function PatientForm({ patient }: Props) {
               aria-invalid={errors.phone ? "true" : "false"}
             />
             {errors.phone && (
-              <p className="text-sm text-red-500">{errors.phone.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.phone.message as string}
+              </p>
             )}
           </div>
 
@@ -323,7 +359,9 @@ export function PatientForm({ patient }: Props) {
               aria-invalid={errors.email ? "true" : "false"}
             />
             {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.email.message as string}
+              </p>
             )}
           </div>
 
@@ -336,7 +374,9 @@ export function PatientForm({ patient }: Props) {
               aria-invalid={errors.address ? "true" : "false"}
             />
             {errors.address && (
-              <p className="text-sm text-red-500">{errors.address.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.address.message as string}
+              </p>
             )}
           </div>
 
@@ -350,7 +390,9 @@ export function PatientForm({ patient }: Props) {
               aria-invalid={errors.notes ? "true" : "false"}
             />
             {errors.notes && (
-              <p className="text-sm text-red-500">{errors.notes.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.notes.message as string}
+              </p>
             )}
           </div>
         </CardContent>
