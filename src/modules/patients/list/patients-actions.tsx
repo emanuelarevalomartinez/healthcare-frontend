@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { PatientApiResponse } from "../types";
-import { deletePatient, findPatientById, getAllPatients } from "../services";
+import { deletePatient, getAllPatients } from "../services";
 import { toast } from "sonner";
 import { PaginatedData } from "@/lib/server/api-response";
 import { useRouter } from "next/navigation";
@@ -27,14 +27,14 @@ export function usePatientsActions(t: any) {
     setIsLoading(true);
     try {
       const response = await getAllPatients(currentPage, pageSize);
-      
+
       if (response.data && response.data.content) {
         const sanitizedContent = response.data.content.map((patient) => {
           let formattedCreatedAt = "";
 
           if (patient.createdAt) {
             const isoString = String(patient.createdAt).replace(" ", "T");
-            
+
             try {
               const parsedDate = parseISO(isoString);
               formattedCreatedAt = format(parsedDate, "yyyy-MM-dd HH:mm");
@@ -46,7 +46,7 @@ export function usePatientsActions(t: any) {
 
           return {
             ...patient,
-            createdAt: formattedCreatedAt as unknown as Date, 
+            createdAt: formattedCreatedAt as unknown as Date,
           };
         });
 
@@ -57,7 +57,6 @@ export function usePatientsActions(t: any) {
       } else {
         setPatients(response.data);
       }
-
     } catch (error) {
       console.error("Error to load the patients: ", error);
     } finally {
@@ -73,6 +72,11 @@ export function usePatientsActions(t: any) {
   const handleEditPatient = async (id: string) => {
     const editUrl = routes.patients.edit.replace(":id", id);
     router.push(editUrl);
+  };
+
+  const handleViewPatientDetails = async (id: string) => {
+    const detailsUrl = routes.patients.details.replace(":id", id);
+    router.push(detailsUrl);
   };
 
   const handleExecuteDelete = async () => {
@@ -102,7 +106,7 @@ export function usePatientsActions(t: any) {
   const patientActions: TableAction<PatientApiResponse>[] = [
     {
       label: t.components.actions.viewDetails,
-      onClick: (patient) => console.log("Abriendo detalles de:", patient.id),
+      onClick: (patient) => handleViewPatientDetails(patient.id),
     },
     {
       label: t.components.actions.edit,

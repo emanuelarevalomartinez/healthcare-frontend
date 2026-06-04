@@ -33,7 +33,7 @@ export default async function DashBoardLayout({
               <NavigationMenu />
             </div>
 
-            <hr className="w-full bg-red-500 border-border" />
+            <hr className="w-full border-border" />
           </div>
 
           <div className="px-4 py-2">{children}</div>

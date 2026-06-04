@@ -16,6 +16,7 @@ export default async function ({ params }: PageProps) {
 
   return (
     <PatientForm
+    mode="edit"
       patient={{
         id: response.data.id,
         medicalRecordNumber: response.data.medicalRecordNumber,

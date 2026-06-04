@@ -1,15 +1,10 @@
 import { PatientForm } from "@/modules/patients/forms/patient-form";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function NewPatientPage({ params }: PageProps) {
-  const { id } = await params;
-
+export default async function NewPatientPage() {
   return (
     <div>
       <PatientForm
+        mode="create"
         patient={{
           id: "",
           medicalRecordNumber: "",
@@ -23,7 +18,7 @@ export default async function NewPatientPage({ params }: PageProps) {
           address: "",
           notes: "",
           createdById: "",
-          createdAt: new Date(),
+          createdAt: undefined as unknown as Date,
         }}
       />
     </div>

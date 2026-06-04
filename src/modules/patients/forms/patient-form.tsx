@@ -43,19 +43,27 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+
+type FormMode = "create" | "edit" | "details";
 
 interface Props {
   patient: PatientApiResponse;
+  mode: FormMode;
 }
 
-export function PatientForm({ patient }: Props) {
+export function PatientForm({ patient, mode }: Props) {
   const { dictionary } = useLanguage();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const t = dictionary.dashboard.patients;
-  const isEditMode = !!patient?.id && patient.id.trim() !== "";
+
+  const isEditMode = mode === "edit";
+  const isViewMode = mode === "details";
+  const disableAllFields = isViewMode;
+
   const currentSchema = isEditMode
     ? getUpdatePatientSchema(t.validation)
     : getCreatePatientSchema(t.validation);
@@ -102,6 +110,7 @@ export function PatientForm({ patient }: Props) {
   const currentSex = watch("sex");
 
   async function onSubmit(data: PatientSchema) {
+    if (isViewMode) return;
     setIsLoading(true);
     try {
       const payload = {
@@ -140,29 +149,42 @@ export function PatientForm({ patient }: Props) {
     }
   };
 
+  const getHeaderTitle = () => {
+    if (isViewMode) return "Patient Details";
+    if (isEditMode) return "Edit Patient";
+    return t.createSectionTitle;
+  };
+
   return (
     <form
       id="patient-form"
       noValidate
       onSubmit={handleSubmit(onSubmit, handleFocusError)}
-      className="container mx-auto"
     >
       <SectionHeader
-        title={isEditMode ? "Edit Patient" : t.createSectionTitle}
-        description={isEditMode ? "Update details" : t.createSectionSubtitle}
+        title={getHeaderTitle()}
+        description={
+          isEditMode
+            ? "Update details"
+            : isViewMode
+            ? "Viewing patient profile"
+            : t.createSectionSubtitle
+        }
         onBack={() => router.back()}
       >
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
-        >
-          {isLoading ? t.buttonLoading : t.buttonSubmit}
-        </Button>
+        {!isViewMode && (
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+          >
+            {isLoading ? t.buttonLoading : t.buttonSubmit}
+          </Button>
+        )}
       </SectionHeader>
 
-      <Card className="border border-border rounded-lg w-full">
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+      <Card className="border bg-background border-border rounded-lg w-full">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
           <div className="grid gap-2">
             <Label htmlFor="medicalRecordNumber">
               {t.medicalRecordNumberLabel}
@@ -170,14 +192,17 @@ export function PatientForm({ patient }: Props) {
             <Input
               id="medicalRecordNumber"
               placeholder={t.medicalRecordNumberPlaceholder}
+              disabled={disableAllFields}
               {...register("medicalRecordNumber")}
               aria-invalid={errors.medicalRecordNumber ? "true" : "false"}
             />
-            {errors.medicalRecordNumber && (
-              <p className="text-sm text-red-500">
-                {errors.medicalRecordNumber.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.medicalRecordNumber ? (
+                (errors.medicalRecordNumber.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
@@ -185,19 +210,23 @@ export function PatientForm({ patient }: Props) {
             <Input
               id="fullName"
               placeholder={t.fullNamePlaceholder}
+              disabled={disableAllFields}
               {...register("fullName")}
               aria-invalid={errors.fullName ? "true" : "false"}
             />
-            {errors.fullName && (
-              <p className="text-sm text-red-500">
-                {errors.fullName.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.fullName ? (
+                (errors.fullName.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="documentType">{t.documentTypeLabel}</Label>
             <Select
+              disabled={disableAllFields}
               onValueChange={(value) =>
                 setValue("documentType", value as PATIENT_DOCUMENT_TYPE, {
                   shouldValidate: true,
@@ -225,11 +254,13 @@ export function PatientForm({ patient }: Props) {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {errors.documentType && (
-              <p className="text-sm text-red-500">
-                {errors.documentType.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.documentType ? (
+                (errors.documentType.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
@@ -237,14 +268,17 @@ export function PatientForm({ patient }: Props) {
             <Input
               id="documentNumber"
               placeholder={t.documentNumberPlaceholder}
+              disabled={disableAllFields}
               {...register("documentNumber")}
               aria-invalid={errors.documentNumber ? "true" : "false"}
             />
-            {errors.documentNumber && (
-              <p className="text-sm text-red-500">
-                {errors.documentNumber.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.documentNumber ? (
+                (errors.documentNumber.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
@@ -254,6 +288,7 @@ export function PatientForm({ patient }: Props) {
                 <Button
                   id="birthDate"
                   variant="outline"
+                  disabled={disableAllFields}
                   className={cn(
                     "w-full justify-start text-left font-normal px-3",
                     !birthDateValue && "text-muted-foreground"
@@ -292,16 +327,19 @@ export function PatientForm({ patient }: Props) {
                 />
               </PopoverContent>
             </Popover>
-            {errors.birthDate && (
-              <p className="text-sm text-red-500">
-                {errors.birthDate.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.birthDate ? (
+                (errors.birthDate.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="sex">{t.sexLabel}</Label>
             <Select
+              disabled={disableAllFields}
               onValueChange={(value) =>
                 setValue("sex", value as PATIENT_SEX, { shouldValidate: true })
               }
@@ -326,11 +364,9 @@ export function PatientForm({ patient }: Props) {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {errors.sex && (
-              <p className="text-sm text-red-500">
-                {errors.sex.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.sex ? (errors.sex.message as string) : <>&nbsp;</>}
+            </div>
           </div>
 
           <div className="grid gap-2">
@@ -339,14 +375,13 @@ export function PatientForm({ patient }: Props) {
               id="phone"
               type="tel"
               placeholder={t.phonePlaceholder}
+              disabled={disableAllFields}
               {...register("phone")}
               aria-invalid={errors.phone ? "true" : "false"}
             />
-            {errors.phone && (
-              <p className="text-sm text-red-500">
-                {errors.phone.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.phone ? (errors.phone.message as string) : <>&nbsp;</>}
+            </div>
           </div>
 
           <div className="grid gap-2">
@@ -355,14 +390,13 @@ export function PatientForm({ patient }: Props) {
               id="email"
               type="email"
               placeholder={t.emailPlaceholder}
+              disabled={disableAllFields}
               {...register("email")}
               aria-invalid={errors.email ? "true" : "false"}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">
-                {errors.email.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.email ? (errors.email.message as string) : <>&nbsp;</>}
+            </div>
           </div>
 
           <div className="grid gap-2 md:col-span-2">
@@ -370,15 +404,51 @@ export function PatientForm({ patient }: Props) {
             <Input
               id="address"
               placeholder={t.addressPlaceholder}
+              disabled={disableAllFields}
               {...register("address")}
               aria-invalid={errors.address ? "true" : "false"}
             />
-            {errors.address && (
-              <p className="text-sm text-red-500">
-                {errors.address.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.address ? (
+                (errors.address.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
           </div>
+
+          {(isEditMode || isViewMode) && (
+            <>
+              <Separator className="md:col-span-2 mt-2 mb-4" />
+
+              <div className="grid gap-2">
+                <Label htmlFor="createdBy">Created By</Label>
+                <Input
+                  id="createdBy"
+                  value={patient.createdById || "System / Unknown"}
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="createdAt">Created At</Label>
+                <Input
+                  id="createdAt"
+                  value={
+                    patient.createdAt
+                      ? format(new Date(patient.createdAt), "yyyy-MM-dd HH:mm")
+                      : ""
+                  }
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+            </>
+          )}
 
           <div className="grid gap-2 md:col-span-2">
             <Label htmlFor="notes">{t.notesLabel}</Label>
@@ -386,14 +456,13 @@ export function PatientForm({ patient }: Props) {
               id="notes"
               placeholder={t.notesPlaceholder}
               rows={4}
+              disabled={disableAllFields}
               {...register("notes")}
               aria-invalid={errors.notes ? "true" : "false"}
             />
-            {errors.notes && (
-              <p className="text-sm text-red-500">
-                {errors.notes.message as string}
-              </p>
-            )}
+            <div className="text-sm h-5 text-red-500">
+              {errors.notes ? (errors.notes.message as string) : <>&nbsp;</>}
+            </div>
           </div>
         </CardContent>
       </Card>

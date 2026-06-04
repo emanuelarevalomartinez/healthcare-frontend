@@ -9,7 +9,8 @@ export const routes = {
   patients: {
     root: "/patients",
     create: "/patients/create",
-    edit: "/patients/:id/edit"
+    edit: "/patients/:id/edit",
+    details: "/patients/:id",
   },
   root: "/"
 } satisfies Routes;
