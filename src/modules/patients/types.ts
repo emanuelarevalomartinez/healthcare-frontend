@@ -4,7 +4,7 @@ export interface PatientApiResponse {
   fullName: string;
   documentType: string;
   documentNumber: string;
-  birthDate: Date;
+  birthDate: string;
   sex: string;
   phone: string;
   email: string;
@@ -19,7 +19,7 @@ export interface PatientCreateRequest {
   fullName: string;
   documentType: PATIENT_DOCUMENT_TYPE;
   documentNumber: string;
-  birthDate: Date;
+  birthDate: string;
   sex: PATIENT_SEX;
   phone: string;
   email: string;
@@ -27,18 +27,7 @@ export interface PatientCreateRequest {
   notes: string | null;
 }
 
-export interface PatientUpdateRequest {
-  medicalRecordNumber: string;
-  fullName: string;
-  documentType: PATIENT_DOCUMENT_TYPE;
-  documentNumber: string;
-  birthDate: Date;
-  sex: PATIENT_SEX;
-  phone: string;
-  email: string;
-  address: string | null;
-  notes: string | null;
-}
+export interface PatientUpdateRequest extends PatientCreateRequest {}
 
 
 export enum PATIENT_DOCUMENT_TYPE {

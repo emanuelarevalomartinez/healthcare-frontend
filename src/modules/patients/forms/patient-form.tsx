@@ -24,6 +24,8 @@ import {
   PATIENT_DOCUMENT_TYPE,
   PATIENT_SEX,
   PatientApiResponse,
+  PatientCreateRequest,
+  PatientUpdateRequest,
 } from "../types";
 import {
   Select,
@@ -68,13 +70,18 @@ export function PatientForm({ patient, mode }: Props) {
     ? getUpdatePatientSchema(t.validation)
     : getCreatePatientSchema(t.validation);
 
-  const initialBirthDate = useMemo(() => {
+  /* const initialBirthDate = useMemo(() => {
     if (!patient?.birthDate) return "";
     const isoString =
       patient.birthDate instanceof Date
         ? patient.birthDate.toISOString()
         : String(patient.birthDate);
     return isoString.split("T")[0];
+  }, [patient?.birthDate]); */
+
+  const initialBirthDate = useMemo(() => {
+    if (!patient?.birthDate) return "";
+    return String(patient.birthDate).split("T")[0];
   }, [patient?.birthDate]);
 
   const {
@@ -87,16 +94,16 @@ export function PatientForm({ patient, mode }: Props) {
   } = useForm<PatientSchema>({
     resolver: zodResolver(currentSchema),
     defaultValues: {
-      medicalRecordNumber: patient.medicalRecordNumber || "",
-      fullName: patient.fullName || "",
+      medicalRecordNumber: patient.medicalRecordNumber,
+      fullName: patient.fullName,
       documentType: patient.documentType as PATIENT_DOCUMENT_TYPE,
-      documentNumber: patient.documentNumber || "",
+      documentNumber: patient.documentNumber,
       birthDate: initialBirthDate,
       sex: patient.sex as PATIENT_SEX,
-      phone: patient.phone || "",
-      email: patient.email || "",
-      address: patient.address || "",
-      notes: patient.notes || "",
+      phone: patient.phone,
+      email: patient.email,
+      address: patient.address,
+      notes: patient.notes,
     },
   });
 
@@ -109,18 +116,16 @@ export function PatientForm({ patient, mode }: Props) {
   const currentDocumentType = watch("documentType");
   const currentSex = watch("sex");
 
-  async function onSubmit(data: PatientSchema) {
+ /*  async function onSubmit(data: PatientSchema) {
     if (isViewMode) return;
     setIsLoading(true);
     try {
-      const payload = {
+      const payload: PatientSchema = {
         ...data,
-        email: data.email || "",
-        notes: data.notes || "",
+        notes: data.notes || null,
         address: data.address || null,
         documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
         sex: data.sex as PATIENT_SEX,
-        birthDate: data.birthDate || null,
       };
 
       const response = isEditMode
@@ -128,9 +133,7 @@ export function PatientForm({ patient, mode }: Props) {
         : await createPatient(payload as any);
 
       if (response.status === 201 || response.status === 200) {
-        toast.success(
-          isEditMode ? "Patient updated successfully" : t.toastSuccess
-        );
+        toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
         router.push(routes.patients.root);
       }
     } catch (error) {
@@ -139,7 +142,94 @@ export function PatientForm({ patient, mode }: Props) {
     } finally {
       setIsLoading(false);
     }
+  } */
+
+ /*    async function onSubmit(data: PatientSchema) {
+  if (isViewMode) return;
+  setIsLoading(true);
+  
+  try {
+    let response;
+
+    if (isEditMode) {
+      const payload: PatientUpdateRequest = {
+        medicalRecordNumber: data.medicalRecordNumber,
+        fullName: data.fullName,
+        documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
+        documentNumber: data.documentNumber,
+        birthDate: data.birthDate,
+        sex: data.sex as PATIENT_SEX,
+        phone: data.phone,
+        email: data.email,
+        address: data.address || null, 
+        notes: data.notes || null,
+      };
+      
+      response = await updatePatient(patient.id, payload);
+    } else {
+      const payload: PatientCreateRequest = {
+        medicalRecordNumber: data.medicalRecordNumber,
+        fullName: data.fullName,
+        documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
+        documentNumber: data.documentNumber,
+        birthDate: data.birthDate,
+        sex: data.sex as PATIENT_SEX,
+        phone: data.phone,
+        email: data.email,
+        address: data.address || null,
+        notes: data.notes || null,
+      };
+      
+      response = await createPatient(payload);
+    }
+
+    if (response.status === 201 || response.status === 200) {
+      toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
+      router.push(routes.patients.root);
+    }
+  } catch (error) {
+    toast.error(getErrorMessage(error));
+    console.error(error);
+  } finally {
+    setIsLoading(false);
   }
+} */
+
+  async function onSubmit(data: PatientSchema) {
+  if (isViewMode) return;
+  setIsLoading(true);
+  
+  try {
+    // Construimos un payload limpio asegurando que los valores opcionales vacíos vayan como null al Backend
+    const payload = {
+      medicalRecordNumber: data.medicalRecordNumber,
+      fullName: data.fullName,
+      documentType: data.documentType,
+      documentNumber: data.documentNumber,
+      birthDate: data.birthDate,
+      sex: data.sex,
+      phone: data.phone,
+      email: data.email,
+      address: data.address || null, // Convierte cadena vacía a null para cumplir con la API
+      notes: data.notes || null,     // Convierte cadena vacía a null para cumplir con la API
+    };
+
+    // Usamos aserciones de tipos de las interfaces del dominio en lugar de 'any'
+    const response = isEditMode
+      ? await updatePatient(patient.id, payload as PatientUpdateRequest)
+      : await createPatient(payload as PatientCreateRequest);
+
+    if (response.status === 201 || response.status === 200) {
+      toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
+      router.push(routes.patients.root);
+    }
+  } catch (error) {
+    toast.error(getErrorMessage(error));
+    console.error(error);
+  } finally {
+    setIsLoading(false);
+  }
+}
 
   const handleFocusError = (formErrors: FieldErrors<PatientSchema>) => {
     const firstError = Object.keys(formErrors)[0];
@@ -150,8 +240,8 @@ export function PatientForm({ patient, mode }: Props) {
   };
 
   const getHeaderTitle = () => {
-    if (isViewMode) return "Patient Details";
-    if (isEditMode) return "Edit Patient";
+    if (isViewMode) return t.viewSectionTitle;
+    if (isEditMode) return t.editSectionTitle;
     return t.createSectionTitle;
   };
 
@@ -165,9 +255,9 @@ export function PatientForm({ patient, mode }: Props) {
         title={getHeaderTitle()}
         description={
           isEditMode
-            ? "Update details"
+            ? t.editSectionSubtitle
             : isViewMode
-            ? "Viewing patient profile"
+            ? t.viewSectionSubtitle
             : t.createSectionSubtitle
         }
         onBack={() => router.back()}
@@ -422,10 +512,10 @@ export function PatientForm({ patient, mode }: Props) {
               <Separator className="md:col-span-2 mt-2 mb-4" />
 
               <div className="grid gap-2">
-                <Label htmlFor="createdBy">Created By</Label>
+                <Label htmlFor="createdBy">{t.createdByLabel}</Label>
                 <Input
                   id="createdBy"
-                  value={patient.createdById || "System / Unknown"}
+                  value={patient.createdById || t.systemUnknown}
                   disabled={true}
                   className="bg-muted text-muted-foreground"
                 />
@@ -434,7 +524,7 @@ export function PatientForm({ patient, mode }: Props) {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="createdAt">Created At</Label>
+                <Label htmlFor="createdAt">{t.createdAtLabel}</Label>
                 <Input
                   id="createdAt"
                   value={

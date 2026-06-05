@@ -23,7 +23,7 @@ export function usePatientsActions(t: any) {
   const [isLoading, setIsLoading] = useState(true);
   const pageSize = 10;
 
-  const fetchPatients = useCallback(async () => {
+/*   const fetchPatients = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await getAllPatients(currentPage, pageSize);
@@ -62,6 +62,19 @@ export function usePatientsActions(t: any) {
     } finally {
       setIsLoading(false);
     }
+  }, [currentPage, pageSize]); */
+
+  const fetchPatients = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await getAllPatients(currentPage, pageSize);
+      // Guardamos la respuesta nativa sin mutar ni romper los tipos con conversiones raras
+      setPatients(response.data);
+    } catch (error) {
+      console.error("Error to load the patients: ", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [currentPage, pageSize]);
 
   const handleOpenDeleteConfirm = (id: string, name: string) => {
@@ -82,10 +95,8 @@ export function usePatientsActions(t: any) {
   const handleExecuteDelete = async () => {
     if (!patientToDelete) return;
 
-    const { id } = patientToDelete;
-
     try {
-      const response = await deletePatient(id);
+      const response = await deletePatient(patientToDelete.id);
 
       if (response.status === 200 || response.status === 204) {
         toast.success(t.dashboard.patients.successDeletePatientToast);
