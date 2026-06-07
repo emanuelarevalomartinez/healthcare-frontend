@@ -21,6 +21,7 @@ import {
 } from "./schema";
 import {
   formatApiDateToInputString,
+  formatDisplayDateTimeToLocaleString,
   formatSelectedDateToInputString,
   parseInputStringToDate,
 } from "@/lib/utils/functions";
@@ -352,7 +353,7 @@ export function PatientForm({ patient, mode }: PatientFormProps) {
                   id="createdAt"
                   value={
                     patient.createdAt
-                      ? new Date(patient.createdAt).toLocaleDateString()
+                      ? formatDisplayDateTimeToLocaleString(patient.createdAt)
                       : ""
                   }
                   disabled={true}

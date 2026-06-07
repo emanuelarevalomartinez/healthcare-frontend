@@ -10,7 +10,7 @@ export default async function () {
         username: "",
         email: "",
         role: undefined as unknown as USER_ROLE,
-        active: false,
+        isActive: false,
         createdAt: undefined as unknown as Date,
         updatedAt: undefined as unknown as Date,
         lastLogin: undefined as unknown as Date,

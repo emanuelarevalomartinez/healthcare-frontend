@@ -18,3 +18,31 @@ export function formatDisplayDateTime(date: string | Date | undefined | null): s
 export function formatSelectedDateToInputString(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
+
+export function formatDisplayDateTimeToLocaleString(
+  date?: string | Date | null,
+  locale: string = "en-US"
+) {
+  if (!date) return "";
+
+  return new Date(date).toLocaleString(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export function formatDisplayDateToLocaleDateString(
+  date?: string | Date | null,
+  locale: string = "en-US"
+) {
+  if (!date) return "";
+
+  return new Date(date).toLocaleDateString(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}

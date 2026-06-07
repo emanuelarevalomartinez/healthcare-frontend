@@ -1,6 +1,7 @@
 import { TableColumn } from "@/components/customs/table-wrapper";
 import { PatientApiResponse } from "../types";
 import { TranslationDictionary } from "@/lib";
+import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
 
 export const getPatientColumns = (
   dictionary: TranslationDictionary
@@ -22,7 +23,7 @@ export const getPatientColumns = (
     },
     {
       header: t.registrationDateLabel,
-      accessor: (patient) => new Date(patient.createdAt).toLocaleDateString(),
+      accessor: (patient) => formatDisplayDateTimeToLocaleString(patient.createdAt),
     },
   ];
 };

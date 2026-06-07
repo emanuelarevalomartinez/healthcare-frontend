@@ -17,7 +17,7 @@ export default async function ({ params }: PageProps) {
         username: response.data.username,
         email: response.data.email,
         role: response.data.role,
-        active: response.data.active,
+        isActive: response.data.isActive,
         createdAt: response.data.createdAt,
         updatedAt: response.data.updatedAt,
         lastLogin: response.data.lastLogin,

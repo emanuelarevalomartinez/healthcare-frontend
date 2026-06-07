@@ -12,7 +12,6 @@ export const apiRoutes = {
   },
   patients: {
     list: `${API_URL}/patients`,
-    filter: `${API_URL}/patients/filter`,
     create: `${API_URL}/patients`,
     edit: `${API_URL}/patients/:id`,
     details: `${API_URL}/patients/:id`,

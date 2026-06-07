@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { routes, TranslationDictionary } from "@/lib";
+import { routes, TranslationDictionary, USER_ROLE } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { UserApiResponse } from "../types";
@@ -83,23 +83,12 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     },
   ];
 
-/*   const getDocumentTypeOptions = useCallback((optionsDict: any) => {
-    return Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
-      const docTypeKey = docType.toLowerCase() as
-        | "dni"
-        | "passport"
-        | "id_card"
-        | "other";
-      return { value: docType, label: optionsDict[docTypeKey] };
-    });
-  }, []); */
-
- /*  const getSexOptions = useCallback((optionsDict: any) => {
-    return Object.values(PATIENT_SEX).map((sexItem) => {
-      const sexKey = sexItem.toLowerCase() as "male" | "female" | "other";
-      return { value: sexItem, label: optionsDict[sexKey] };
-    });
-  }, []); */
+   const getRoleOptions = useCallback((optionsDict: any) => {
+      return Object.values(USER_ROLE).map((sexItem) => {
+        const sexKey = sexItem.toLowerCase() as "admin" | "doctor" | "receptionist";
+        return { value: sexItem, label: optionsDict[sexKey] };
+      });
+    }, []);
 
   return {
     usersData,
@@ -113,7 +102,6 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     usersActions,
     fetchUsers,
     handleExecuteDelete,
-  //  getDocumentTypeOptions,
-   // getSexOptions,
+    getRoleOptions,
   };
 }

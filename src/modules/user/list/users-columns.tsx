@@ -1,6 +1,7 @@
 import { TableColumn } from "@/components/customs/table-wrapper";
 import { UserApiResponse } from "../types";
 import { TranslationDictionary } from "@/lib";
+import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
 
 export const getUserColumns = (
   dictionary: TranslationDictionary
@@ -22,7 +23,7 @@ export const getUserColumns = (
     },
     {
       header: t.registrationDateLabel,
-      accessor: (user) => new Date(user.createdAt).toLocaleDateString(),
+      accessor: (user) => formatDisplayDateTimeToLocaleString(user.createdAt),
     },
   ];
 };
