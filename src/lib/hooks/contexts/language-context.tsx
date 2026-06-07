@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-type TranslationDictionary = typeof import("../../../../messages/en.json");
+export type TranslationDictionary = typeof import("../../../../messages/en.json");
 
 interface LanguageContextType {
   dictionary: TranslationDictionary;

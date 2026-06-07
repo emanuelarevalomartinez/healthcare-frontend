@@ -7,16 +7,11 @@ interface PageProps {
 
 export default async function ({ params }: PageProps) {
   const { id } = await params;
-
-  console.log("id", id);
-
   const response = await findPatientById(id);
-
-  console.log("response.data", response.data);
 
   return (
     <PatientForm
-    mode="edit"
+      mode="edit"
       patient={{
         id: response.data.id,
         medicalRecordNumber: response.data.medicalRecordNumber,

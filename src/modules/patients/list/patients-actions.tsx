@@ -1,79 +1,46 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { TableAction } from "@/components/customs/table-wrapper";
-import { PatientApiResponse } from "../types";
-import { deletePatient, getAllPatients } from "../services";
-import { toast } from "sonner";
-import { PaginatedData } from "@/lib/server/api-response";
 import { useRouter } from "next/navigation";
-import { routes } from "@/lib";
-import { format, parseISO } from "date-fns";
+import { toast } from "sonner";
+import { routes, TranslationDictionary } from "@/lib";
+import { PaginatedData } from "@/lib/server/api-response";
+import { TableAction } from "@/components/customs/table-wrapper";
+import { deletePatient, getAllPatients } from "../services";
+import {
+  PatientApiResponse,
+  PATIENT_DOCUMENT_TYPE,
+  PATIENT_SEX,
+} from "../types";
 
-export function usePatientsActions(t: any) {
+interface UsePatientsActionsProps {
+  dictionary: TranslationDictionary;
+}
+
+export function usePatientsActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
+  const t = dictionary.dashboard.patients;
 
-  const [patients, setPatients] = useState<PaginatedData<PatientApiResponse>>();
+  const [patientsData, setPatientsData] =
+    useState<PaginatedData<PatientApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [patientToDelete, setPatientToDelete] = useState<{
     id: string;
     name: string;
   } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(true);
   const pageSize = 10;
 
-/*   const fetchPatients = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await getAllPatients(currentPage, pageSize);
-
-      if (response.data && response.data.content) {
-        const sanitizedContent = response.data.content.map((patient) => {
-          let formattedCreatedAt = "";
-
-          if (patient.createdAt) {
-            const isoString = String(patient.createdAt).replace(" ", "T");
-
-            try {
-              const parsedDate = parseISO(isoString);
-              formattedCreatedAt = format(parsedDate, "yyyy-MM-dd HH:mm");
-            } catch (e) {
-              console.error("Unexpected error parsing date:", e);
-              formattedCreatedAt = String(patient.createdAt);
-            }
-          }
-
-          return {
-            ...patient,
-            createdAt: formattedCreatedAt as unknown as Date,
-          };
-        });
-
-        setPatients({
-          ...response.data,
-          content: sanitizedContent,
-        });
-      } else {
-        setPatients(response.data);
-      }
-    } catch (error) {
-      console.error("Error to load the patients: ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage, pageSize]); */
-
   const fetchPatients = useCallback(async () => {
-    setIsLoading(true);
+    setIsTableLoading(true);
     try {
       const response = await getAllPatients(currentPage, pageSize);
-      // Guardamos la respuesta nativa sin mutar ni romper los tipos con conversiones raras
-      setPatients(response.data);
+      setPatientsData(response.data);
     } catch (error) {
       console.error("Error to load the patients: ", error);
     } finally {
-      setIsLoading(false);
+      setIsTableLoading(false);
     }
   }, [currentPage, pageSize]);
 
@@ -82,25 +49,13 @@ export function usePatientsActions(t: any) {
     setIsAlertOpen(true);
   };
 
-  const handleEditPatient = async (id: string) => {
-    const editUrl = routes.patients.edit.replace(":id", id);
-    router.push(editUrl);
-  };
-
-  const handleViewPatientDetails = async (id: string) => {
-    const detailsUrl = routes.patients.details.replace(":id", id);
-    router.push(detailsUrl);
-  };
-
   const handleExecuteDelete = async () => {
     if (!patientToDelete) return;
-
     try {
       const response = await deletePatient(patientToDelete.id);
-
       if (response.status === 200 || response.status === 204) {
-        toast.success(t.dashboard.patients.successDeletePatientToast);
-        if (patients?.content.length === 1 && currentPage > 0) {
+        toast.success(t.successDeletePatientToast);
+        if (patientsData?.content.length === 1 && currentPage > 0) {
           setCurrentPage((prev) => prev - 1);
         } else {
           await fetchPatients();
@@ -108,41 +63,61 @@ export function usePatientsActions(t: any) {
       }
     } catch (error) {
       console.error("Error to delete:", error);
-      toast.error(t.dashboard.patients.errordeletePatientToast);
+      toast.error(t.errordeletePatientToast);
     } finally {
+      setIsAlertOpen(false);
       setPatientToDelete(null);
     }
   };
 
   const patientActions: TableAction<PatientApiResponse>[] = [
     {
-      label: t.components.actions.viewDetails,
-      onClick: (patient) => handleViewPatientDetails(patient.id),
+      label: dictionary.components.actions.viewDetails,
+      onClick: (p) => router.push(routes.patients.details.replace(":id", p.id)),
     },
     {
-      label: t.components.actions.edit,
-      onClick: (patient) => handleEditPatient(patient.id),
+      label: dictionary.components.actions.edit,
+      onClick: (p) => router.push(routes.patients.edit.replace(":id", p.id)),
     },
     {
-      label: t.components.actions.delete,
+      label: dictionary.components.actions.delete,
       variant: "destructive",
       separatorBefore: true,
-      onClick: (patient) =>
-        handleOpenDeleteConfirm(patient.id, patient.fullName),
+      onClick: (p) => handleOpenDeleteConfirm(p.id, p.fullName),
     },
   ];
 
+  const getDocumentTypeOptions = useCallback((optionsDict: any) => {
+    return Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
+      const docTypeKey = docType.toLowerCase() as
+        | "dni"
+        | "passport"
+        | "id_card"
+        | "other";
+      return { value: docType, label: optionsDict[docTypeKey] };
+    });
+  }, []);
+
+  const getSexOptions = useCallback((optionsDict: any) => {
+    return Object.values(PATIENT_SEX).map((sexItem) => {
+      const sexKey = sexItem.toLowerCase() as "male" | "female" | "other";
+      return { value: sexItem, label: optionsDict[sexKey] };
+    });
+  }, []);
+
   return {
-    patients,
+    patientsData,
     isAlertOpen,
     setIsAlertOpen,
     currentPage,
     setCurrentPage,
     patientToDelete,
     setPatientToDelete,
-    isLoading,
+    isTableLoading,
     patientActions,
     fetchPatients,
     handleExecuteDelete,
+    getDocumentTypeOptions,
+    getSexOptions,
   };
 }

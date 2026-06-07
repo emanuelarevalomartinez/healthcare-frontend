@@ -1,43 +1,37 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useForm, FieldErrors } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-
-import { getErrorMessage, useLanguage } from "@/lib";
-import { routes } from "@/lib/routes/routes";
+import { FormMode, getErrorMessage, useLanguage, routes } from "@/lib";
+import { createPatient, updatePatient } from "../services";
+import {
+  PatientApiResponse,
+  PATIENT_DOCUMENT_TYPE,
+  PATIENT_SEX,
+  PatientCreateRequest,
+  PatientUpdateRequest,
+} from "../types";
 import {
   getCreatePatientSchema,
   getUpdatePatientSchema,
   PatientSchema,
 } from "./schema";
-import { createPatient, updatePatient } from "../services";
 import {
-  PATIENT_DOCUMENT_TYPE,
-  PATIENT_SEX,
-  PatientApiResponse,
-  PatientCreateRequest,
-  PatientUpdateRequest,
-} from "../types";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  formatApiDateToInputString,
+  formatSelectedDateToInputString,
+  parseInputStringToDate,
+} from "@/lib/utils/functions";
+
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { SectionHeader } from "@/components/customs/secction-header";
 import { Calendar } from "@/components/ui/calendar";
-import { format, parse } from "date-fns";
 import {
   Popover,
   PopoverContent,
@@ -46,43 +40,48 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { FormFieldInput } from "@/components/customs/form-field-input";
+import { FormFieldSelect } from "@/components/customs/form-field-select";
+import { usePatientsActions } from "../list/patients-actions";
 
-type FormMode = "create" | "edit" | "details";
-
-interface Props {
+interface PatientFormProps {
   patient: PatientApiResponse;
   mode: FormMode;
 }
 
-export function PatientForm({ patient, mode }: Props) {
-  const { dictionary } = useLanguage();
+export function PatientForm({ patient, mode }: PatientFormProps) {
   const router = useRouter();
+  const { dictionary } = useLanguage();
+  const t = dictionary.dashboard.patients;
+  const { getDocumentTypeOptions, getSexOptions } = usePatientsActions({
+    dictionary,
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
-  const t = dictionary.dashboard.patients;
 
   const isEditMode = mode === "edit";
   const isViewMode = mode === "details";
   const disableAllFields = isViewMode;
 
-  const currentSchema = isEditMode
-    ? getUpdatePatientSchema(t.validation)
-    : getCreatePatientSchema(t.validation);
-
-  /* const initialBirthDate = useMemo(() => {
-    if (!patient?.birthDate) return "";
-    const isoString =
-      patient.birthDate instanceof Date
-        ? patient.birthDate.toISOString()
-        : String(patient.birthDate);
-    return isoString.split("T")[0];
-  }, [patient?.birthDate]); */
+  const currentSchema = useMemo(() => {
+    return isEditMode
+      ? getUpdatePatientSchema(dictionary)
+      : getCreatePatientSchema(dictionary);
+  }, [isEditMode, dictionary]);
 
   const initialBirthDate = useMemo(() => {
-    if (!patient?.birthDate) return "";
-    return String(patient.birthDate).split("T")[0];
+    return formatApiDateToInputString(patient?.birthDate);
   }, [patient?.birthDate]);
+
+  const documentTypeOptions = useMemo(
+    () => getDocumentTypeOptions(t.documentTypeOptions),
+    [t.documentTypeOptions, getDocumentTypeOptions]
+  );
+  const sexOptions = useMemo(
+    () => getSexOptions(t.sexTypeOptions),
+    [t.sexTypeOptions, getSexOptions]
+  );
 
   const {
     register,
@@ -102,35 +101,46 @@ export function PatientForm({ patient, mode }: Props) {
       sex: patient.sex as PATIENT_SEX,
       phone: patient.phone,
       email: patient.email,
-      address: patient.address,
-      notes: patient.notes,
+      address: patient.address || null,
+      notes: patient.notes || null,
     },
   });
 
   const birthDateValue = watch("birthDate");
-  const selectedDate = useMemo(() => {
-    if (!birthDateValue) return undefined;
-    return parse(birthDateValue, "yyyy-MM-dd", new Date());
-  }, [birthDateValue]);
-
-  const currentDocumentType = watch("documentType");
   const currentSex = watch("sex");
+  const currentDocumentType = watch("documentType");
+  const selectedDate = useMemo(
+    () => parseInputStringToDate(birthDateValue),
+    [birthDateValue]
+  );
 
- /*  async function onSubmit(data: PatientSchema) {
+  const getHeaderTitle = () => {
+    if (isViewMode) return t.viewSectionTitle;
+    if (isEditMode) return t.editSectionTitle;
+    return t.createSectionTitle;
+  };
+
+  async function onSubmit(data: PatientSchema) {
     if (isViewMode) return;
     setIsLoading(true);
+
     try {
-      const payload: PatientSchema = {
-        ...data,
-        notes: data.notes || null,
+      const payload = {
+        medicalRecordNumber: data.medicalRecordNumber,
+        fullName: data.fullName,
+        documentType: data.documentType,
+        documentNumber: data.documentNumber,
+        birthDate: data.birthDate,
+        sex: data.sex,
+        phone: data.phone,
+        email: data.email,
         address: data.address || null,
-        documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
-        sex: data.sex as PATIENT_SEX,
+        notes: data.notes || null,
       };
 
       const response = isEditMode
-        ? await updatePatient(patient.id, payload as any)
-        : await createPatient(payload as any);
+        ? await updatePatient(patient.id, payload as PatientUpdateRequest)
+        : await createPatient(payload as PatientCreateRequest);
 
       if (response.status === 201 || response.status === 200) {
         toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
@@ -142,107 +152,12 @@ export function PatientForm({ patient, mode }: Props) {
     } finally {
       setIsLoading(false);
     }
-  } */
-
- /*    async function onSubmit(data: PatientSchema) {
-  if (isViewMode) return;
-  setIsLoading(true);
-  
-  try {
-    let response;
-
-    if (isEditMode) {
-      const payload: PatientUpdateRequest = {
-        medicalRecordNumber: data.medicalRecordNumber,
-        fullName: data.fullName,
-        documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
-        documentNumber: data.documentNumber,
-        birthDate: data.birthDate,
-        sex: data.sex as PATIENT_SEX,
-        phone: data.phone,
-        email: data.email,
-        address: data.address || null, 
-        notes: data.notes || null,
-      };
-      
-      response = await updatePatient(patient.id, payload);
-    } else {
-      const payload: PatientCreateRequest = {
-        medicalRecordNumber: data.medicalRecordNumber,
-        fullName: data.fullName,
-        documentType: data.documentType as PATIENT_DOCUMENT_TYPE,
-        documentNumber: data.documentNumber,
-        birthDate: data.birthDate,
-        sex: data.sex as PATIENT_SEX,
-        phone: data.phone,
-        email: data.email,
-        address: data.address || null,
-        notes: data.notes || null,
-      };
-      
-      response = await createPatient(payload);
-    }
-
-    if (response.status === 201 || response.status === 200) {
-      toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
-      router.push(routes.patients.root);
-    }
-  } catch (error) {
-    toast.error(getErrorMessage(error));
-    console.error(error);
-  } finally {
-    setIsLoading(false);
   }
-} */
 
-  async function onSubmit(data: PatientSchema) {
-  if (isViewMode) return;
-  setIsLoading(true);
-  
-  try {
-    // Construimos un payload limpio asegurando que los valores opcionales vacíos vayan como null al Backend
-    const payload = {
-      medicalRecordNumber: data.medicalRecordNumber,
-      fullName: data.fullName,
-      documentType: data.documentType,
-      documentNumber: data.documentNumber,
-      birthDate: data.birthDate,
-      sex: data.sex,
-      phone: data.phone,
-      email: data.email,
-      address: data.address || null, // Convierte cadena vacía a null para cumplir con la API
-      notes: data.notes || null,     // Convierte cadena vacía a null para cumplir con la API
-    };
-
-    // Usamos aserciones de tipos de las interfaces del dominio en lugar de 'any'
-    const response = isEditMode
-      ? await updatePatient(patient.id, payload as PatientUpdateRequest)
-      : await createPatient(payload as PatientCreateRequest);
-
-    if (response.status === 201 || response.status === 200) {
-      toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
-      router.push(routes.patients.root);
-    }
-  } catch (error) {
-    toast.error(getErrorMessage(error));
-    console.error(error);
-  } finally {
-    setIsLoading(false);
-  }
-}
-
-  const handleFocusError = (formErrors: FieldErrors<PatientSchema>) => {
+  const handleFocusError = (formErrors: any) => {
     const firstError = Object.keys(formErrors)[0];
     const element = document.getElementById(firstError);
-    if (element) {
-      element.focus();
-    }
-  };
-
-  const getHeaderTitle = () => {
-    if (isViewMode) return t.viewSectionTitle;
-    if (isEditMode) return t.editSectionTitle;
-    return t.createSectionTitle;
+    if (element) element.focus();
   };
 
   return (
@@ -275,101 +190,47 @@ export function PatientForm({ patient, mode }: Props) {
 
       <Card className="border bg-background border-border rounded-lg w-full">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
-          <div className="grid gap-2">
-            <Label htmlFor="medicalRecordNumber">
-              {t.medicalRecordNumberLabel}
-            </Label>
-            <Input
-              id="medicalRecordNumber"
-              placeholder={t.medicalRecordNumberPlaceholder}
-              disabled={disableAllFields}
-              {...register("medicalRecordNumber")}
-              aria-invalid={errors.medicalRecordNumber ? "true" : "false"}
-            />
-            <div className="text-sm h-5 text-red-500">
-              {errors.medicalRecordNumber ? (
-                (errors.medicalRecordNumber.message as string)
-              ) : (
-                <>&nbsp;</>
-              )}
-            </div>
-          </div>
+          <FormFieldInput
+            id="medicalRecordNumber"
+            label={t.medicalRecordNumberLabel}
+            placeholder={t.medicalRecordNumberPlaceholder}
+            disabled={disableAllFields}
+            register={register("medicalRecordNumber")}
+            error={errors.medicalRecordNumber?.message as string}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="fullName">{t.fullNameLabel}</Label>
-            <Input
-              id="fullName"
-              placeholder={t.fullNamePlaceholder}
-              disabled={disableAllFields}
-              {...register("fullName")}
-              aria-invalid={errors.fullName ? "true" : "false"}
-            />
-            <div className="text-sm h-5 text-red-500">
-              {errors.fullName ? (
-                (errors.fullName.message as string)
-              ) : (
-                <>&nbsp;</>
-              )}
-            </div>
-          </div>
+          <FormFieldInput
+            id="fullName"
+            label={t.fullNameLabel}
+            placeholder={t.fullNamePlaceholder}
+            disabled={disableAllFields}
+            register={register("fullName")}
+            error={errors.fullName?.message as string}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="documentType">{t.documentTypeLabel}</Label>
-            <Select
-              disabled={disableAllFields}
-              onValueChange={(value) =>
-                setValue("documentType", value as PATIENT_DOCUMENT_TYPE, {
-                  shouldValidate: true,
-                })
-              }
-              value={currentDocumentType}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={t.documentTypePlaceholder} />
-              </SelectTrigger>
-              <SelectContent className="bg-secondary">
-                <SelectGroup>
-                  {Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
-                    const docTypeKey = docType.toLowerCase() as
-                      | "dni"
-                      | "passport"
-                      | "id_card"
-                      | "other";
-                    return (
-                      <SelectItem key={docType} value={docType}>
-                        {t.documentTypeOptions[docTypeKey]}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <div className="text-sm h-5 text-red-500">
-              {errors.documentType ? (
-                (errors.documentType.message as string)
-              ) : (
-                <>&nbsp;</>
-              )}
-            </div>
-          </div>
+          <FormFieldSelect
+            id="documentType"
+            label={t.documentTypeLabel}
+            placeholder={t.documentTypePlaceholder}
+            disabled={disableAllFields}
+            value={currentDocumentType}
+            onValueChange={(value) =>
+              setValue("documentType", value as PATIENT_DOCUMENT_TYPE, {
+                shouldValidate: true,
+              })
+            }
+            options={documentTypeOptions}
+            error={errors.documentType?.message as string}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="documentNumber">{t.documentNumberLabel}</Label>
-            <Input
-              id="documentNumber"
-              placeholder={t.documentNumberPlaceholder}
-              disabled={disableAllFields}
-              {...register("documentNumber")}
-              aria-invalid={errors.documentNumber ? "true" : "false"}
-            />
-            <div className="text-sm h-5 text-red-500">
-              {errors.documentNumber ? (
-                (errors.documentNumber.message as string)
-              ) : (
-                <>&nbsp;</>
-              )}
-            </div>
-          </div>
+          <FormFieldInput
+            id="documentNumber"
+            label={t.documentNumberLabel}
+            placeholder={t.documentNumberPlaceholder}
+            disabled={disableAllFields}
+            register={register("documentNumber")}
+            error={errors.documentNumber?.message as string}
+          />
 
           <div className="grid gap-2">
             <Label htmlFor="birthDate">{t.birthDateLabel}</Label>
@@ -400,10 +261,11 @@ export function PatientForm({ patient, mode }: Props) {
                   selected={selectedDate}
                   onSelect={(date) => {
                     if (date) {
-                      const pureString = format(date, "yyyy-MM-dd");
-                      setValue("birthDate", pureString, {
-                        shouldValidate: true,
-                      });
+                      setValue(
+                        "birthDate",
+                        formatSelectedDateToInputString(date),
+                        { shouldValidate: true }
+                      );
                     } else {
                       setValue("birthDate", "");
                     }
@@ -426,91 +288,53 @@ export function PatientForm({ patient, mode }: Props) {
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="sex">{t.sexLabel}</Label>
-            <Select
-              disabled={disableAllFields}
-              onValueChange={(value) =>
-                setValue("sex", value as PATIENT_SEX, { shouldValidate: true })
-              }
-              value={currentSex}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={t.sexTypePlaceholder} />
-              </SelectTrigger>
-              <SelectContent className="bg-secondary">
-                <SelectGroup>
-                  {Object.values(PATIENT_SEX).map((sexItem) => {
-                    const sexKey = sexItem.toLowerCase() as
-                      | "male"
-                      | "female"
-                      | "other";
-                    return (
-                      <SelectItem key={sexItem} value={sexItem}>
-                        {t.sexTypeOptions[sexKey]}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <div className="text-sm h-5 text-red-500">
-              {errors.sex ? (errors.sex.message as string) : <>&nbsp;</>}
-            </div>
-          </div>
+          <FormFieldSelect
+            id="sex"
+            label={t.sexLabel}
+            placeholder={t.sexTypePlaceholder}
+            disabled={disableAllFields}
+            value={currentSex}
+            onValueChange={(value) =>
+              setValue("sex", value as PATIENT_SEX, { shouldValidate: true })
+            }
+            options={sexOptions}
+            error={errors.sex?.message as string}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="phone">{t.phoneLabel}</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder={t.phonePlaceholder}
-              disabled={disableAllFields}
-              {...register("phone")}
-              aria-invalid={errors.phone ? "true" : "false"}
-            />
-            <div className="text-sm h-5 text-red-500">
-              {errors.phone ? (errors.phone.message as string) : <>&nbsp;</>}
-            </div>
-          </div>
+          <FormFieldInput
+            id="phone"
+            type="tel"
+            label={t.phoneLabel}
+            placeholder={t.phonePlaceholder}
+            disabled={disableAllFields}
+            register={register("phone")}
+            error={errors.phone?.message as string}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="email">{t.emailLabel}</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t.emailPlaceholder}
-              disabled={disableAllFields}
-              {...register("email")}
-              aria-invalid={errors.email ? "true" : "false"}
-            />
-            <div className="text-sm h-5 text-red-500">
-              {errors.email ? (errors.email.message as string) : <>&nbsp;</>}
-            </div>
-          </div>
+          <FormFieldInput
+            id="email"
+            type="email"
+            label={t.emailLabel}
+            placeholder={t.emailPlaceholder}
+            disabled={disableAllFields}
+            register={register("email")}
+            error={errors.email?.message as string}
+          />
 
           <div className="grid gap-2 md:col-span-2">
-            <Label htmlFor="address">{t.addressLabel}</Label>
-            <Input
+            <FormFieldInput
               id="address"
+              label={t.addressLabel}
               placeholder={t.addressPlaceholder}
               disabled={disableAllFields}
-              {...register("address")}
-              aria-invalid={errors.address ? "true" : "false"}
+              register={register("address")}
+              error={errors.address?.message as string}
             />
-            <div className="text-sm h-5 text-red-500">
-              {errors.address ? (
-                (errors.address.message as string)
-              ) : (
-                <>&nbsp;</>
-              )}
-            </div>
           </div>
 
           {(isEditMode || isViewMode) && (
             <>
               <Separator className="md:col-span-2 mt-2 mb-4" />
-
               <div className="grid gap-2">
                 <Label htmlFor="createdBy">{t.createdByLabel}</Label>
                 <Input
@@ -519,7 +343,6 @@ export function PatientForm({ patient, mode }: Props) {
                   disabled={true}
                   className="bg-muted text-muted-foreground"
                 />
-
                 <div className="text-sm h-5">&nbsp;</div>
               </div>
 
@@ -529,7 +352,7 @@ export function PatientForm({ patient, mode }: Props) {
                   id="createdAt"
                   value={
                     patient.createdAt
-                      ? format(new Date(patient.createdAt), "yyyy-MM-dd HH:mm")
+                      ? new Date(patient.createdAt).toLocaleDateString()
                       : ""
                   }
                   disabled={true}

@@ -11,7 +11,7 @@ export default async function NewPatientPage() {
           fullName: "",
           documentType: "",
           documentNumber: "",
-          birthDate: undefined as unknown as Date,
+          birthDate: "",
           sex: "",
           phone: "",
           email: "",

@@ -4,3 +4,6 @@ export enum USER_ROLE {
     DOCTOR = "DOCTOR",
     RECEPTIONIST = "RECEPTIONIST"
 }
+
+
+export type FormMode = "create" | "edit" | "details";

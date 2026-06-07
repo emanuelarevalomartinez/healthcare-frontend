@@ -9,62 +9,61 @@ import { TablePagination } from "@/components/customs/table-pagination";
 import { useRouter } from "next/navigation";
 import { routes, useLanguage } from "@/lib";
 import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
-import { usePatientsActions } from "./patients-actions";
 import { getPatientColumns } from "./patients-columns";
+import { usePatientsActions } from "./patients-actions";
 
 export function PatientList() {
   const router = useRouter();
   const { dictionary } = useLanguage();
+  const columns = getPatientColumns(dictionary);
   const t = dictionary.dashboard.patients;
-  const columns = getPatientColumns(t);
 
   const {
-    patients,
+    patientsData,
     isAlertOpen,
     setIsAlertOpen,
-    currentPage,
     setCurrentPage,
     patientToDelete,
     setPatientToDelete,
-    isLoading,
+    isTableLoading,
     patientActions,
     fetchPatients,
     handleExecuteDelete,
-  } = usePatientsActions(dictionary);
+  } = usePatientsActions({ dictionary });
 
   useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
 
-  const handleGoToCreatePatient = () => {
-    router.push(routes.patients.create);
-  };
-
   return (
     <>
       <div className="space-y-4 p-1">
-        <SectionHeader title={t.tableSectionTitle} description={t.tableSectionSubtitle}>
-          <Button onClick={handleGoToCreatePatient} className="w-full sm:w-auto shadow-sm">
+        <SectionHeader
+          title={t.tableSectionTitle}
+          description={t.tableSectionSubtitle}
+        >
+          <Button
+            onClick={() => router.push(routes.patients.create)}
+            className="w-full sm:w-auto shadow-sm"
+          >
             <UserPlusIcon className="mr-2 size-4" />
             {t.createNewPatientButton}
           </Button>
         </SectionHeader>
-        
-        <div>
-          <TableWrapper
-            cols={columns}
-            data={patients?.content || []}
-            actions={patientActions}
-            isLoading={isLoading}
-          />
-        </div>
-        
-        {patients && (
+
+        <TableWrapper
+          cols={columns}
+          data={patientsData?.content || []}
+          actions={patientActions}
+          isLoading={isTableLoading}
+        />
+
+        {patientsData && (
           <TablePagination
-            page={patients.page}
-            size={patients.size}
-            totalElements={patients.totalElements}
-            totalPages={patients.totalPages}
+            page={patientsData.page}
+            size={patientsData.size}
+            totalElements={patientsData.totalElements}
+            totalPages={patientsData.totalPages}
             onPageChange={(newPage) => setCurrentPage(newPage)}
           />
         )}
@@ -78,7 +77,9 @@ export function PatientList() {
         }}
         onConfirm={handleExecuteDelete}
         title={t.deleteAlertTitle}
-        description={`${t.deleteAlertDescription} ${patientToDelete?.name ? `"${patientToDelete.name}"` : ""}.`}
+        description={`${t.deleteAlertDescription} ${
+          patientToDelete?.name ? `"${patientToDelete.name}"` : ""
+        }.`}
         cancelText={t.cancel}
         confirmText={t.confirm}
       />
