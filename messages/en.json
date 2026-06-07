@@ -84,6 +84,22 @@
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the patient",
       "cancel": "Cancel",
       "confirm": "Delete"
+    },
+    "users": {
+      "userName": "Username",
+      "email": "Email",
+      "role": "Role",
+      "registrationDateLabel": "Registration Date",
+      "tableSectionTitle": "Users",
+      "tableSectionSubtitle": "Manage and monitor user accounts and system permissions.",
+      "createNewUserButton": "New User",
+
+      "successDeleteUserToast": "The user was successfully deleted.",
+      "errordeleteUserToast": "Could not delete the user.",
+      "deleteAlertTitle": "Are you absolutely sure?",
+      "deleteAlertDescription": "This action cannot be undone. This will permanently delete the user account and remove their access.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
     }
   },
   "auth": {

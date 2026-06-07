@@ -18,4 +18,12 @@ export const apiRoutes = {
     details: `${API_URL}/patients/:id`,
     delete: `${API_URL}/patients/:id`,
   },
+   users: {
+    list: `${API_URL}/users`,
+    filter: `${API_URL}/users/filter`,
+    create: `${API_URL}/users`,
+    edit: `${API_URL}/users/:id`,
+    details: `${API_URL}/users/:id`,
+    delete: `${API_URL}/users/:id`,
+  },
 };

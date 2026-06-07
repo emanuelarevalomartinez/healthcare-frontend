@@ -84,6 +84,22 @@
       "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente al paciente",
       "cancel": "Cancelar",
       "confirm": "Eliminar"
+    },
+    "users": {
+      "userName": "Usuario",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "registrationDateLabel": "Fecha de registro",
+      "tableSectionTitle": "Usuarios",
+      "tableSectionSubtitle": "Gestiona y supervisa las cuentas de usuario y sus permisos en el sistema.",
+      "createNewUserButton": "Nuevo usuario",
+
+      "successDeleteUserToast": "El usuario fue eliminado correctamente.",
+      "errordeleteUserToast": "No se pudo eliminar al usuario.",
+      "deleteAlertTitle": "¿Estás completamente seguro?",
+      "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la cuenta del usuario y revocará su acceso.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
     }
   },
   "auth": {

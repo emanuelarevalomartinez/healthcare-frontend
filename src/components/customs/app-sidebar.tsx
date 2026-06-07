@@ -56,7 +56,7 @@ export function AppSidebar() {
     {
       label: "Gestión de Usuarios",
       icon: Users,
-      href: "/users",
+      href: routes.users.root,
       roles: [USER_ROLE.ADMIN],
     },
     {
