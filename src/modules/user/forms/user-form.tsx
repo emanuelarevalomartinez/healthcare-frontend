@@ -217,10 +217,17 @@ export function UserForm({ user, mode }: UserFormProps) {
           />
 
           <FieldGroup className="gap-2">
-            <Field orientation="horizontal">
+            <Field
+              orientation="vertical"
+              className="flex h-full justify-center"
+            >
+              <FieldLabel htmlFor="active">
+                {currentActive ? t.activeUserLabel : t.inactiveUserLabel}
+              </FieldLabel>
+
               <Switch
                 id="active"
-                size="sm"
+                size="default"
                 checked={currentActive}
                 disabled={disableFields}
                 onCheckedChange={(checked) =>
@@ -229,10 +236,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                   })
                 }
               />
-
-              <FieldLabel htmlFor="active">
-                {currentActive ? "Active user" : "Inactive user"}
-              </FieldLabel>
             </Field>
 
             <div className="text-sm h-5 text-red-500">

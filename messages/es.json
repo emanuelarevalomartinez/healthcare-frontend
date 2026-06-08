@@ -102,6 +102,8 @@
       "roleLabel": "Rol",
       "rolePlaceholder": "Seleccione un rol",
       "activeLabel": "Activo",
+      "activeUserLabel": "Usuario activo",
+      "inactiveUserLabel": "Usuario inactivo",
       "createSectionTitle": "Crear Usuario",
       "createSectionSubtitle": "Cree una nueva cuenta de usuario para el sistema.",
       "editSectionTitle": "Editar Usuario",
