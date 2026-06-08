@@ -62,7 +62,7 @@ export function AppSidebar() {
     {
       label: "Médicos",
       icon: Stethoscope,
-      href: "/doctors",
+      href: routes.doctors.root,
       roles: [USER_ROLE.ADMIN],
     },
     {

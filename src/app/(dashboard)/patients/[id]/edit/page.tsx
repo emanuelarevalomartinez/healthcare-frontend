@@ -1,5 +1,6 @@
 import { PatientForm } from "@/modules/patients/forms/patient-form";
 import { findPatientById } from "@/modules/patients/services";
+import { findUserById } from "@/modules/user/services";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -8,6 +9,7 @@ interface PageProps {
 export default async function ({ params }: PageProps) {
   const { id } = await params;
   const response = await findPatientById(id);
+  const user = await findUserById(response.data.createdById);
 
   return (
     <PatientForm
@@ -24,7 +26,7 @@ export default async function ({ params }: PageProps) {
         email: response.data.email,
         address: response.data.address,
         notes: response.data.notes,
-        createdById: response.data.createdById,
+        createdById: user.data.username,
         createdAt: response.data.createdAt,
       }}
     />
