@@ -151,6 +151,21 @@
       "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la cuenta del usuario y revocará su acceso.",
       "cancel": "Cancelar",
       "confirm": "Eliminar"
+    },
+    "doctors": {
+      "specialty": "Especialidad",
+      "licenseNumber": "Número de colegiado",
+      "defaultConsultationDuration": "Duración de consulta",
+      "registrationDateLabel": "Fecha de registro",
+      "tableSectionTitle": "Médicos",
+      "tableSectionSubtitle": "Gestione y monitoree el personal médico y la configuración de consultas.",
+      "createNewDoctorButton": "Nuevo médico",
+      "successDeleteDoctorToast": "El médico fue eliminado exitosamente.",
+      "errorDeleteDoctorToast": "No se pudo eliminar el médico.",
+      "deleteAlertTitle": "¿Está completamente seguro?",
+      "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la cuenta del médico y eliminará su acceso.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar"
     }
   },
   "auth": {

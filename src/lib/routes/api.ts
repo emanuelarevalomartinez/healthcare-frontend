@@ -10,13 +10,6 @@ export const apiRoutes = {
     refresh: `${API_URL}/auth/refresh`,
     logout: `${API_URL}/auth/logout`,
   },
-  patients: {
-    list: `${API_URL}/patients`,
-    create: `${API_URL}/patients`,
-    edit: `${API_URL}/patients/:id`,
-    details: `${API_URL}/patients/:id`,
-    delete: `${API_URL}/patients/:id`,
-  },
    users: {
     list: `${API_URL}/users`,
     filter: `${API_URL}/users/filter`,
@@ -24,5 +17,19 @@ export const apiRoutes = {
     edit: `${API_URL}/users/:id`,
     details: `${API_URL}/users/:id`,
     delete: `${API_URL}/users/:id`,
+  },
+   patients: {
+    list: `${API_URL}/patients`,
+    create: `${API_URL}/patients`,
+    edit: `${API_URL}/patients/:id`,
+    details: `${API_URL}/patients/:id`,
+    delete: `${API_URL}/patients/:id`,
+  },
+   doctors: {
+    list: `${API_URL}/doctors`,
+    create: `${API_URL}/doctors`,
+    edit: `${API_URL}/doctors/:id`,
+    details: `${API_URL}/doctors/:id`,
+    delete: `${API_URL}/doctors/:id`,
   },
 };
