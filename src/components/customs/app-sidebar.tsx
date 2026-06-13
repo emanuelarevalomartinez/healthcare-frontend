@@ -82,7 +82,7 @@ export function AppSidebar() {
     {
       label: "Agenda / Citas",
       icon: Calendar,
-      href: "/appointments",
+      href: routes.appointments.root,
       roles: [USER_ROLE.ADMIN, USER_ROLE.DOCTOR, USER_ROLE.RECEPTIONIST],
     },
     // Receptionist only

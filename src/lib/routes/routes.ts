@@ -24,5 +24,11 @@ export const routes = {
     edit: "/patients/:id/edit",
     details: "/patients/:id",
   },
+  appointments: {
+    root: "/appointments",
+    create: "/appointments/create",
+    edit: "/appointments/:id/edit",
+    details: "/appointments/:id",
+  },
   root: "/"
 } satisfies Routes;
