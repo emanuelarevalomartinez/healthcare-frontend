@@ -121,6 +121,12 @@
       "confirmPasswordLabel": "Confirmar contraseña",
       "confirmPasswordPlaceholder": "Confirme la contraseña",
       "confirmPasswordRequired": "La confirmación de contraseña es obligatoria.",
+      "specialtyLabel": "Especialidad",
+      "specialtyPlaceholder": "Introduzca la especialidad",
+      "licenseNumberLabel": "Número de licencia",
+      "licenseNumberPlaceholder": "Introduzca el número de licencia",
+      "defaultConsultationDurationLabel": "Duración predeterminada de consulta",
+      "defaultConsultationDurationPlaceholder": "Introduzca la duración en minutos",
       "roleOptions": {
         "admin": "ADMINISTRADOR",
         "doctor": "DOCTOR",
@@ -141,7 +147,10 @@
         "confirmPasswordRequired": "Debes confirmar la contraseña.",
         "confirmPasswordMin": "La confirmación de contraseña debe tener al menos 8 caracteres.",
         "confirmPasswordMax": "La confirmación de contraseña no puede superar los 100 caracteres.",
-        "passwordsMustMatch": "Las contraseñas no coinciden."
+        "passwordsMustMatch": "Las contraseñas no coinciden.",
+        "specialtyRequired": "La especialidad es obligatoria.",
+        "licenseNumberRequired": "El número de licencia es obligatorio.",
+        "defaultConsultationDurationRequired": "La duración predeterminada de la consulta es obligatoria."
       },
       "toastSuccess": "Usuario creado correctamente.",
       "toastUpdateSuccess": "Usuario actualizado correctamente.",

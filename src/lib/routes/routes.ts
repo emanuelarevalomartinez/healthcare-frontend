@@ -12,12 +12,6 @@ export const routes = {
     edit: "/users/:id/edit",
     details: "/users/:id",
   },
-  doctors: {
-    root: "/doctors",
-    create: "/doctors/create",
-    edit: "/doctors/:id/edit",
-    details: "/doctors/:id",
-  },
   patients: {
     root: "/patients",
     create: "/patients/create",

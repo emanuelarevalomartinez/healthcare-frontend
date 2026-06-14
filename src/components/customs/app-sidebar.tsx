@@ -60,12 +60,6 @@ export function AppSidebar() {
       roles: [USER_ROLE.ADMIN],
     },
     {
-      label: "Médicos",
-      icon: Stethoscope,
-      href: routes.doctors.root,
-      roles: [USER_ROLE.ADMIN],
-    },
-    {
       label: "Reportes",
       icon: BarChart,
       href: "/reports",

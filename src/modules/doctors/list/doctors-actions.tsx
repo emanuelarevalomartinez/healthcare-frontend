@@ -66,7 +66,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
     }
   };
 
-  const doctorsActions: TableAction<DoctorApiResponse>[] = [
+/*   const doctorsActions: TableAction<DoctorApiResponse>[] = [
     {
       label: dictionary.components.actions.viewDetails,
       onClick: (e) => router.push(routes.doctors.details.replace(":id", e.id)),
@@ -81,7 +81,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
       separatorBefore: true,
       onClick: (e) => handleOpenDeleteConfirm(e.id, e.id),
     },
-  ];
+  ]; */
 
   return {
     doctorsData,
@@ -92,7 +92,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
     doctorToDelete,
     setDoctorToDelete,
     isTableLoading,
-    doctorsActions,
+    //doctorsActions,
     fetchDoctors,
     handleExecuteDelete,
   };

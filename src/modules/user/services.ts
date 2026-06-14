@@ -1,11 +1,11 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
-import { PaginatedData } from "@/lib/server/api-response";
+import { ApiResponse, PaginatedData } from "@/lib/server/api-response";
 import { UserApiResponse, UserCreateRequest, UserUpdateRequest } from "./types";
 
 export const createUser = async (data: UserCreateRequest) => {
-  const response = await fetcher(apiRoutes.users.create, {
+  const response = await fetcher<UserApiResponse>(apiRoutes.users.create, {
     ...POST_OPTIONS,
     body: JSON.stringify(data),
   });
@@ -13,7 +13,7 @@ export const createUser = async (data: UserCreateRequest) => {
 };
 
 export const updateUser = async (id: string, data: UserUpdateRequest) => {
-  const response = await fetcher(apiRoutes.users.edit.replace(":id", id), {
+  const response = await fetcher<UserApiResponse>(apiRoutes.users.edit.replace(":id", id), {
     ...PUT_OPTIONS,
     body: JSON.stringify(data),
   });

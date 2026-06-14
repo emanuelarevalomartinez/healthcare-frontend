@@ -11,9 +11,15 @@ export default async function () {
         email: "",
         role: undefined as unknown as USER_ROLE,
         isActive: false,
-        createdAt: undefined as unknown as Date,
-        updatedAt: undefined as unknown as Date,
-        lastLogin: undefined as unknown as Date,
+        doctor: {
+          id: "",
+          specialty: "",
+          licenseNumber: "",
+          defaultConsultationDuration: undefined as unknown as number
+        },
+        createdAt: "",
+        updatedAt: "",
+        lastLogin: "",
       }}
     />
   );

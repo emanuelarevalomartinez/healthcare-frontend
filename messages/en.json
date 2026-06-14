@@ -121,6 +121,12 @@
       "confirmPasswordLabel": "Confirm Password",
       "confirmPasswordPlaceholder": "Confirm password",
       "confirmPasswordRequired": "Password confirmation is required.",
+      "specialtyLabel": "Specialty",
+      "specialtyPlaceholder": "Enter specialty",
+      "licenseNumberLabel": "License Number",
+      "licenseNumberPlaceholder": "Enter license number",
+      "defaultConsultationDurationLabel": "Default Consultation Duration",
+      "defaultConsultationDurationPlaceholder": "Enter duration in minutes",
       "roleOptions": {
         "admin": "ADMINISTRATOR",
         "doctor": "DOCTOR",
@@ -141,7 +147,10 @@
         "confirmPasswordRequired": "Please confirm your password.",
         "confirmPasswordMin": "Confirmation password must be at least 8 characters.",
         "confirmPasswordMax": "Confirmation password cannot exceed 100 characters.",
-        "passwordsMustMatch": "Passwords do not match."
+        "passwordsMustMatch": "Passwords do not match.",
+        "specialtyRequired": "Specialty is required.",
+        "licenseNumberRequired": "License number is required.",
+        "defaultConsultationDurationRequired": "Default consultation duration is required."
       },
       "toastSuccess": "User created successfully.",
       "toastUpdateSuccess": "User updated successfully.",

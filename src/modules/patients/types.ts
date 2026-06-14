@@ -11,7 +11,7 @@ export interface PatientApiResponse {
   address: string;
   notes: string;
   createdById: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface PatientCreateRequest {

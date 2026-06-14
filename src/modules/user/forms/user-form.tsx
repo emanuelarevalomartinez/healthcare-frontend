@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +27,11 @@ import { FormFieldSelect } from "@/components/customs/form-field-select";
 
 import { createUser, updateUser } from "../services";
 
-import { UserApiResponse, UserCreateRequest } from "../types";
+import {
+  UserApiResponse,
+  UserCreateRequest,
+  UserUpdateRequest,
+} from "../types";
 
 import {
   CreateUserSchema,
@@ -40,6 +44,11 @@ import {
 import { useUsersActions } from "../list/users-actions";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
+import {
+  DoctorCreateRequest,
+  DoctorUpdateRequest,
+} from "@/modules/doctors/types";
+import { createDoctor, updateDoctor } from "@/modules/doctors/services";
 
 interface UserFormProps {
   user: UserApiResponse;
@@ -86,6 +95,9 @@ export function UserForm({ user, mode }: UserFormProps) {
       confirmPassword: "",
       role: user.role,
       isActive: user.isActive,
+      specialty: user.doctor?.specialty,
+      licenseNumber: user.doctor?.licenseNumber,
+      defaultConsultationDuration: user.doctor?.defaultConsultationDuration,
     },
   });
 
@@ -106,11 +118,42 @@ export function UserForm({ user, mode }: UserFormProps) {
     try {
       if (isEditMode) {
         const updateData = data as UpdateUserSchema;
-        const { confirmPassword, ...payload } = updateData;
+
+        const payload: UserUpdateRequest = {
+          username: updateData.username,
+          email: updateData.email,
+          role: updateData.role,
+          isActive: updateData.isActive,
+          ...(updateData.password?.trim()
+            ? { password: updateData.password }
+            : {}),
+        };
 
         const response = await updateUser(user.id, payload);
 
         if (response.status === 200 || response.status === 204) {
+          if (data.role == USER_ROLE.DOCTOR) {
+            const doctor = user.doctor;
+            if (doctor?.id) {
+              const doctorPayload: DoctorUpdateRequest = {
+                specialty: data.specialty ?? "",
+                licenseNumber: data.licenseNumber ?? "",
+                defaultConsultationDuration:
+                  data.defaultConsultationDuration ?? 0,
+              };
+              await updateDoctor(doctor.id, doctorPayload);
+            } else {
+              const doctorPayload: DoctorCreateRequest = {
+                userId: response.data.id,
+                specialty: data.specialty ?? "",
+                licenseNumber: data.licenseNumber ?? "",
+                defaultConsultationDuration:
+                  data.defaultConsultationDuration ?? 0,
+              };
+              await createDoctor(doctorPayload);
+            }
+          }
+
           toast.success(t.toastUpdateSuccess);
           router.push(routes.users.root);
         }
@@ -128,6 +171,17 @@ export function UserForm({ user, mode }: UserFormProps) {
         const response = await createUser(payload);
 
         if (response.status === 200 || response.status === 201) {
+          if (data.role == USER_ROLE.DOCTOR) {
+            const doctorPayload: DoctorCreateRequest = {
+              userId: response.data.id,
+              specialty: data.specialty ?? "",
+              licenseNumber: data.licenseNumber ?? "",
+              defaultConsultationDuration:
+                data.defaultConsultationDuration ?? 0,
+            };
+            await createDoctor(doctorPayload);
+          }
+
           toast.success(t.toastSuccess);
           router.push(routes.users.root);
         }
@@ -138,6 +192,14 @@ export function UserForm({ user, mode }: UserFormProps) {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (currentRole !== USER_ROLE.DOCTOR) {
+      setValue("specialty", "");
+      setValue("licenseNumber", "");
+      setValue("defaultConsultationDuration", undefined);
+    }
+  }, [currentRole, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -215,6 +277,40 @@ export function UserForm({ user, mode }: UserFormProps) {
             options={roleOptions}
             error={errors.role?.message}
           />
+
+          {currentRole === USER_ROLE.DOCTOR && (
+            <>
+              <FormFieldInput
+                id="specialty"
+                label={t.specialtyLabel}
+                placeholder={t.specialtyPlaceholder}
+                disabled={disableFields}
+                register={register("specialty")}
+                error={errors.specialty?.message}
+              />
+
+              <FormFieldInput
+                id="licenseNumber"
+                label={t.licenseNumberLabel}
+                placeholder={t.licenseNumberPlaceholder}
+                disabled={disableFields}
+                register={register("licenseNumber")}
+                error={errors.licenseNumber?.message}
+              />
+
+              <FormFieldInput
+                id="defaultConsultationDuration"
+                type="number"
+                label={t.defaultConsultationDurationLabel}
+                placeholder={t.defaultConsultationDurationPlaceholder}
+                disabled={disableFields}
+                register={register("defaultConsultationDuration", {
+                  valueAsNumber: true,
+                })}
+                error={errors.defaultConsultationDuration?.message}
+              />
+            </>
+          )}
 
           <FieldGroup className="gap-2">
             <Field

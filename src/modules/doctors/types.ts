@@ -4,10 +4,15 @@ export interface DoctorApiResponse {
   licenseNumber: string;
   defaultConsultationDuration: number;
 }
-
-
 export interface DoctorCreateRequest {
-
+  userId: string;
+  specialty: string;
+  licenseNumber: string;
+  defaultConsultationDuration: number;
 }
 
-export interface DoctorUpdateRequest extends DoctorCreateRequest {};
+export interface DoctorUpdateRequest {
+  specialty: string;
+  licenseNumber: string;
+  defaultConsultationDuration: number;
+}
