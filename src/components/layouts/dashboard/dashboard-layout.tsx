@@ -28,7 +28,7 @@ export default async function DashBoardLayout({
           <div className="flex flex-col w-full sticky top-0 z-20 bg-background">
             <div className="flex">
               <div className="flex rounded-xl h-12 w-12 items-center justify-center bg-card mt-4 mx-2">
-                <SidebarTrigger size="icon" className="items-center" />
+                <SidebarTrigger size="icon" className="items-center cursor-pointer" />
               </div>
               <NavigationMenu />
             </div>

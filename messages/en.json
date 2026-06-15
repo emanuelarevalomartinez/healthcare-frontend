@@ -160,21 +160,6 @@
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the user account and remove their access.",
       "cancel": "Cancel",
       "confirm": "Delete"
-    },
-    "doctors": {
-      "specialty": "Specialty",
-      "licenseNumber": "License Number",
-      "defaultConsultationDuration": "Consultation Duration",
-      "registrationDateLabel": "Registration Date",
-      "tableSectionTitle": "Doctors",
-      "tableSectionSubtitle": "Manage and monitor medical staff and consultation settings.",
-      "createNewDoctorButton": "New Doctor",
-      "successDeleteDoctorToast": "The doctor was successfully deleted.",
-      "errorDeleteDoctorToast": "Could not delete the doctor.",
-      "deleteAlertTitle": "Are you absolutely sure?",
-      "deleteAlertDescription": "This action cannot be undone. This will permanently delete the doctor account and remove their access.",
-      "cancel": "Cancel",
-      "confirm": "Delete"
     }
   },
   "auth": {

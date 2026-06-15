@@ -34,11 +34,9 @@ export function NavigationUserProfile() {
 
   async function handleLogout() {
     try {
-      // deleteUserAuthCredentialsLocalStorage();
       await deleteUserAuthCredentialsCookies();
       deleteUserDataLocalStorage();
       router.push(routes.auth.login);
-      // checkAuth();
       toast("Sesión cerrada con exito.");
     } catch (error) {
       console.error("Error to close session", error);
@@ -59,7 +57,7 @@ export function NavigationUserProfile() {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild className="cursor-pointer">
           <Button
             variant="outline"
             className="h-auto gap-3 rounded-2xl bg-card px-3 py-2 text-left hover:bg-muted"
@@ -91,11 +89,11 @@ export function NavigationUserProfile() {
             {dictionary.system.miAccountLabel}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Ver Perfil</DropdownMenuItem>
-          <DropdownMenuItem>Configuración</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">Ver Perfil</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">Configuración</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
+            className="text-destructive focus:text-destructive cursor-pointer"
             onClick={() => {
               handleLogout();
             }}

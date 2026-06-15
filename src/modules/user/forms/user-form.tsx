@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
@@ -87,7 +87,7 @@ export function UserForm({ user, mode }: UserFormProps) {
     setValue,
     formState: { errors },
   } = useForm<UserSchema>({
-    resolver: zodResolver(currentSchema),
+    resolver: zodResolver(currentSchema) as Resolver<UserSchema>,
     defaultValues: {
       username: user.username,
       email: user.email,

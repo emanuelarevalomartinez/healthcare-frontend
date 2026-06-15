@@ -29,7 +29,7 @@ export function NavigationUserLanguage() {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild className="cursor-pointer">
           <Button
             variant="outline"
             size="icon"
@@ -42,14 +42,14 @@ export function NavigationUserLanguage() {
           <DropdownMenuLabel>{dictionary.system.language}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="flex items-center justify-between"
+            className="flex items-center justify-between cursor-pointer"
             onClick={() => handleChangeLanguage("es")}
           >
             <span>Español</span>
             <span className="text-xs text-muted-foreground">ES</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="flex items-center justify-between"
+            className="flex items-center justify-between cursor-pointer"
             onClick={() => handleChangeLanguage("en")}
           >
             <span>English</span>

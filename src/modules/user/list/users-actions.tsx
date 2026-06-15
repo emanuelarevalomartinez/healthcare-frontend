@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { routes, TranslationDictionary, USER_ROLE } from "@/lib";
@@ -102,6 +102,6 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     usersActions,
     fetchUsers,
     handleExecuteDelete,
-    getRoleOptions,
+    getRoleOptions
   };
 }

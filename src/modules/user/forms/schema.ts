@@ -9,7 +9,12 @@ const passwordRegex =
 const doctorFields = {
   specialty: z.string().trim().optional(),
   licenseNumber: z.string().trim().optional(),
-  defaultConsultationDuration: z.number().positive().optional(),
+  defaultConsultationDuration: z.preprocess((value) => {
+    if (value === "" || Number.isNaN(value)) {
+      return undefined;
+    }
+    return value;
+  }, z.number().positive().optional()),
 };
 
 export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
@@ -60,17 +65,17 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
     .superRefine((data, ctx) => {
       if (data.role !== USER_ROLE.DOCTOR) return;
 
-      if (!data.specialty) {
+      if (!data.specialty?.trim()) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["specialty"],
           message: v.specialtyRequired,
         });
       }
 
-      if (!data.licenseNumber) {
+      if (!data.licenseNumber?.trim()) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["licenseNumber"],
           message: v.licenseNumberRequired,
         });
@@ -78,10 +83,10 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
 
       if (
         data.defaultConsultationDuration === undefined ||
-        data.defaultConsultationDuration === null
+        Number.isNaN(data.defaultConsultationDuration)
       ) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["defaultConsultationDuration"],
           message: v.defaultConsultationDurationRequired,
         });
@@ -133,79 +138,75 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
       const hasPassword = !!password;
       const hasConfirmPassword = !!confirmPassword;
 
-      if (hasPassword !== hasConfirmPassword) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["confirmPassword"],
-          message: v.confirmPasswordRequired,
-        });
+      if (hasPassword || hasConfirmPassword) {
+        if (hasPassword !== hasConfirmPassword) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["confirmPassword"],
+            message: v.confirmPasswordRequired,
+          });
+        }
 
-        return;
+        if (password && password.length < 8) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["password"],
+            message: v.passwordMin,
+          });
+        }
+
+        if (password && password.length > 100) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["password"],
+            message: v.passwordMax,
+          });
+        }
+
+        if (password && !passwordRegex.test(password)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["password"],
+            message: v.passwordInvalid,
+          });
+        }
+
+        if (password !== confirmPassword) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["confirmPassword"],
+            message: v.passwordsMustMatch,
+          });
+        }
       }
 
-      if (!hasPassword && !hasConfirmPassword) {
-        return;
-      }
+      if (data.role === USER_ROLE.DOCTOR) {
+        if (!data.specialty?.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["specialty"],
+            message: v.specialtyRequired,
+          });
+        }
 
-      if (password!.length < 8) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["password"],
-          message: v.passwordMin,
-        });
-      }
+        if (!data.licenseNumber?.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["licenseNumber"],
+            message: v.licenseNumberRequired,
+          });
+        }
 
-      if (password!.length > 100) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["password"],
-          message: v.passwordMax,
-        });
-      }
-
-      if (!passwordRegex.test(password!)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["password"],
-          message: v.passwordInvalid,
-        });
-      }
-
-      if (password !== confirmPassword) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["confirmPassword"],
-          message: v.passwordsMustMatch,
-        });
-      }
-
-      if (data.role !== USER_ROLE.DOCTOR) return;
-
-      if (!data.specialty) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["specialty"],
-          message: v.specialtyRequired,
-        });
-      }
-
-      if (!data.licenseNumber) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["licenseNumber"],
-          message: v.licenseNumberRequired,
-        });
-      }
-
-      if (
-        data.defaultConsultationDuration === undefined ||
-        data.defaultConsultationDuration === null
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["defaultConsultationDuration"],
-          message: v.defaultConsultationDurationRequired,
-        });
+        if (
+          data.defaultConsultationDuration === undefined ||
+          Number.isNaN(data.defaultConsultationDuration)
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["defaultConsultationDuration"],
+            message: v.defaultConsultationDurationRequired,
+          });
+        }
       }
     });
 };
