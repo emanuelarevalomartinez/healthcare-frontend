@@ -49,7 +49,7 @@ export function AppSidebar() {
     {
       label: "Dashboard",
       icon: LayoutDashboard,
-      href: "/dashboard",
+      href: routes.root,
       roles: [USER_ROLE.ADMIN, USER_ROLE.DOCTOR, USER_ROLE.RECEPTIONIST],
     },
     // Admin only

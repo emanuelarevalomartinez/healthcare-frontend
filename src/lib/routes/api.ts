@@ -7,6 +7,7 @@ export const apiRoutes = {
   auth: {
     register: `${API_URL}/auth/register`,
     login: `${API_URL}/auth/login`,
+    me: `${API_URL}/auth/me`,
     refresh: `${API_URL}/auth/refresh`,
     logout: `${API_URL}/auth/logout`,
   },

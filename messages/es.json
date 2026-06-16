@@ -160,6 +160,9 @@
       "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la cuenta del usuario y revocará su acceso.",
       "cancel": "Cancelar",
       "confirm": "Eliminar"
+    },
+    "doctors": {
+      "save": "Guardar"
     }
   },
   "auth": {

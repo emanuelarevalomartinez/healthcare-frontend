@@ -1,5 +1,6 @@
 export interface DoctorApiResponse {
   id: string;
+  createdBy: string;
   specialty: string;
   licenseNumber: string;
   defaultConsultationDuration: number;

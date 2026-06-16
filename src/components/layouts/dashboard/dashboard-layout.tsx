@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { routes } from "@/lib";
 import { COOKIE_KEYS } from "@/lib/utils/cookies-types";
+import { DoctorRender } from "@/modules/doctors/forms/doctor-render";
 import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -28,7 +29,10 @@ export default async function DashBoardLayout({
           <div className="flex flex-col w-full sticky top-0 z-20 bg-background">
             <div className="flex">
               <div className="flex rounded-xl h-12 w-12 items-center justify-center bg-card mt-4 mx-2">
-                <SidebarTrigger size="icon" className="items-center cursor-pointer" />
+                <SidebarTrigger
+                  size="icon"
+                  className="items-center cursor-pointer"
+                />
               </div>
               <NavigationMenu />
             </div>
@@ -37,7 +41,7 @@ export default async function DashBoardLayout({
           </div>
 
           <div className="px-4 py-2">{children}</div>
-
+          <DoctorRender />
           <SheetWrapper />
         </main>
       </SidebarProvider>

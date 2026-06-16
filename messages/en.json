@@ -160,6 +160,9 @@
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the user account and remove their access.",
       "cancel": "Cancel",
       "confirm": "Delete"
+    },
+    "doctors": {
+      "save": "Save"
     }
   },
   "auth": {

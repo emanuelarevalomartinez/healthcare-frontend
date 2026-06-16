@@ -6,6 +6,9 @@
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 // hacer que si el usuario ya esta activo y accede por primera ves como doctor pedirle los datos asociados a un doctor antes de dejarlo entrar
 
+// hay un problema que n ose esta manejando el error cuando se intenta crear un docotor y el numero de licecia ya se esta usando por otro usuario
+// hay que activar el usuario desde la lista porque si no no se puede actualizar desde la interfaz de actualizacion
+
 
 
  // hacer un mejor responsive de las vistas de autenticacion

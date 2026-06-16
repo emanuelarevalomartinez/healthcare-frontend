@@ -1,7 +1,13 @@
-'use client'
+"use client";
 
-import { Button } from "../ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { cn } from "@/lib/utils";
 
 type Props = {
   open: boolean;
@@ -9,6 +15,9 @@ type Props = {
   title: string;
   description?: string;
   children: React.ReactNode;
+  className?: string;
+  showCloseButton?: boolean;
+  preventOutsideClose?: boolean;
 };
 
 export function DialogWrapper({
@@ -17,18 +26,25 @@ export function DialogWrapper({
   title,
   description,
   children,
+  className,
+  showCloseButton = true,
+  preventOutsideClose = false,
 }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-card">
+      <DialogContent
+        showCloseButton={showCloseButton}
+        onPointerDownOutside={(event) => {
+          if (preventOutsideClose) {
+            event.preventDefault();
+          }
+        }}
+        className={cn("bg-card", className)}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
 
-          {description && (
-            <DialogDescription>
-              {description}
-            </DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
         {children}
