@@ -29,6 +29,8 @@ export const updateDoctor = async (id: string, data: DoctorUpdateRequest) => {
 };
 
 export const updateDoctorWithUser = async (userId: string, data: DoctorUpdateWithUserRequest) => {
+  console.log("dentro");
+  
   const response = await fetcher(apiRoutes.doctors.editWithUser.replace(":userId", userId), {
     ...PUT_OPTIONS,
     body: JSON.stringify(data),

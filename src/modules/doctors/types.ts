@@ -16,7 +16,7 @@ export interface DoctorCreateRequest {
 
 export interface DoctorCreateWithUserRequest {
   username: string;
-  password: string;
+  password?: string;
   email: string;
   role: USER_ROLE;
   isActive: boolean;
