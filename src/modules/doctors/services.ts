@@ -1,7 +1,7 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
-import { DoctorApiResponse, DoctorCreateRequest, DoctorUpdateRequest } from "./types";
+import { DoctorApiResponse, DoctorCreateRequest, DoctorCreateWithUserRequest, DoctorUpdateRequest, DoctorUpdateWithUserRequest } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
 
 export const createDoctor = async (data: DoctorCreateRequest) => {
@@ -12,8 +12,24 @@ export const createDoctor = async (data: DoctorCreateRequest) => {
   return response;
 };
 
+export const createDoctorWithUser = async (data: DoctorCreateWithUserRequest) => {
+  const response = await fetcher(apiRoutes.doctors.createWithUser, {
+    ...POST_OPTIONS,
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
 export const updateDoctor = async (id: string, data: DoctorUpdateRequest) => {
   const response = await fetcher(apiRoutes.doctors.edit.replace(":id", id), {
+    ...PUT_OPTIONS,
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const updateDoctorWithUser = async (userId: string, data: DoctorUpdateWithUserRequest) => {
+  const response = await fetcher(apiRoutes.doctors.editWithUser.replace(":userId", userId), {
     ...PUT_OPTIONS,
     body: JSON.stringify(data),
   });

@@ -8,13 +8,14 @@ import { DoctorApiResponse } from "../types";
 
 interface Props {
   mode: DoctorFormMode;
+  openDetails: boolean;
+  setOpenDetails: (e: boolean) => void;
   doctorData: DoctorApiResponse | null;
 }
 
-export function DoctorForm({ mode, doctorData }: Props) {
+export function DoctorForm({ mode, doctorData, openDetails, setOpenDetails }: Props) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.doctors;
-  const [openDetails, setOpenDetails] = useState(true);
 
   // TODO esto es para no cerrar el modal hasta que se termine con el formulario
   // preventOutsideClose
@@ -32,7 +33,7 @@ export function DoctorForm({ mode, doctorData }: Props) {
         className="sm:min-w-xl"
         showCloseButton={false}
       >
-        <ItemDoctorForm mode={mode} doctorData={doctorData} />
+        <ItemDoctorForm mode={mode} doctorData={doctorData} setOpenDetails={setOpenDetails} />
       </DialogWrapper>
     </>
   );

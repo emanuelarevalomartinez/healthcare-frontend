@@ -12,10 +12,11 @@ import { FormFieldInput } from "@/components/customs/form-field-input";
 import { createDoctor, updateDoctor } from "../services";
 import { DoctorApiResponse, DoctorCreateRequest } from "../types";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
-import { DoctorFormMode } from "@/lib";
+import { DoctorFormMode, getErrorMessage } from "@/lib";
 
 interface Props {
   mode: DoctorFormMode;
+  setOpenDetails: (e: boolean) => void;
   doctorData: DoctorApiResponse | null;
 }
 
@@ -25,7 +26,7 @@ interface DoctorFormValues {
   defaultConsultationDuration: number;
 }
 
-export function ItemDoctorForm({ mode, doctorData }: Props) {
+export function ItemDoctorForm({ mode, setOpenDetails, doctorData }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const user = getUserDataLocalStore();
@@ -79,10 +80,9 @@ export function ItemDoctorForm({ mode, doctorData }: Props) {
           toast.success("Doctor creado correctamente");
         }
       }
-
-      // reset();
+      setOpenDetails(false);
     } catch (error) {
-      toast.error("Error al crear el doctor");
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

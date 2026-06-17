@@ -45,10 +45,13 @@ import { useUsersActions } from "../list/users-actions";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
 import {
-  DoctorCreateRequest,
-  DoctorUpdateRequest,
+  DoctorCreateWithUserRequest,
+  DoctorUpdateWithUserRequest,
 } from "@/modules/doctors/types";
-import { createDoctor, updateDoctor } from "@/modules/doctors/services";
+import {
+  createDoctorWithUser,
+  updateDoctorWithUser,
+} from "@/modules/doctors/services";
 
 interface UserFormProps {
   user: UserApiResponse;
@@ -119,72 +122,78 @@ export function UserForm({ user, mode }: UserFormProps) {
       if (isEditMode) {
         const updateData = data as UpdateUserSchema;
 
-        const payload: UserUpdateRequest = {
-          username: updateData.username,
-          email: updateData.email,
-          role: updateData.role,
-          isActive: updateData.isActive,
-          ...(updateData.password?.trim()
-            ? { password: updateData.password }
-            : {}),
-        };
-
-        const response = await updateUser(user.id, payload);
-
-        if (response.status === 200 || response.status === 204) {
-          if (data.role == USER_ROLE.DOCTOR) {
-            const doctor = user.doctor;
-            if (doctor?.id) {
-              const doctorPayload: DoctorUpdateRequest = {
-                specialty: data.specialty ?? "",
-                licenseNumber: data.licenseNumber ?? "",
-                defaultConsultationDuration:
-                  data.defaultConsultationDuration ?? 0,
-              };
-              await updateDoctor(doctor.id, doctorPayload);
-            } else {
-              const doctorPayload: DoctorCreateRequest = {
-                userId: response.data.id,
-                specialty: data.specialty ?? "",
-                licenseNumber: data.licenseNumber ?? "",
-                defaultConsultationDuration:
-                  data.defaultConsultationDuration ?? 0,
-              };
-              await createDoctor(doctorPayload);
-            }
-          }
-
-          toast.success(t.toastUpdateSuccess);
-          router.push(routes.users.root);
-        }
-      } else {
-        const createData = data as CreateUserSchema;
-
-        const payload: UserCreateRequest = {
-          username: createData.username,
-          password: createData.password,
-          email: createData.email,
-          role: createData.role,
-          isActive: createData.isActive,
-        };
-
-        const response = await createUser(payload);
-
-        if (response.status === 200 || response.status === 201) {
-          if (data.role == USER_ROLE.DOCTOR) {
-            const doctorPayload: DoctorCreateRequest = {
-              userId: response.data.id,
-              specialty: data.specialty ?? "",
+        if (currentRole == USER_ROLE.DOCTOR) {
+          const doctor = user.doctor;
+          if (doctor?.id) {
+            const updateDoctorWithUserPayload: DoctorUpdateWithUserRequest = {
+              username: updateData.username,
+              password: updateData.password,
+              email: updateData.email,
+              role: currentRole,
+              isActive: currentActive,
+              specialty: updateData.specialty ?? "",
               licenseNumber: data.licenseNumber ?? "",
               defaultConsultationDuration:
                 data.defaultConsultationDuration ?? 0,
             };
-            await createDoctor(doctorPayload);
+            await updateDoctorWithUser(doctor.id, updateDoctorWithUserPayload);
+          } else {
+            const createDoctorWithUserPayload: DoctorCreateWithUserRequest = {
+              username: updateData.username,
+              password: updateData.password ?? "",
+              email: updateData.email,
+              role: currentRole,
+              isActive: currentActive,
+              specialty: updateData.specialty ?? "",
+              licenseNumber: data.licenseNumber ?? "",
+              defaultConsultationDuration:
+                data.defaultConsultationDuration ?? 0,
+            };
+            await createDoctorWithUser(createDoctorWithUserPayload);
           }
-
-          toast.success(t.toastSuccess);
-          router.push(routes.users.root);
+        } else {
+          const updateUserPayload: UserUpdateRequest = {
+            username: updateData.username,
+            email: updateData.email,
+            role: updateData.role,
+            isActive: updateData.isActive,
+            ...(updateData.password?.trim()
+              ? { password: updateData.password }
+              : {}),
+          };
+          await updateUser(user.id, updateUserPayload);
         }
+        toast.success(t.toastUpdateSuccess);
+        router.push(routes.users.root);
+      } else {
+        const createData = data as CreateUserSchema;
+
+        if (currentRole == USER_ROLE.DOCTOR) {
+          const createDoctorWithUserPayload: DoctorCreateWithUserRequest = {
+            username: createData.username,
+            password: createData.password,
+            email: createData.email,
+            role: currentRole,
+            isActive: currentActive,
+            specialty: createData.specialty ?? "",
+            licenseNumber: data.licenseNumber ?? "",
+            defaultConsultationDuration: data.defaultConsultationDuration ?? 0,
+          };
+
+          await createDoctorWithUser(createDoctorWithUserPayload);
+        } else {
+          const createUserPayload: UserCreateRequest = {
+            username: createData.username,
+            password: createData.password,
+            email: createData.email,
+            role: createData.role,
+            isActive: createData.isActive,
+          };
+
+          await createUser(createUserPayload);
+        }
+        toast.success(t.toastSuccess);
+        router.push(routes.users.root);
       }
     } catch (error) {
       toast.error(getErrorMessage(error));

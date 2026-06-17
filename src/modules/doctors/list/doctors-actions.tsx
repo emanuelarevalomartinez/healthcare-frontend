@@ -21,6 +21,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
   const [showDoctorForm, setShowDoctorForm] = useState(false);
   const [isNewDoctor, setIsNewDoctor] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [openDetails, setOpenDetails] = useState(true);
 
   /*  const fetchMyUser = useCallback(async () => {
     try {
@@ -60,7 +61,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
         return;
       }
 
-      if (doctor.createdBy !== user.id) {
+      if (doctor.modifiedBy !== user.id) {
         setShowDoctorForm(true);
         setIsNewDoctor(false);
         return;
@@ -80,5 +81,7 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
     isLoading,
     fetchMyUser,
     isNewDoctor,
+    openDetails,
+    setOpenDetails
   };
 }

@@ -8,7 +8,7 @@ import { useDoctorsActions } from "../list/doctors-actions";
 
 export function DoctorRender() {
   const { dictionary } = useLanguage();
-  const { fetchMyUser, showDoctorForm, isLoading, isNewDoctor, doctorData } = useDoctorsActions({
+  const { fetchMyUser, showDoctorForm, isLoading, isNewDoctor, doctorData, openDetails, setOpenDetails } = useDoctorsActions({
     dictionary,
   });
 
@@ -30,5 +30,5 @@ export function DoctorRender() {
     return null;
   }
 
-  return <DoctorForm mode={isNewDoctor ? "create": "complete"} doctorData={doctorData} />;
+  return <DoctorForm mode={isNewDoctor ? "create": "complete"} doctorData={doctorData} openDetails={openDetails} setOpenDetails={setOpenDetails} />;
 }

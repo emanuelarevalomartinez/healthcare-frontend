@@ -28,8 +28,10 @@ export const apiRoutes = {
   },
    doctors: {
     list: `${API_URL}/doctors`,
-    create: `${API_URL}/doctors`,
+    create: `${API_URL}/doctors/:id`,
+    createWithUser: `${API_URL}/doctors/create-with-user`,
     edit: `${API_URL}/doctors/:id`,
+    editWithUser: `${API_URL}/doctors/update-with-user/:userId`,
     details: `${API_URL}/doctors/:id`,
     delete: `${API_URL}/doctors/:id`,
   },
