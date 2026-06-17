@@ -64,6 +64,7 @@ export default function LoginForm() {
         await setUserAuthCredentialsCookies(userAuthCredentialsInfo);
 
         const userInfo: UserDataLocalStorageInterface = {
+          id: response.data.id,
           username: response.data.username,
           email: response.data.email,
           role: response.data.role,

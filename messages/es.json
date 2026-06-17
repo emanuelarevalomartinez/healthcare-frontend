@@ -162,7 +162,11 @@
       "confirm": "Eliminar"
     },
     "doctors": {
-      "save": "Guardar"
+      "save": "Guardar",
+      "createProfileTitle": "Completa tu perfil profesional",
+      "createProfileDescription": "Antes de continuar, necesitamos algunos datos adicionales para configurar correctamente tu perfil médico.",
+      "completeProfileTitle": "Revisa y completa tu perfil profesional",
+      "completeProfileDescription": "Un administrador ya registró tu información. Por favor, revísala y completa los datos restantes para finalizar la configuración de tu perfil médico."
     }
   },
   "auth": {

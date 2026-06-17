@@ -6,6 +6,11 @@
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 // hacer que si el usuario ya esta activo y accede por primera ves como doctor pedirle los datos asociados a un doctor antes de dejarlo entrar
 
+// tengo que añadir el texto de traduccion al tema de cuando estoy en el formulario de doctores
+// hacer que no se pueda cerrar hasta que este completado
+// evitar que cada ves que se recargue la informacion se pida aa la api
+// hacer que al completa el formulario se cierre el mismo y no se recargue mas la peticion
+
 // hay un problema que n ose esta manejando el error cuando se intenta crear un docotor y el numero de licecia ya se esta usando por otro usuario
 // hay que activar el usuario desde la lista porque si no no se puede actualizar desde la interfaz de actualizacion
 

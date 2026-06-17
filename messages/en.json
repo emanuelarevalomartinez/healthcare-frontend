@@ -162,7 +162,11 @@
       "confirm": "Delete"
     },
     "doctors": {
-      "save": "Save"
+      "save": "Save",
+      "createProfileTitle": "Complete your professional profile",
+      "createProfileDescription": "Before continuing, we need some additional information to properly configure your medical profile.",
+      "completeProfileTitle": "Review and complete your professional profile",
+      "completeProfileDescription": "An administrator has already registered your information. Please review it and complete the remaining details to finish setting up your medical profile."
     }
   },
   "auth": {

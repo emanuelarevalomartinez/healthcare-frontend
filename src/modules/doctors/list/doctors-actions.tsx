@@ -3,9 +3,9 @@
 import { TranslationDictionary } from "@/lib";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 import { findMyUser } from "@/modules/auth/services";
-import { UserApiResponse } from "@/modules/user/types";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { DoctorApiResponse } from "../types";
 
 interface UseDoctorsActionsProps {
   dictionary: TranslationDictionary;
@@ -17,40 +17,68 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
 
   const user = getUserDataLocalStore();
 
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [doctorToDelete, setDoctorToDelete] = useState<{
-    id: string;
-    username: string;
-  } | null>(null);
-  const [isTableLoading, setIsTableLoading] = useState(true);
-  const pageSize = 10;
+  const [doctorData, setDoctorData] = useState<DoctorApiResponse | null>(null);
+  const [showDoctorForm, setShowDoctorForm] = useState(false);
+  const [isNewDoctor, setIsNewDoctor] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [userData, setUserData] = useState<UserApiResponse>();
-
-  const fetchMyUser = useCallback(async () => {
-    setIsTableLoading(true);
+  /*  const fetchMyUser = useCallback(async () => {
     try {
-      if (user) {
-        const response = await findMyUser();
-        console.log("response", response.data.doctor)
-        setUserData(response.data);
+    //  if (!user) return;
+
+      const response = await findMyUser();
+
+      setUserData(response.data);
+
+      const doctor = response.data?.doctor;
+
+      if (doctor && doctor.createdBy === user?.id) {
+        setCanCreateDoctor(true);
+      } else {
+        setCanCreateDoctor(false);
       }
     } catch (error) {
       console.error("Error to load the users: ", error);
-    } finally {
-      setIsTableLoading(false);
     }
-  }, [currentPage, pageSize]);
+  }, [user]); */
+
+  const fetchMyUser = async () => {
+    try {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await findMyUser();
+
+      const doctor = response.data?.doctor;
+      setDoctorData(doctor);
+
+      if (!doctor) {
+        setShowDoctorForm(true);
+        setIsNewDoctor(true);
+        return;
+      }
+
+      if (doctor.createdBy !== user.id) {
+        setShowDoctorForm(true);
+        setIsNewDoctor(false);
+        return;
+      }
+
+      setShowDoctorForm(false);
+    } catch (error) {
+      console.error("Error to load the users: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
-    isAlertOpen,
-    setIsAlertOpen,
-    currentPage,
-    setCurrentPage,
-    doctorToDelete,
-    setDoctorToDelete,
-    isTableLoading,
+    doctorData,
+    showDoctorForm,
+    isLoading,
     fetchMyUser,
+    isNewDoctor,
   };
 }

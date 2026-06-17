@@ -5,5 +5,5 @@ export enum USER_ROLE {
     RECEPTIONIST = "RECEPTIONIST"
 }
 
-
 export type FormMode = "create" | "edit" | "details";
+export type DoctorFormMode = "create" | "complete";

@@ -9,8 +9,15 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { FormFieldInput } from "@/components/customs/form-field-input";
 
-import { createDoctor } from "../services";
-import { DoctorCreateRequest } from "../types";
+import { createDoctor, updateDoctor } from "../services";
+import { DoctorApiResponse, DoctorCreateRequest } from "../types";
+import { getUserDataLocalStore } from "@/lib/utils/local-storage";
+import { DoctorFormMode } from "@/lib";
+
+interface Props {
+  mode: DoctorFormMode;
+  doctorData: DoctorApiResponse | null;
+}
 
 interface DoctorFormValues {
   specialty: string;
@@ -18,8 +25,10 @@ interface DoctorFormValues {
   defaultConsultationDuration: number;
 }
 
-export function ItemDoctorForm() {
+export function ItemDoctorForm({ mode, doctorData }: Props) {
   const [isLoading, setIsLoading] = useState(false);
+
+  const user = getUserDataLocalStore();
 
   const {
     register,
@@ -28,9 +37,12 @@ export function ItemDoctorForm() {
     reset,
   } = useForm<DoctorFormValues>({
     defaultValues: {
-      specialty: "",
-      licenseNumber: "",
-      defaultConsultationDuration: 30,
+      specialty: doctorData?.specialty ?? "",
+
+      licenseNumber: doctorData?.licenseNumber ?? "",
+
+      defaultConsultationDuration:
+        doctorData?.defaultConsultationDuration ?? 30,
     },
   });
 
@@ -38,19 +50,37 @@ export function ItemDoctorForm() {
     try {
       setIsLoading(true);
 
-      const payload: DoctorCreateRequest = {
-        userId: "",
-        specialty: data.specialty,
-        licenseNumber: data.licenseNumber,
-        defaultConsultationDuration:
-          data.defaultConsultationDuration,
-      };
+      if (doctorData) {
 
-      await createDoctor(payload);
+         if (user) {
+          const payload: DoctorCreateRequest = {
+            userId: user.id,
+            specialty: data.specialty,
+            licenseNumber: data.licenseNumber,
+            defaultConsultationDuration: data.defaultConsultationDuration,
+          };
 
-      toast.success("Doctor creado correctamente");
+          await updateDoctor( doctorData.id,payload);
 
-      reset();
+          toast.success("Doctor actualizado correctamente");
+        }
+
+      } else {
+        if (user) {
+          const payload: DoctorCreateRequest = {
+            userId: user.id,
+            specialty: data.specialty,
+            licenseNumber: data.licenseNumber,
+            defaultConsultationDuration: data.defaultConsultationDuration,
+          };
+
+          await createDoctor(payload);
+
+          toast.success("Doctor creado correctamente");
+        }
+      }
+
+      // reset();
     } catch (error) {
       toast.error("Error al crear el doctor");
     } finally {
@@ -61,10 +91,7 @@ export function ItemDoctorForm() {
   return (
     <Card className="w-full">
       <CardContent className="pt-6">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="grid gap-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <FormFieldInput
             id="specialty"
             label="Especialidad"
@@ -90,34 +117,26 @@ export function ItemDoctorForm() {
             type="number"
             label="Duración de consulta (min)"
             placeholder="30"
-            register={register(
-              "defaultConsultationDuration",
-              {
-                valueAsNumber: true,
-                required: "La duración es obligatoria",
-                min: {
-                  value: 1,
-                  message: "Debe ser mayor que cero",
-                },
-              }
-            )}
-            error={
-              errors.defaultConsultationDuration?.message
-            }
+            register={register("defaultConsultationDuration", {
+              valueAsNumber: true,
+              required: "La duración es obligatoria",
+              min: {
+                value: 1,
+                message: "Debe ser mayor que cero",
+              },
+            })}
+            error={errors.defaultConsultationDuration?.message}
           />
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? "Guardando..." : "Guardar"}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Guardando..." : `${mode == "create" ? "Guardar" : "Actualizar"}`}
           </Button>
         </form>
       </CardContent>
     </Card>
   );
 
- /*  return (
+  /*  return (
   <form
     onSubmit={handleSubmit(onSubmit)}
     className="grid gap-4"
