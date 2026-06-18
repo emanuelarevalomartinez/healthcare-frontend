@@ -2,7 +2,7 @@
 
 // TODO
 
-// Me quede viendpo el caso de cuandop el usuario existe pero con otro error y quiero actualizar a doctor da error el doctor id null, asi como que no llega el userId de la creacion
+// hay que ver el caso en que se quiere actualziar el usuario con otro rol que no sea el de doctor porque entonces hay que eliminar la cuenta de doctor
 
 // terminar de manejar y controlar el tema de expiracion del token y el error raro que lanza cuando falla la autenticacion
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
