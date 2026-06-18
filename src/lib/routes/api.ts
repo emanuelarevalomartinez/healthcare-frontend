@@ -34,5 +34,6 @@ export const apiRoutes = {
     editWithUser: `${API_URL}/doctors/update-with-user/:userId`,
     details: `${API_URL}/doctors/:id`,
     delete: `${API_URL}/doctors/:id`,
+    deleteDoctorByUserId: `${API_URL}/doctors/delete-with-user/:userId`,
   },
 };

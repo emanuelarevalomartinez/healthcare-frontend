@@ -50,6 +50,7 @@ import {
 } from "@/modules/doctors/types";
 import {
   createDoctorWithUser,
+  deleteDoctorByUserId,
   updateDoctorWithUser,
 } from "@/modules/doctors/services";
 
@@ -148,12 +149,12 @@ export function UserForm({ user, mode }: UserFormProps) {
               ? { password: updateData.password }
               : {}),
           };
+          await deleteDoctorByUserId(user.id);
           await updateUser(user.id, updateUserPayload);
         }
         toast.success(t.toastUpdateSuccess);
         router.push(routes.users.root);
       } else {
-        //TODO CORRECTO
         const createData = data as CreateUserSchema;
 
         if (currentRole == USER_ROLE.DOCTOR) {

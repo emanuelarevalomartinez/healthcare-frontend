@@ -67,3 +67,10 @@ export const deleteDoctor = async (id: string) => {
   });
   return response;
 };
+
+export const deleteDoctorByUserId = async (userId: string) => {
+  const response = await fetcher(apiRoutes.doctors.deleteDoctorByUserId.replace(":userId",userId), {
+    method: "DELETE",
+  });
+  return response;
+};
