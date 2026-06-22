@@ -156,6 +156,10 @@
       "toastUpdateSuccess": "Usuario actualizado correctamente.",
       "successDeleteUserToast": "El usuario fue eliminado correctamente.",
       "errordeleteUserToast": "No se pudo eliminar al usuario.",
+      "successActivateUserToast": "El usuario fue activado correctamente.",
+      "successDeactivateUserToast": "El usuario fue desactivado correctamente.",
+      "errorActivateUserToast": "No se pudo activar el usuario.",
+      "errorDeactivateUserToast": "No se pudo desactivar el usuario.",
       "deleteAlertTitle": "¿Estás completamente seguro?",
       "deleteAlertDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente la cuenta del usuario y revocará su acceso.",
       "cancel": "Cancelar",
@@ -238,6 +242,8 @@
     },
     "actions": {
       "viewDetails": "Ver Detalles",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
       "edit": "Editar",
       "delete": "Eliminar"
     }

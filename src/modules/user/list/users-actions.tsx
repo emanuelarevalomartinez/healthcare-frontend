@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { routes, TranslationDictionary, USER_ROLE } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
-import { UserApiResponse } from "../types";
-import { deleteUser, getAllUsers } from "../services";
+import { UserApiResponse, UserUpdateRequest } from "../types";
+import { deleteUser, getAllUsers, updateUser } from "../services";
+import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 
 interface UsePatientsActionsProps {
   dictionary: TranslationDictionary;
@@ -17,8 +18,10 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
   const t = dictionary.dashboard.users;
 
-  const [usersData, setUsersData] =
-    useState<PaginatedData<UserApiResponse>>();
+  const user = getUserDataLocalStore();
+  const currentUserId = user?.id;
+
+  const [usersData, setUsersData] = useState<PaginatedData<UserApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [userToDelete, setUserToDelete] = useState<{
@@ -66,10 +69,54 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     }
   };
 
+  const handleActivateUser = async (id: string, isActive: boolean) => {
+    try {
+      const userUpdate: UserUpdateRequest = {
+        isActive: !isActive,
+      };
+
+      const response = await updateUser(id, userUpdate);
+
+      if (response.status === 200 || response.status === 204) {
+        const updatedUser = response.data;
+
+        setUsersData((prev) => {
+          if (!prev) return prev;
+
+          return {
+            ...prev,
+            content: prev.content.map((user) =>
+              user.id === updatedUser.id ? updatedUser : user
+            ),
+          };
+        });
+
+        toast.success(
+          isActive ? t.successDeactivateUserToast : t.successActivateUserToast
+        );
+      }
+    } catch (error) {
+      console.error("Error to activate:", error);
+      toast.error(
+        isActive ? t.errorDeactivateUserToast : t.errorActivateUserToast
+      );
+    }
+  };
+
   const usersActions: TableAction<UserApiResponse>[] = [
     {
       label: dictionary.components.actions.viewDetails,
       onClick: (e) => router.push(routes.users.details.replace(":id", e.id)),
+    },
+    {
+      label: (user) =>
+        user.isActive
+          ? dictionary.components.actions.deactivate
+          : dictionary.components.actions.activate,
+      onClick: (user) => {
+        console.log(user.isActive);
+        handleActivateUser(user.id, user.isActive);
+      },
     },
     {
       label: dictionary.components.actions.edit,
@@ -80,15 +127,19 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
       variant: "destructive",
       separatorBefore: true,
       onClick: (e) => handleOpenDeleteConfirm(e.id, e.username),
+      disabled: (user) => user.id === currentUserId,
     },
   ];
 
-   const getRoleOptions = useCallback((optionsDict: any) => {
-      return Object.values(USER_ROLE).map((sexItem) => {
-        const sexKey = sexItem.toLowerCase() as "admin" | "doctor" | "receptionist";
-        return { value: sexItem, label: optionsDict[sexKey] };
-      });
-    }, []);
+  const getRoleOptions = useCallback((optionsDict: any) => {
+    return Object.values(USER_ROLE).map((sexItem) => {
+      const sexKey = sexItem.toLowerCase() as
+        | "admin"
+        | "doctor"
+        | "receptionist";
+      return { value: sexItem, label: optionsDict[sexKey] };
+    });
+  }, []);
 
   return {
     usersData,
@@ -102,6 +153,6 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     usersActions,
     fetchUsers,
     handleExecuteDelete,
-    getRoleOptions
+    getRoleOptions,
   };
 }

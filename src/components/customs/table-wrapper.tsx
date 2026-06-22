@@ -24,10 +24,11 @@ export interface TableColumn<T> {
 }
 
 export interface TableAction<T> {
-  label: string;
+  label: string | ((row: T) => string);
   onClick: (row: T) => void;
   variant?: "default" | "destructive";
   separatorBefore?: boolean;
+  disabled?: (row: T) => boolean;
 }
 
 interface TableWrapperProps<T> {
@@ -105,6 +106,7 @@ export function TableWrapper<T>({
                         <div key={actionIndex}>
                           {action.separatorBefore && <DropdownMenuSeparator />}
                           <DropdownMenuItem
+                          disabled={action.disabled?.(row)}
                             variant={
                               action.variant === "destructive"
                                 ? "destructive"
@@ -112,7 +114,9 @@ export function TableWrapper<T>({
                             }
                             onClick={() => action.onClick(row)}
                           >
-                            {action.label}
+                            {typeof action.label === "function"
+                              ? action.label(row)
+                              : action.label}
                           </DropdownMenuItem>
                         </div>
                       ))}
@@ -203,6 +207,7 @@ export function TableWrapper<T>({
                                 <DropdownMenuSeparator />
                               )}
                               <DropdownMenuItem
+                              disabled={action.disabled?.(row)}
                                 variant={
                                   action.variant === "destructive"
                                     ? "destructive"
@@ -210,7 +215,9 @@ export function TableWrapper<T>({
                                 }
                                 onClick={() => action.onClick(row)}
                               >
-                                {action.label}
+                                {typeof action.label === "function"
+                                  ? action.label(row)
+                                  : action.label}
                               </DropdownMenuItem>
                             </div>
                           ))}
