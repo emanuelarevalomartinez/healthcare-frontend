@@ -167,10 +167,26 @@
     },
     "doctors": {
       "save": "Guardar",
-      "createProfileTitle": "Completa tu perfil profesional",
-      "createProfileDescription": "Antes de continuar, necesitamos algunos datos adicionales para configurar correctamente tu perfil médico.",
-      "completeProfileTitle": "Revisa y completa tu perfil profesional",
-      "completeProfileDescription": "Un administrador ya registró tu información. Por favor, revísala y completa los datos restantes para finalizar la configuración de tu perfil médico."
+      "update": "Actualizar",
+      "saving": "Guardando...",
+      "createProfileTitle": "Complete su perfil profesional",
+      "createProfileDescription": "Antes de continuar, necesitamos información adicional para configurar correctamente su perfil médico.",
+      "completeProfileTitle": "Revise y complete su perfil profesional",
+      "completeProfileDescription": "Un administrador ya registró parte de su información. Revise los datos y complete la información restante para finalizar la configuración de su perfil médico.",
+      "specialtyLabel": "Especialidad",
+      "specialtyPlaceholder": "Ingrese la especialidad",
+      "licenseNumberLabel": "Número de licencia",
+      "licenseNumberPlaceholder": "Ingrese el número de licencia",
+      "defaultConsultationDurationLabel": "Duración predeterminada de la consulta",
+      "defaultConsultationDurationPlaceholder": "Ingrese la duración en minutos",
+      "validation": {
+        "specialtyRequired": "La especialidad es obligatoria.",
+        "licenseNumberRequired": "El número de licencia es obligatorio.",
+        "defaultConsultationDurationRequired": "La duración de la consulta es obligatoria.",
+        "defaultConsultationDurationMin": "La duración debe ser mayor que cero."
+      },
+      "toastSuccess": "El perfil médico se creó correctamente.",
+      "toastUpdateSuccess": "El perfil médico se actualizó correctamente."
     }
   },
   "auth": {
@@ -246,6 +262,9 @@
       "deactivate": "Desactivar",
       "edit": "Editar",
       "delete": "Eliminar"
+    },
+    "toast": {
+      "unexpectedResponseStatus": "El servidor devolvió un estado de respuesta inesperado."
     }
   }
 }

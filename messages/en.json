@@ -167,10 +167,26 @@
     },
     "doctors": {
       "save": "Save",
-      "createProfileTitle": "Complete your professional profile",
+      "update": "Update",
+      "saving": "Saving...",
+      "createProfileTitle": "Complete Your Professional Profile",
       "createProfileDescription": "Before continuing, we need some additional information to properly configure your medical profile.",
-      "completeProfileTitle": "Review and complete your professional profile",
-      "completeProfileDescription": "An administrator has already registered your information. Please review it and complete the remaining details to finish setting up your medical profile."
+      "completeProfileTitle": "Review and Complete Your Professional Profile",
+      "completeProfileDescription": "An administrator has already registered part of your information. Please review the existing details and complete the remaining information to finish setting up your medical profile.",
+      "specialtyLabel": "Specialty",
+      "specialtyPlaceholder": "Enter specialty",
+      "licenseNumberLabel": "License Number",
+      "licenseNumberPlaceholder": "Enter license number",
+      "defaultConsultationDurationLabel": "Default Consultation Duration",
+      "defaultConsultationDurationPlaceholder": "Enter duration in minutes",
+      "validation": {
+        "specialtyRequired": "Specialty is required.",
+        "licenseNumberRequired": "License number is required.",
+        "defaultConsultationDurationRequired": "Default consultation duration is required.",
+        "defaultConsultationDurationMin": "Duration must be greater than zero."
+      },
+      "toastSuccess": "Medical profile created successfully.",
+      "toastUpdateSuccess": "Medical profile updated successfully."
     }
   },
   "auth": {
@@ -246,6 +262,9 @@
       "deactivate": "Deactivate",
       "edit": "Edit",
       "delete": "Delete"
+    },
+    "toast": {
+      "unexpectedResponseStatus": "The server returned an unexpected response status."
     }
   }
 }

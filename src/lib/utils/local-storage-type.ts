@@ -5,4 +5,5 @@ export interface UserDataLocalStorageInterface {
   email: string;
   role: USER_ROLE;
   username: string;
+  doctorProfileCompleted: boolean;
 }

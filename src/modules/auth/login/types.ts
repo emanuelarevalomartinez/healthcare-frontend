@@ -1,4 +1,5 @@
 import { USER_ROLE } from "@/lib";
+import { DoctorApiResponse } from "@/modules/doctors/types";
 
 export interface LoginApiResponse {
   id: string;
@@ -6,6 +7,7 @@ export interface LoginApiResponse {
   email: string;
   role: USER_ROLE;
   active: boolean;
+  doctor: DoctorApiResponse | null;
   createdAt: string;
   updatedAt: string;
   lastLogin: string;

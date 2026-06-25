@@ -17,9 +17,6 @@ export function DoctorForm({ mode, doctorData, openDetails, setOpenDetails }: Pr
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.doctors;
 
-  // TODO esto es para no cerrar el modal hasta que se termine con el formulario
-  // preventOutsideClose
-
   const title = mode === "create" ? t.createProfileTitle : t.completeProfileTitle;
   const description = mode === "create" ? t.createProfileDescription : t.completeProfileDescription;
 
@@ -32,6 +29,7 @@ export function DoctorForm({ mode, doctorData, openDetails, setOpenDetails }: Pr
         description={description}
         className="sm:min-w-xl"
         showCloseButton={false}
+        preventOutsideClose
       >
         <ItemDoctorForm mode={mode} doctorData={doctorData} setOpenDetails={setOpenDetails} />
       </DialogWrapper>

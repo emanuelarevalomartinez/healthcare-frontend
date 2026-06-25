@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormFieldInput } from "@/components/customs/form-field-input";
 
 import { createDoctor, updateDoctor } from "../services";
-import { DoctorApiResponse, DoctorCreateRequest } from "../types";
-import { getUserDataLocalStore } from "@/lib/utils/local-storage";
-import { DoctorFormMode, getErrorMessage } from "@/lib";
+import {
+  DoctorApiResponse,
+  DoctorCreateRequest,
+  DoctorUpdateRequest,
+} from "../types";
+import {
+  getUserDataLocalStore,
+  setUserDataLocalStore,
+} from "@/lib/utils/local-storage";
+import { DoctorFormMode, getErrorMessage, useLanguage } from "@/lib";
+import {
+  DoctorSchema,
+  getCreateDoctorSchema,
+  getUpdateDoctorSchema,
+} from "./schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
   mode: DoctorFormMode;
@@ -20,67 +33,89 @@ interface Props {
   doctorData: DoctorApiResponse | null;
 }
 
-interface DoctorFormValues {
-  specialty: string;
-  licenseNumber: string;
-  defaultConsultationDuration: number;
-}
-
 export function ItemDoctorForm({ mode, setOpenDetails, doctorData }: Props) {
+  const { dictionary } = useLanguage();
+  const t = dictionary.dashboard.doctors;
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const user = getUserDataLocalStore();
+  const isCompleteMode = mode === "complete";
+
+  const currentSchema = useMemo(() => {
+    return isCompleteMode
+      ? getUpdateDoctorSchema(dictionary)
+      : getCreateDoctorSchema(dictionary);
+  }, [dictionary, isCompleteMode]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<DoctorFormValues>({
+  } = useForm<DoctorSchema>({
+    resolver: zodResolver(currentSchema) as Resolver<DoctorSchema>,
     defaultValues: {
       specialty: doctorData?.specialty ?? "",
-
       licenseNumber: doctorData?.licenseNumber ?? "",
-
       defaultConsultationDuration:
         doctorData?.defaultConsultationDuration ?? 30,
     },
   });
 
-  async function onSubmit(data: DoctorFormValues) {
+  async function onSubmit(data: DoctorSchema) {
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
+      const user = getUserDataLocalStore();
 
-      if (doctorData) {
+      if (!user) {
+        throw new Error("User not found");
+      }
 
-         if (user) {
-          const payload: DoctorCreateRequest = {
-            userId: user.id,
-            specialty: data.specialty,
-            licenseNumber: data.licenseNumber,
-            defaultConsultationDuration: data.defaultConsultationDuration,
-          };
+      if (isCompleteMode && doctorData) {
+        const payload: DoctorUpdateRequest = {
+          specialty: data.specialty,
+          licenseNumber: data.licenseNumber,
+          defaultConsultationDuration: data.defaultConsultationDuration,
+        };
 
-          await updateDoctor( doctorData.id,payload);
+        try {
+          const response = await updateDoctor(doctorData.id, payload);
 
-          toast.success("Doctor actualizado correctamente");
+          if (response.status === 200) {
+            user.doctorProfileCompleted = true;
+            setUserDataLocalStore(user);
+            toast.success(t.toastUpdateSuccess);
+            setOpenDetails(false);
+          } else {
+            toast.error(dictionary.components.toast.unexpectedResponseStatus);
+          }
+        } catch (error) {
+          toast.error(getErrorMessage(error));
         }
-
       } else {
-        if (user) {
-          const payload: DoctorCreateRequest = {
-            userId: user.id,
-            specialty: data.specialty,
-            licenseNumber: data.licenseNumber,
-            defaultConsultationDuration: data.defaultConsultationDuration,
-          };
+        const payload: DoctorCreateRequest = {
+          userId: user.id,
+          specialty: data.specialty,
+          licenseNumber: data.licenseNumber,
+          defaultConsultationDuration: data.defaultConsultationDuration,
+        };
 
-          await createDoctor(payload);
+        try {
+          const response = await createDoctor(payload);
 
-          toast.success("Doctor creado correctamente");
+          if (response.status === 201) {
+            user.doctorProfileCompleted = true;
+            setUserDataLocalStore(user);
+            toast.success(t.toastSuccess);
+            setOpenDetails(false);
+          } else {
+            toast.error(dictionary.components.toast.unexpectedResponseStatus);
+          }
+        } catch (error) {
+          toast.error(getErrorMessage(error));
         }
       }
-      setOpenDetails(false);
     } catch (error) {
       toast.error(getErrorMessage(error));
     } finally {
@@ -89,100 +124,41 @@ export function ItemDoctorForm({ mode, setOpenDetails, doctorData }: Props) {
   }
 
   return (
-    <Card className="w-full">
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Card className="border border-border">
+        <CardContent className="grid gap-4 pt-6">
           <FormFieldInput
             id="specialty"
-            label="Especialidad"
-            placeholder="Cardiología"
-            register={register("specialty", {
-              required: "La especialidad es obligatoria",
-            })}
+            label={t.specialtyLabel}
+            placeholder={t.specialtyPlaceholder}
+            register={register("specialty")}
             error={errors.specialty?.message}
           />
 
           <FormFieldInput
             id="licenseNumber"
-            label="Número de licencia"
-            placeholder="MED-12345"
-            register={register("licenseNumber", {
-              required: "La licencia es obligatoria",
-            })}
+            label={t.licenseNumberLabel}
+            placeholder={t.licenseNumberPlaceholder}
+            register={register("licenseNumber")}
             error={errors.licenseNumber?.message}
           />
 
           <FormFieldInput
             id="defaultConsultationDuration"
             type="number"
-            label="Duración de consulta (min)"
-            placeholder="30"
+            label={t.defaultConsultationDurationLabel}
+            placeholder={t.defaultConsultationDurationPlaceholder}
             register={register("defaultConsultationDuration", {
               valueAsNumber: true,
-              required: "La duración es obligatoria",
-              min: {
-                value: 1,
-                message: "Debe ser mayor que cero",
-              },
             })}
             error={errors.defaultConsultationDuration?.message}
           />
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Guardando..." : `${mode == "create" ? "Guardar" : "Actualizar"}`}
+            {isLoading ? t.saving : mode === "create" ? t.save : t.update}
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </form>
   );
-
-  /*  return (
-  <form
-    onSubmit={handleSubmit(onSubmit)}
-    className="grid gap-4"
-  >
-    <FormFieldInput
-      id="specialty"
-      label="Especialidad"
-      placeholder="Cardiología"
-      register={register("specialty", {
-        required: "La especialidad es obligatoria",
-      })}
-      error={errors.specialty?.message}
-    />
-
-    <FormFieldInput
-      id="licenseNumber"
-      label="Número de licencia"
-      placeholder="MED-12345"
-      register={register("licenseNumber", {
-        required: "La licencia es obligatoria",
-      })}
-      error={errors.licenseNumber?.message}
-    />
-
-    <FormFieldInput
-      id="defaultConsultationDuration"
-      type="number"
-      label="Duración de consulta (min)"
-      placeholder="30"
-      register={register("defaultConsultationDuration", {
-        valueAsNumber: true,
-        required: "La duración es obligatoria",
-        min: {
-          value: 1,
-          message: "Debe ser mayor que cero",
-        },
-      })}
-      error={errors.defaultConsultationDuration?.message}
-    />
-
-    <Button
-      type="submit"
-      disabled={isLoading}
-    >
-      {isLoading ? "Guardando..." : "Guardar"}
-    </Button>
-  </form>
-); */
 }

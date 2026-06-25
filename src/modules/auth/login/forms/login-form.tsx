@@ -68,6 +68,7 @@ export default function LoginForm() {
           username: response.data.username,
           email: response.data.email,
           role: response.data.role,
+          doctorProfileCompleted: false,
         };
 
         setUserDataLocalStore(userInfo);

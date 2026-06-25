@@ -1,10 +1,13 @@
 "use client";
 
 import { TranslationDictionary } from "@/lib";
-import { getUserDataLocalStore } from "@/lib/utils/local-storage";
+import {
+  getUserDataLocalStore,
+  setUserDataLocalStore,
+} from "@/lib/utils/local-storage";
 import { findMyUser } from "@/modules/auth/services";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { DoctorApiResponse } from "../types";
 
 interface UseDoctorsActionsProps {
@@ -23,55 +26,39 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [openDetails, setOpenDetails] = useState(true);
 
-  /*  const fetchMyUser = useCallback(async () => {
-    try {
-    //  if (!user) return;
-
-      const response = await findMyUser();
-
-      setUserData(response.data);
-
-      const doctor = response.data?.doctor;
-
-      if (doctor && doctor.createdBy === user?.id) {
-        setCanCreateDoctor(true);
-      } else {
-        setCanCreateDoctor(false);
-      }
-    } catch (error) {
-      console.error("Error to load the users: ", error);
-    }
-  }, [user]); */
-
   const fetchMyUser = async () => {
-    try {
-      if (!user) {
+    if (!user?.doctorProfileCompleted) {
+      try {
+        if (!user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await findMyUser();
+
+        const doctor = response.data?.doctor;
+        setDoctorData(doctor);
+
+        if (!doctor) {
+          setShowDoctorForm(true);
+          setIsNewDoctor(true);
+          return;
+        }
+
+        if (doctor.modifiedBy !== user.id) {
+          setShowDoctorForm(true);
+          setIsNewDoctor(false);
+          return;
+        }
+
+        setShowDoctorForm(false);
+        user.doctorProfileCompleted = true;
+        setUserDataLocalStore(user);
+      } catch (error) {
+        console.error("Error to load the users: ", error);
+      } finally {
         setIsLoading(false);
-        return;
       }
-
-      const response = await findMyUser();
-
-      const doctor = response.data?.doctor;
-      setDoctorData(doctor);
-
-      if (!doctor) {
-        setShowDoctorForm(true);
-        setIsNewDoctor(true);
-        return;
-      }
-
-      if (doctor.modifiedBy !== user.id) {
-        setShowDoctorForm(true);
-        setIsNewDoctor(false);
-        return;
-      }
-
-      setShowDoctorForm(false);
-    } catch (error) {
-      console.error("Error to load the users: ", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -82,6 +69,6 @@ export function useDoctorsActions({ dictionary }: UseDoctorsActionsProps) {
     fetchMyUser,
     isNewDoctor,
     openDetails,
-    setOpenDetails
+    setOpenDetails,
   };
 }
