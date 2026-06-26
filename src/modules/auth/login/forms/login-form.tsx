@@ -13,8 +13,8 @@ import { Label } from "@/components/ui/label";
 import { getErrorMessage, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { getLoginUserSchema, LoginUserSchema } from "./schema";
 import { loginUser } from "../services";
 import { toast } from "sonner";
@@ -78,8 +78,6 @@ export default function LoginForm() {
       }
     } catch (error) {
       toast.error(getErrorMessage(error));
-
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +90,52 @@ export default function LoginForm() {
       element.focus();
     }
   };
+
+  /* const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("reason") === "session_expired") {
+      toast.error("La sesión ha expirado.");
+    }
+  }, []); */
+
+ /*  const searchParams = useSearchParams();
+const reason = searchParams.get("reason");
+
+useEffect(() => {
+  if (reason === "session_expired") {
+    toast.error("Sesión expirada");
+  }
+}, [reason]); */
+
+const searchParams = useSearchParams();
+
+const hasHandled = useRef(false);
+
+useEffect(() => {
+  if (hasHandled.current) return;
+
+  const reason = searchParams.get("reason");
+
+  if (reason === "session_expired") {
+    hasHandled.current = true;
+
+    toast.error("La sesión ha expirado.");
+    router.replace(routes.auth.login);
+  }
+}, [router, searchParams]);
+
+/* useEffect(() => {
+  const reason = searchParams.get("reason");
+
+  if (reason === "session_expired") {
+    
+
+    router.replace(routes.auth.login);
+
+    toast.error("La sesión ha expirado.");
+  }
+}, [router, searchParams]); */
 
   return (
     <>

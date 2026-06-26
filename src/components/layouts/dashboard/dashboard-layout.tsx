@@ -9,6 +9,7 @@ import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
+import { toast } from "sonner";
 
 export default async function DashBoardLayout({
   children,
@@ -16,8 +17,11 @@ export default async function DashBoardLayout({
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-  if (!accessToken) {
-    redirect(routes.auth.login);
+  if (accessToken == "") {
+   // toast("Sesion cerrada");
+   console.log("puta mierdaaaaaaaaa")
+   redirect(`${routes.auth.login}?reason=session_expired`);
+  //  redirect(routes.auth.login);
   }
 
   return (

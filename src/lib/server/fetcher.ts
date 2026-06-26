@@ -1,16 +1,18 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { apiRoutes } from "../routes";
-import { COOKIE_KEYS } from "../utils/cookies-types";
+import { apiRoutes, routes } from "../routes";
+import { COOKIE_KEYS, UserAuthCredentialsInterface } from "../utils/cookies-types";
 import { ApiResponse } from "./api-response";
+import { redirect } from "next/navigation";
+import { setUserAuthCredentialsCookies } from "../utils/cookies";
 
 export const fetcher = async <T = any>(
   url: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> => {
   const cookieStore = await cookies();
-  
+
   const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
   const refreshToken = cookieStore.get(COOKIE_KEYS.REFRESH_TOKEN)?.value;
 
@@ -31,7 +33,11 @@ export const fetcher = async <T = any>(
   let response = await fetch(url, finalOptions);
 
   if (response.status === 401 && refreshToken) {
+
+    let credentials: UserAuthCredentialsInterface;
+
     try {
+
       const refreshResponse = await fetch(apiRoutes.auth.refresh, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,41 +45,49 @@ export const fetcher = async <T = any>(
       });
 
       if (!refreshResponse.ok) {
-        throw new Error("Refresh token inválido");
+         console.log("error de refresh token");
+        throw new Error("Invalid refresh token");
+
       }
 
       const tokenData = await refreshResponse.json();
-      const newAccessToken = tokenData.accessToken || tokenData.data?.accessToken;
-      const newRefreshToken = tokenData.refreshToken || tokenData.data?.refreshToken || refreshToken;
+      const newAccessToken = tokenData.accessToken;
+      const newRefreshToken = tokenData.refreshToken;
 
-      cookieStore.set(COOKIE_KEYS.ACCESS_TOKEN, newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
+     credentials = {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      }
 
-      cookieStore.set(COOKIE_KEYS.REFRESH_TOKEN, newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      });
+      setUserAuthCredentialsCookies(credentials);
 
       headers.set("Authorization", `Bearer ${newAccessToken}`);
       response = await fetch(url, finalOptions);
-
     } catch (error) {
-      cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
-      cookieStore.delete(COOKIE_KEYS.REFRESH_TOKEN);
-      throw new Error("SESSION_EXPIRED");
+      /* cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
+      cookieStore.delete(COOKIE_KEYS.REFRESH_TOKEN); */
+
+      credentials = {
+        accessToken: "",
+        refreshToken: ""
+      }
+
+   setUserAuthCredentialsCookies(credentials);
+
+      console.log("sesion expirada");
+redirect(`${routes.auth.login}?reason=session_expired`);
+     // throw new Error("SESSION_EXPIRED");
+    // throw new ServerSessionExpiredError();
     }
   }
 
   const data: ApiResponse<T> = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Error en la petición del servidor");
+
+    console.log( "response del error de fuera 2", response);
+
+    throw new Error(data.message || "Server request error");
   }
 
   return data;

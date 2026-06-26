@@ -28,9 +28,11 @@ export const getAllUsers = async (page: number = 0, size: number = 10) => {
 
   const urlWithParams = `${apiRoutes.users.list}?${queryParams.toString()}`;
 
-  return await fetcher<PaginatedData<UserApiResponse>>(urlWithParams, {
+  const response = await fetcher<PaginatedData<UserApiResponse>>(urlWithParams, {
     ...GET_OPTIONS,
   });
+
+  return response;
 };
 
 export const findUserById = async (id: string) => {

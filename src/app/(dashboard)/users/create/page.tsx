@@ -13,6 +13,7 @@ export default async function () {
         isActive: false,
         doctor: {
           id: "",
+          modifiedBy: "",
           specialty: "",
           licenseNumber: "",
           defaultConsultationDuration: undefined as unknown as number

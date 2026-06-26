@@ -20,6 +20,7 @@ export default async function ({ params }: PageProps) {
         isActive: response.data.isActive,
         doctor: {
           id: response.data.doctor?.id || "",
+          modifiedBy: "",
           specialty: response.data.doctor?.specialty || "",
           licenseNumber: response.data.doctor?.licenseNumber || "",
           defaultConsultationDuration:
