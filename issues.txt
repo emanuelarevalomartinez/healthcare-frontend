@@ -3,6 +3,7 @@
 // TODO
 
 // en el midleware hay que excluir las rutas asi como lasa carpetas dentro de public para que se vean
+corregir cuando el usuario regresa de ver lo detalles y ocurre un error inesperado
 
 
 // terminar de manejar y controlar el tema de expiracion del token y el error raro que lanza cuando falla la autenticacion
