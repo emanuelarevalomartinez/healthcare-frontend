@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { COOKIE_KEYS, UserAuthCredentialsInterface } from "./cookies-types";
+import { FIFTEEN_DAYS_IN_SECONDS, ONE_DAY_IN_SECONDS } from "../constants";
 
 
 export const setUserAuthCredentialsCookies = async (
@@ -15,7 +16,7 @@ export const setUserAuthCredentialsCookies = async (
     secure: isProduction,
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24, // 1 día
+    maxAge: ONE_DAY_IN_SECONDS,
   });
 
   cookieStore.set(COOKIE_KEYS.REFRESH_TOKEN, credentials.refreshToken, {
@@ -23,7 +24,7 @@ export const setUserAuthCredentialsCookies = async (
     secure: isProduction,
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 dias
+    maxAge: FIFTEEN_DAYS_IN_SECONDS,
   });
 };
 

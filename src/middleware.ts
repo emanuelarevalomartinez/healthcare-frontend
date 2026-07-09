@@ -1,7 +1,12 @@
-// middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import { COOKIE_KEYS } from "@/lib/utils/cookies-types";
-import { API_URL } from "@/lib/config/config";
+import { apiRoutes, FIFTEEN_DAYS_IN_SECONDS, ONE_DAY_IN_SECONDS, QUERY_PARAMS, REDIRECT_REASONS, routes } from "./lib";
+
+const PUBLIC_ROUTES = [routes.auth.login, routes.auth.register];
+
+function isPublicRoute(pathname: string) {
+  return PUBLIC_ROUTES.includes(pathname);
+}
 
 function isTokenExpired(token: string, bufferSeconds = 5): boolean {
   try {
@@ -16,6 +21,12 @@ function isTokenExpired(token: string, bufferSeconds = 5): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
   const accessToken = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(COOKIE_KEYS.REFRESH_TOKEN)?.value;
 
@@ -23,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   if (accessTokenInvalid && refreshToken) {
     try {
-      const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
+      const refreshResponse = await fetch(apiRoutes.auth.refresh, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
@@ -40,41 +51,58 @@ export async function middleware(request: NextRequest) {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
-          maxAge: 60 * 60 * 24,
+          maxAge: ONE_DAY_IN_SECONDS,
           path: "/",
         });
         response.cookies.set(COOKIE_KEYS.REFRESH_TOKEN, newRefreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
-          maxAge: 60 * 60 * 24 * 7,
+          maxAge: FIFTEEN_DAYS_IN_SECONDS,
           path: "/",
         });
 
         return response;
       } else {
-        const response = NextResponse.redirect(
-          new URL("/auth/login?reason=session_expired", request.url)
+        const loginUrl = new URL(routes.auth.login, request.url);
+
+        loginUrl.searchParams.set(
+          QUERY_PARAMS.REASON,
+          REDIRECT_REASONS.SESSION_EXPIRED
         );
+
+        const response = NextResponse.redirect(loginUrl);
+
         response.cookies.delete(COOKIE_KEYS.ACCESS_TOKEN);
         response.cookies.delete(COOKIE_KEYS.REFRESH_TOKEN);
+
         return response;
       }
     } catch (error) {
-      return NextResponse.redirect(
-        new URL("/auth/login?reason=session_expired", request.url)
+      const loginUrl = new URL(routes.auth.login, request.url);
+
+      loginUrl.searchParams.set(
+        QUERY_PARAMS.REASON,
+        REDIRECT_REASONS.SESSION_EXPIRED
       );
+
+      return NextResponse.redirect(loginUrl);
     }
   }
   if (accessTokenInvalid && !refreshToken) {
-    return NextResponse.redirect(
-      new URL("/auth/login?reason=session_expired", request.url)
+    const loginUrl = new URL(routes.auth.login, request.url);
+
+    loginUrl.searchParams.set(
+      QUERY_PARAMS.REASON,
+      REDIRECT_REASONS.SESSION_EXPIRED
     );
+
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/users/:path*", "/dashboard/:path*"],
+  matcher: ["/((?!api|_next|favicon.ico|icons).*)"],
 };

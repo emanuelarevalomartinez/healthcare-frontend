@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getErrorMessage, useLanguage } from "@/lib";
+import { getErrorMessage, REDIRECT_REASONS, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,7 +25,6 @@ import { setUserAuthCredentialsCookies } from "@/lib/utils/cookies";
 import { UserAuthCredentialsInterface } from "@/lib/utils/cookies-types";
 
 export default function LoginForm() {
-
   const { dictionary } = useLanguage();
 
   const searchParams = useSearchParams();
@@ -90,12 +89,10 @@ export default function LoginForm() {
   };
 
   useEffect(() => {
-
     const reason = searchParams.get("reason");
 
-    if (reason === "session_expired") {
-
-      toast.error("La sesión ha expirado.");
+    if (reason === REDIRECT_REASONS.SESSION_EXPIRED) {
+      toast.error(dictionary.components.toast.sessionExpired);
       router.replace(routes.auth.login);
     }
   }, [router, searchParams]);

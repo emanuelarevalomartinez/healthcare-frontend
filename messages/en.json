@@ -264,7 +264,8 @@
       "delete": "Delete"
     },
     "toast": {
-      "unexpectedResponseStatus": "The server returned an unexpected response status."
+      "unexpectedResponseStatus": "The server returned an unexpected response status.",
+      "sessionExpired": "Your session has expired. Please sign in again."
     }
   }
 }

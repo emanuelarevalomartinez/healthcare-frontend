@@ -1,6 +1,6 @@
 import { PatientForm } from "@/modules/patients/forms/patient-form";
 
-export default async function NewPatientPage() {
+export default async function Page() {
   return (
     <div>
       <PatientForm
@@ -18,7 +18,7 @@ export default async function NewPatientPage() {
           address: "",
           notes: "",
           createdById: "",
-          createdAt: undefined as unknown as Date,
+          createdAt: undefined as unknown as string,
         }}
       />
     </div>

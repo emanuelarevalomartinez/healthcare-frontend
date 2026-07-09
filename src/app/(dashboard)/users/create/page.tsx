@@ -1,7 +1,7 @@
 import { USER_ROLE } from "@/lib";
 import { UserForm } from "@/modules/user/forms/user-form";
 
-export default async function () {
+export default async function Page() {
   return (
     <UserForm
       mode="create"
