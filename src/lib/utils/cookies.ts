@@ -13,15 +13,17 @@ export const setUserAuthCredentialsCookies = async (
   cookieStore.set(COOKIE_KEYS.ACCESS_TOKEN, credentials.accessToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
+    maxAge: 60 * 60 * 24, // 1 día
   });
 
   cookieStore.set(COOKIE_KEYS.REFRESH_TOKEN, credentials.refreshToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 7 dias
   });
 };
 

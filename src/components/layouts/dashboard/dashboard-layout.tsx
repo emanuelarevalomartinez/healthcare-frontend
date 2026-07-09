@@ -2,27 +2,13 @@ import { AppSidebar } from "@/components/customs/app-sidebar";
 import { SheetWrapper } from "@/components/customs/sheet-wrapper";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { routes } from "@/lib";
-import { COOKIE_KEYS } from "@/lib/utils/cookies-types";
 import { DoctorRender } from "@/modules/doctors/forms/doctor-render";
 import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
-import { toast } from "sonner";
 
 export default async function DashBoardLayout({
   children,
 }: Readonly<PropsWithChildren>) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
-
-  if (accessToken == "") {
-   // toast("Sesion cerrada");
-   console.log("puta mierdaaaaaaaaa")
-   redirect(`${routes.auth.login}?reason=session_expired`);
-  //  redirect(routes.auth.login);
-  }
 
   return (
     <TooltipProvider>

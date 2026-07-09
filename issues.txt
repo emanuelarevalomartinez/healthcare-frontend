@@ -2,6 +2,12 @@
 
 // TODO
 
+// colocar page en todas las rutas dentro de next para el router dom
+/ hacer constante lo de session expired y hacerla comun colocar la url de refresh dentro de el middle con la ruta de la api de constantes
+// comprovar por consola que se usa tanto el token como el refresh
+// pomner el tast de sesion expiada en los idiomas
+
+
 // terminar de manejar y controlar el tema de expiracion del token y el error raro que lanza cuando falla la autenticacion
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 

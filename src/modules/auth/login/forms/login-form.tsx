@@ -14,23 +14,21 @@ import { getErrorMessage, useLanguage } from "@/lib";
 import { routes } from "@/lib/routes/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getLoginUserSchema, LoginUserSchema } from "./schema";
 import { loginUser } from "../services";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import {
-  setUserDataLocalStore,
-} from "@/lib/utils/local-storage";
-import {
-  UserDataLocalStorageInterface,
-} from "@/lib/utils/local-storage-type";
+import { setUserDataLocalStore } from "@/lib/utils/local-storage";
+import { UserDataLocalStorageInterface } from "@/lib/utils/local-storage-type";
 import { setUserAuthCredentialsCookies } from "@/lib/utils/cookies";
 import { UserAuthCredentialsInterface } from "@/lib/utils/cookies-types";
 
 export default function LoginForm() {
 
   const { dictionary } = useLanguage();
+
+  const searchParams = useSearchParams();
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -91,51 +89,16 @@ export default function LoginForm() {
     }
   };
 
-  /* const searchParams = useSearchParams();
-
   useEffect(() => {
-    if (searchParams.get("reason") === "session_expired") {
+
+    const reason = searchParams.get("reason");
+
+    if (reason === "session_expired") {
+
       toast.error("La sesión ha expirado.");
+      router.replace(routes.auth.login);
     }
-  }, []); */
-
- /*  const searchParams = useSearchParams();
-const reason = searchParams.get("reason");
-
-useEffect(() => {
-  if (reason === "session_expired") {
-    toast.error("Sesión expirada");
-  }
-}, [reason]); */
-
-const searchParams = useSearchParams();
-
-const hasHandled = useRef(false);
-
-useEffect(() => {
-  if (hasHandled.current) return;
-
-  const reason = searchParams.get("reason");
-
-  if (reason === "session_expired") {
-    hasHandled.current = true;
-
-    toast.error("La sesión ha expirado.");
-    router.replace(routes.auth.login);
-  }
-}, [router, searchParams]);
-
-/* useEffect(() => {
-  const reason = searchParams.get("reason");
-
-  if (reason === "session_expired") {
-    
-
-    router.replace(routes.auth.login);
-
-    toast.error("La sesión ha expirado.");
-  }
-}, [router, searchParams]); */
+  }, [router, searchParams]);
 
   return (
     <>
