@@ -6,6 +6,14 @@ export enum USER_ROLE {
   RECEPTIONIST = "RECEPTIONIST",
 }
 
+export enum APPOINTMENT_STATUS {
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  ATTENDED = "ATTENDED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
+}
+
 export type FormMode = "create" | "edit" | "details";
 export type DoctorFormMode = "create" | "complete";
 

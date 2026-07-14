@@ -2,13 +2,20 @@
 
 // TODO
 
-// en el midleware hay que excluir las rutas asi como lasa carpetas dentro de public para que se vean
-corregir cuando el usuario regresa de ver lo detalles y ocurre un error inesperado
-
-
-// terminar de manejar y controlar el tema de expiracion del token y el error raro que lanza cuando falla la autenticacion
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 
  // hacer un mejor responsive de las vistas de autenticacion
 
- // verificar que el fetchet ejecute la accion de usar el refresh token correctamente
+
+ // en donde se muestra la lista de citas hay que colocar debajo una paginacion asi como un scroll segun la cantidad que aya en el dia
+
+ // incluir texto de traduccion en la seccion de citas
+
+ // añadir la parte de ver detalles
+
+ hacer que los filtros se superpongan a la vista de otro modo no tiene sentido tener un calendario
+
+ // mover la logica y demas de list hacia el action y dejarlo limpio
+
+ // trabajar en los filtros y las acciones de eliminar y actualizar
+

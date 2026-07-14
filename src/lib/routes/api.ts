@@ -36,4 +36,12 @@ export const apiRoutes = {
     delete: `${API_URL}/doctors/:id`,
     deleteDoctorByUserId: `${API_URL}/doctors/delete-with-user/:userId`,
   },
+   appointments: {
+    list: `${API_URL}/appointments`,
+    filter: `${API_URL}/appointments/filter`,
+    create: `${API_URL}/appointments`,
+    edit: `${API_URL}/appointments/:id`,
+    details: `${API_URL}/appointments/:id`,
+    delete: `${API_URL}/appointments/:id`,
+  },
 };

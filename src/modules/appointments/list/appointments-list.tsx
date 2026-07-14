@@ -5,133 +5,45 @@ import { SectionHeader } from "@/components/customs/secction-header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { UserPlusIcon } from "lucide-react";
-import { routes } from "@/lib";
+import { routes, useLanguage } from "@/lib";
 import { DialogWrapper } from "@/components/customs/dialog-wrapper";
-import { useState } from "react";
-import { isSameDay } from "date-fns";
+import { useEffect, useState } from "react";
 import { AppointmentDetails } from "../details/appointments-details";
-
-export interface Appointment {
-  id: string;
-
-  patient: AppointmentPatient;
-
-  doctor: AppointmentDoctor;
-
-  appointmentDateTime: string;
-
-  durationMinutes: number;
-
-  consultationReason: string;
-
-  status: AppointmentStatus;
-
-  cancellationReason?: string;
-
-  createdAt: string;
-
-  confirmedAt?: string;
-
-  attendedAt?: string;
-
-  notes?: string;
-}
-
-export interface AppointmentPatient {
-  id: string;
-  fullName: string;
-  documentNumber: string;
-  phone: string;
-}
-
-export interface AppointmentDoctor {
-  id: string;
-  fullName: string;
-  specialty: string;
-}
-
-export type AppointmentStatus =
-  | "SCHEDULED"
-  | "CONFIRMED"
-  | "IN_PROGRESS"
-  | "ATTENDED"
-  | "CANCELLED"
-  | "NO_SHOW";
+import { AppointmentSearch } from "./appointment-search";
+import { useAppointmentActions } from "./appointment-actions";
+import {
+  formatDisplayDateTimeToLocaleString,
+  formatSelectedDateToInputString,
+} from "@/lib/utils/functions";
+import { AppointmentApiResponse } from "../types";
 
 export function AppointmentsList() {
+  const { dictionary } = useLanguage();
+  const t = dictionary.dashboard.appointments;
   const router = useRouter();
 
   const [openDetails, setOpenDetails] = useState(false);
-
-  const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
+    useState<AppointmentApiResponse | null>(null);
 
-  const appointments: Appointment[] = [
-    {
-      id: "1",
+  const {
+    appointmentsData,
+    isAlertOpen,
+    setIsAlertOpen,
+    setCurrentPage,
+    selectedDate,
+    setSelectedDate,
+    fetchAppointmentsFiltered,
+    isLoading,
+  } = useAppointmentActions({ dictionary });
 
-      patient: {
-        id: "1",
-        fullName: "Juan Pérez",
-        documentNumber: "12345678",
-        phone: "555111111",
-      },
+  useEffect(() => {
+    fetchAppointmentsFiltered();
+  }, [fetchAppointmentsFiltered]);
 
-      doctor: {
-        id: "1",
-        fullName: "Dr. García",
-        specialty: "Cardiología",
-      },
-
-      appointmentDateTime: "2026-06-13T09:00:00",
-
-      durationMinutes: 30,
-
-      consultationReason: "Dolor en el pecho",
-
-      status: "CONFIRMED",
-
-      createdAt: "2026-06-10T08:00:00",
-
-      notes: "Paciente recurrente",
-    },
-
-    {
-      id: "2",
-
-      patient: {
-        id: "2",
-        fullName: "María López",
-        documentNumber: "87654321",
-        phone: "555222222",
-      },
-
-      doctor: {
-        id: "1",
-        fullName: "Dr. García",
-        specialty: "Cardiología",
-      },
-
-      appointmentDateTime: "2026-06-13T10:00:00",
-
-      durationMinutes: 30,
-
-      consultationReason: "Chequeo general",
-
-      status: "SCHEDULED",
-
-      createdAt: "2026-06-10T08:30:00",
-
-      notes: "",
-    },
-  ];
-
-  const appointmentsForSelectedDay = appointments.filter((appointment) =>
-    selectedDate
-      ? isSameDay(new Date(appointment.appointmentDateTime), selectedDate)
-      : false
-  );
+  const appointments = appointmentsData?.content ?? [];
+  const totalAppointments = appointmentsData?.totalElements ?? 0;
+  const hasAppointments = appointments.length > 0;
 
   return (
     <>
@@ -145,6 +57,7 @@ export function AppointmentsList() {
             <AppointmentDetails appointment={selectedAppointment} />
           )}
         </DialogWrapper>
+
         <div className="flex flex-col w-full">
           <div>
             <SectionHeader
@@ -160,6 +73,11 @@ export function AppointmentsList() {
               </Button>
             </SectionHeader>
           </div>
+
+          {/*  <div>
+            <AppointmentSearch />
+          </div> */}
+
           <div className="flex gap-1 pt-4">
             <div className="flex w-2/3">
               <Calendar
@@ -170,41 +88,97 @@ export function AppointmentsList() {
                 mode="single"
                 selected={selectedDate}
                 onSelect={(date) => {
-                  setSelectedDate(date);
-                  setSelectedAppointment(null);
+                  if (date) {
+                    setSelectedDate(date);
+                  }
                 }}
               />
             </div>
 
-            {/*  <div className="flex w-1/3">
-              <div className="rounded-lg border border-border w-full py-2 px-4">
-                <p> Descripcion de la cita </p>
-                <p> Datos relevantes </p>
-                <p> Hora y demas datos </p>
-              </div>
-            </div> */}
+            {/* ✅ LISTA DE CITAS */}
             <div className="w-1/3 border border-border rounded-lg p-4">
-              {appointmentsForSelectedDay.map((appointment) => (
-                <button
-                  key={appointment.id}
-                  className="w-full border border-border rounded-md p-2 mb-2 text-left"
-                  onClick={() => {
-                    setSelectedAppointment(appointment);
-                    setOpenDetails(true);
-                  }}
-                >
-                  <div>
-                    {new Date(
-                      appointment.appointmentDateTime
-                    ).toLocaleTimeString("es", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">
+                  Citas del {formatSelectedDateToInputString(selectedDate)}
+                </h3>
+                <span className="text-sm text-muted-foreground">
+                  {totalAppointments} cita{totalAppointments !== 1 ? 's' : ''}
+                </span>
+              </div>
 
-                  <div>{appointment.patient.fullName}</div>
-                </button>
-              ))}
+              {isLoading ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  Cargando citas...
+                </div>
+              ) : !hasAppointments ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No hay citas para este día
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                  {appointments.map((appointment) => (
+                    <button
+                      key={appointment.id}
+                      className="w-full border border-border rounded-md p-3 mb-2 text-left hover:bg-accent transition-colors"
+                      onClick={() => {
+                        setOpenDetails(true);
+                      }}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-medium">
+                            {formatDisplayDateTimeToLocaleString(
+                              appointment.appointmentDateTime
+                            )}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {appointment.consultationReason}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xs text-muted-foreground">
+                            {appointment.durationMinutes} min
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-1">
+                        <span
+                          className={`
+                          text-xs px-2 py-0.5 rounded-full
+                          ${
+                            appointment.status === "CONFIRMED"
+                              ? "bg-green-100 text-green-700"
+                              : ""
+                          }
+                          ${
+                            appointment.status === "SCHEDULED"
+                              ? "bg-blue-100 text-blue-700"
+                              : ""
+                          }
+                          ${
+                            appointment.status === "ATTENDED"
+                              ? "bg-gray-100 text-gray-700"
+                              : ""
+                          }
+                          ${
+                            appointment.status === "CANCELLED"
+                              ? "bg-red-100 text-red-700"
+                              : ""
+                          }
+                          ${
+                            appointment.status === "NO_SHOW"
+                              ? "bg-red-100 text-red-700"
+                              : ""
+                          }
+                        `}
+                        >
+                          {appointment.status}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

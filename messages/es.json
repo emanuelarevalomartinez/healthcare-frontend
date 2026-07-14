@@ -187,7 +187,8 @@
       },
       "toastSuccess": "El perfil médico se creó correctamente.",
       "toastUpdateSuccess": "El perfil médico se actualizó correctamente."
-    }
+    },
+    "appointments": {}
   },
   "auth": {
     "login": {

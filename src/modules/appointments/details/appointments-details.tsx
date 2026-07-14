@@ -1,8 +1,8 @@
-import { Appointment } from "../list/appointments-list";
+import { AppointmentApiResponse } from "../types";
 
 
 type Props = {
-  appointment: Appointment;
+  appointment: AppointmentApiResponse;
 };
 
 export function AppointmentDetails({
@@ -10,16 +10,6 @@ export function AppointmentDetails({
 }: Props) {
   return (
     <div className="space-y-4">
-
-      <div>
-        <strong>Paciente:</strong>
-        <p>{appointment.patient.fullName}</p>
-      </div>
-
-      <div>
-        <strong>Médico:</strong>
-        <p>{appointment.doctor.fullName}</p>
-      </div>
 
       <div>
         <strong>Motivo:</strong>
