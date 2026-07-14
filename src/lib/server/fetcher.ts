@@ -3,9 +3,6 @@
 import { cookies } from "next/headers";
 import { COOKIE_KEYS } from "../utils/cookies-types";
 import { ApiResponse } from "./api-response";
-import { routes } from "../routes";
-import { redirect } from "next/navigation";
-import { REDIRECT_REASONS } from "../constants";
 
 export const fetcher = async <T = any>(
   url: string,
@@ -21,10 +18,6 @@ export const fetcher = async <T = any>(
   if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
 
   const response = await fetch(url, { ...options, headers });
-
-  if (response.status === 401) {
-    redirect(`${routes.auth.login}?reason=${REDIRECT_REASONS.SESSION_EXPIRED}`);
-  }
 
   const data: ApiResponse<T> = await response.json();
 
