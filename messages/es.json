@@ -264,6 +264,9 @@
       "edit": "Editar",
       "delete": "Eliminar"
     },
+    "loading": {
+      "text": "Cargando"
+    },
     "toast": {
       "unexpectedResponseStatus": "El servidor devolvió un estado de respuesta inesperado.",
       "sessionExpired": "Tu sesión ha expirado. Inicia sesión nuevamente."
