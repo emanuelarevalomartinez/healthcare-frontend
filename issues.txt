@@ -6,16 +6,17 @@
 
  // hacer un mejor responsive de las vistas de autenticacion
 
+// añadir traduccion de la vista de detalles de una cita 
 
- // en donde se muestra la lista de citas hay que colocar debajo una paginacion asi como un scroll segun la cantidad que aya en el dia
+// añadir el crear una cita, editarla y eliminarla mediante las acciones
 
- // incluir texto de traduccion en la seccion de citas
+// ver que datos se van a mostrar de la cita
+
+
 
  // añadir la parte de ver detalles
 
  hacer que los filtros se superpongan a la vista de otro modo no tiene sentido tener un calendario
-
- // mover la logica y demas de list hacia el action y dejarlo limpio
 
  // trabajar en los filtros y las acciones de eliminar y actualizar
 

@@ -188,7 +188,23 @@
       "toastSuccess": "El perfil médico se creó correctamente.",
       "toastUpdateSuccess": "El perfil médico se actualizó correctamente."
     },
-    "appointments": {}
+    "appointments": {
+      "tableSectionTitle": "Horarios y citas",
+      "tableSectionSubtitle": "Gestiona y monitorea las citas.",
+      "createNewAppointmentButton": "Nueva Cita",
+      "status": {
+        "CONFIRMED": "Confirmada",
+        "SCHEDULED": "Agendada",
+        "ATTENDED": "Atendida",
+        "CANCELLED": "Cancelada",
+        "NO_SHOW": "No Asistió",
+        "PENDING": "Pendiente",
+        "RESCHEDULED": "Reagendada",
+        "COMPLETED": "Completada",
+        "IN_PROGRESS": "En Progreso",
+        "WAITING": "En Espera"
+      }
+    }
   },
   "auth": {
     "login": {

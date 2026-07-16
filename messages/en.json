@@ -188,7 +188,23 @@
       "toastSuccess": "Medical profile created successfully.",
       "toastUpdateSuccess": "Medical profile updated successfully."
     },
-    "appointments": {}
+    "appointments": {
+      "tableSectionTitle": "Schedules and Appointments",
+      "tableSectionSubtitle": "Manage and monitor appointments.",
+      "createNewAppointmentButton": "New Appointment",
+      "status": {
+        "CONFIRMED": "Confirmed",
+        "SCHEDULED": "Scheduled",
+        "ATTENDED": "Attended",
+        "CANCELLED": "Cancelled",
+        "NO_SHOW": "No Show",
+        "PENDING": "Pending",
+        "RESCHEDULED": "Rescheduled",
+        "COMPLETED": "Completed",
+        "IN_PROGRESS": "In Progress",
+        "WAITING": "Waiting"
+      }
+    }
   },
   "auth": {
     "login": {

@@ -13,5 +13,7 @@ export interface AppointmentApiResponse {
   confirmedAt: string;
   attendedAt: string;
   notes: string;
+  patientFullName: string;
+  doctorFullName: string;
 }
 

@@ -1,4 +1,6 @@
 import { format, parse } from "date-fns";
+import { APPOINTMENT_STATUS } from "../constants";
+import { BadgeType } from "@/components/customs/badge-wrapper";
 
 export function formatApiDateToInputString(date: string | Date | undefined | null): string {
   if (!date) return "";
@@ -46,3 +48,11 @@ export function formatDisplayDateToLocaleDateString(
     day: "2-digit",
   });
 }
+
+export const statusBadgeMap: Record<APPOINTMENT_STATUS, BadgeType> = {
+  CONFIRMED: "green",
+  SCHEDULED: "blue",
+  ATTENDED: "gray",
+  CANCELLED: "red",
+  NO_SHOW: "red",
+};

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Pagination,
@@ -17,6 +17,7 @@ interface TablePaginationProps {
   totalElements: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  showInfo?: boolean;
 }
 
 export function TablePagination({
@@ -25,8 +26,8 @@ export function TablePagination({
   totalElements,
   totalPages,
   onPageChange,
+  showInfo = true,
 }: TablePaginationProps) {
-
   const { dictionary } = useLanguage();
   const t = dictionary.components.pagination;
 
@@ -107,23 +108,30 @@ export function TablePagination({
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-4 px-1">
-      <p className="text-sm text-muted-foreground text-center sm:text-left">
-        {t.showing}
-        <span className="font-medium text-foreground px-1">
-          {startElement}
-        </span>{" "}
-        {t.to}
-        <span className="font-medium text-foreground px-1">
-          {endElement}
-        </span>{" "}
-        {t.of}
-        <span className="font-medium text-foreground px-1">
-          {totalElements}
-        </span>
-        {t.results}
-      </p>
+      {showInfo && (
+        <p className="text-sm text-muted-foreground text-center sm:text-left">
+          {t.showing}
+          <span className="font-medium text-foreground px-1">
+            {startElement}
+          </span>{" "}
+          {t.to}
+          <span className="font-medium text-foreground px-1">
+            {endElement}
+          </span>{" "}
+          {t.of}
+          <span className="font-medium text-foreground px-1">
+            {totalElements}
+          </span>
+          {t.results}
+        </p>
+      )}
 
-      <Pagination className="w-auto mx-0 justify-center">
+      <Pagination
+        className={cn(
+          "w-auto mx-0 justify-center",
+          !showInfo && "w-full justify-center"
+        )}
+      >
         <PaginationContent>
           <PaginationItem>
             <PaginationLink

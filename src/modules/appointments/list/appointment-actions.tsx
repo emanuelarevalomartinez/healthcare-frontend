@@ -16,8 +16,9 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
   const t = dictionary.dashboard.appointments;
 
+  const [openDetails, setOpenDetails] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentApiResponse | null>(null);
   const [appointmentsData, setAppointmentsData] = useState<PaginatedData<AppointmentApiResponse>>();
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -78,8 +79,10 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
 
   return {
     appointmentsData,
-    isAlertOpen,
-    setIsAlertOpen,
+    openDetails,
+    setOpenDetails,
+    selectedAppointment,
+    setSelectedAppointment,
     currentPage,
     setCurrentPage,
     isLoading,
