@@ -203,6 +203,9 @@
         "COMPLETED": "Completed",
         "IN_PROGRESS": "In Progress",
         "WAITING": "Waiting"
+      },
+      "validation": {
+        
       }
     }
   },

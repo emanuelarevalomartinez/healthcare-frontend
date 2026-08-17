@@ -1,7 +1,7 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
-import { DoctorApiResponse, DoctorCreateRequest, DoctorCreateWithUserRequest, DoctorUpdateRequest, DoctorUpdateWithUserRequest } from "./types";
+import { DoctorApiResponse, DoctorCreateRequest, DoctorCreateWithUserRequest, DoctorFilteredApiResponse, DoctorUpdateRequest, DoctorUpdateWithUserRequest } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
 
 export const createDoctor = async (data: DoctorCreateRequest) => {
@@ -49,6 +49,22 @@ export const getAllDoctors = async (page: number = 0, size: number = 10) => {
   return await fetcher<PaginatedData<DoctorApiResponse>>(urlWithParams, {
     ...GET_OPTIONS,
   });
+};
+
+export const getAllDoctorsFiltered = async (page: number = 0, size: number = 10, search: string) => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+    search: search,
+  });
+
+  const urlWithParams = `${apiRoutes.doctors.filter}?${queryParams.toString()}`;
+
+  const response = await fetcher<PaginatedData<DoctorFilteredApiResponse>>(urlWithParams, {
+    ...GET_OPTIONS,
+  });
+
+  return response;
 };
 
 export const findDoctorById = async (id: string) => {

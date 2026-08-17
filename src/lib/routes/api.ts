@@ -28,6 +28,7 @@ export const apiRoutes = {
   },
    doctors: {
     list: `${API_URL}/doctors`,
+    filter: `${API_URL}/doctors/filter`,
     create: `${API_URL}/doctors`,
     createWithUser: `${API_URL}/doctors/create-with-user`,
     edit: `${API_URL}/doctors/:id`,

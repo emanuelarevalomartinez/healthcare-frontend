@@ -7,6 +7,19 @@ export interface DoctorApiResponse {
   licenseNumber: string;
   defaultConsultationDuration: number;
 }
+
+export interface DoctorFilteredApiResponse {
+  userId: string;
+  username: string;
+  email: string;
+  role: USER_ROLE;
+  isActive: boolean;
+  doctorId: string;
+  specialty: string;
+  licenseNumber: string;
+  defaultConsultationDuration: number;
+}
+
 export interface DoctorCreateRequest {
   userId: string;
   specialty: string;
