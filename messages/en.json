@@ -191,7 +191,10 @@
     "appointments": {
       "tableSectionTitle": "Schedules and Appointments",
       "tableSectionSubtitle": "Manage and monitor appointments.",
+      "createSectionTitle": "Create Appointment",
+      "createSectionSubtitle": "Enter the details to schedule a new appointment in the clinical system.",
       "createNewAppointmentButton": "New Appointment",
+      "save": "Save",
       "status": {
         "CONFIRMED": "Confirmed",
         "SCHEDULED": "Scheduled",
@@ -204,9 +207,7 @@
         "IN_PROGRESS": "In Progress",
         "WAITING": "Waiting"
       },
-      "validation": {
-        
-      }
+      "validation": {}
     }
   },
   "auth": {

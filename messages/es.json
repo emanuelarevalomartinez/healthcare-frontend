@@ -189,9 +189,12 @@
       "toastUpdateSuccess": "El perfil médico se actualizó correctamente."
     },
     "appointments": {
-      "tableSectionTitle": "Horarios y citas",
-      "tableSectionSubtitle": "Gestiona y monitorea las citas.",
+      "tableSectionTitle": "Horarios y Citas",
+      "tableSectionSubtitle": "Administra y supervisa todas las citas.",
+      "createSectionTitle": "Crear Cita",
+      "createSectionSubtitle": "Ingresa los datos para programar una nueva cita en el sistema clínico.",
       "createNewAppointmentButton": "Nueva Cita",
+      "save": "Guardar",
       "status": {
         "CONFIRMED": "Confirmada",
         "SCHEDULED": "Agendada",
@@ -204,9 +207,7 @@
         "IN_PROGRESS": "En Progreso",
         "WAITING": "En Espera"
       },
-      "validation": {
-        
-      }
+      "validation": {}
     }
   },
   "auth": {
