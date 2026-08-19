@@ -2,6 +2,14 @@
 
 // TODO
 
+// el select
+añadir la traduccion de los campos
+quitar todos los anys esos que tiene
+hacerlo generico es decir que se pasen todos los campos que se quieren mostrar o separarlo en otro componente que envie el padre
+extraer la logica del padre y ponerla en el autention
+seguir con el resto de los campos del formulario
+
+
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 
  // hacer un mejor responsive de las vistas de autenticacion

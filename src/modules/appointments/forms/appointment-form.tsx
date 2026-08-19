@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { FormMode, getErrorMessage, useLanguage } from "@/lib";
 import { useAppointmentActions } from "../list/appointment-actions";
@@ -12,11 +12,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormFieldInput } from "@/components/customs/form-field-input";
 import { FormFieldSelect } from "@/components/customs/form-field-select";
 import { useRouter } from "next/navigation";
-import { AppointmentSchema, getCreateAppointmentSchema, getUpdateAppointmentSchema } from "./schema";
+import {
+  AppointmentSchema,
+  getCreateAppointmentSchema,
+  getUpdateAppointmentSchema,
+} from "./schema";
 import { AppointmentApiResponse } from "../types";
-import { getAllDoctors, getAllDoctorsFiltered } from "@/modules/doctors/services";
-import { DoctorApiResponse, DoctorFilteredApiResponse } from "@/modules/doctors/types";
+import {
+  getAllDoctors,
+  getAllDoctorsFiltered,
+} from "@/modules/doctors/services";
+import {
+  DoctorApiResponse,
+  DoctorFilteredApiResponse,
+} from "@/modules/doctors/types";
 import { ApiResponse, PaginatedData } from "@/lib/server/api-response";
+import { FormFieldSearchSelect } from "@/components/customs/form-field-search-select";
 
 interface AppointmentFormProps {
   appointment: AppointmentApiResponse;
@@ -24,28 +35,23 @@ interface AppointmentFormProps {
 }
 
 interface DoctorWithMatch extends DoctorFilteredApiResponse {
-  matchField?: 'name' | 'email' | 'license';
+  matchField?: "name" | "email" | "license";
 }
 
-export function AppointmentForm({ appointment, mode }: AppointmentFormProps){
-
-     const router = useRouter();
+export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
+  const router = useRouter();
 
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.appointments;
 
-  const {  } = useAppointmentActions({ dictionary });
+  const {} = useAppointmentActions({ dictionary });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [doctorData, setDoctorData] = useState<ApiResponse<PaginatedData<DoctorFilteredApiResponse>> | null>(null);
+  const [doctorData, setDoctorData] = useState<ApiResponse<
+    PaginatedData<DoctorFilteredApiResponse>
+  > | null>(null);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
 
-    const [isSearching, setIsSearching] = useState(false);
-   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<DoctorWithMatch[]>([]);
-  const [selectedDoctor, setSelectedDoctor] = useState<DoctorFilteredApiResponse | null>(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  
-  // Ref para el dropdown
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isEditMode = mode === "edit";
@@ -63,71 +69,48 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps){
     handleSubmit,
     watch,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<AppointmentSchema>({
     resolver: zodResolver(currentSchema) as Resolver<AppointmentSchema>,
     defaultValues: {
-      doctorName: ""
+      doctorName: "",
     },
   });
 
-   const searchDoctors = useCallback(async (query: string) => {
-    if (!query || query.length < 2) {
-      setSearchResults([]);
-      setShowDropdown(false);
-      return;
-    }
-
+  const searchDoctors = async (
+    query: string
+  ): Promise<DoctorFilteredApiResponse[]> => {
     try {
-      setIsSearching(true);
-      // Asumiendo que getAllDoctorsFiltered acepta un parámetro de búsqueda
-      // Si no, necesitas crear una función de búsqueda en el servicio
       const response = await getAllDoctorsFiltered(0, 10, query);
-      
-      // Mapear los doctores para agregar información de coincidencia
-      const doctorsWithMatch = response.data.content.map((doctor: DoctorFilteredApiResponse) => {
-        const matchField = detectMatchField(doctor, query);
-        return {
-          ...doctor,
-          matchField
-        };
-      });
-      
-      setSearchResults(doctorsWithMatch);
-      setShowDropdown(doctorsWithMatch.length > 0);
+      return response.data?.content || [];
     } catch (error) {
-      console.error("Error buscando doctores:", error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
+      console.error("Error searching doctors:", error);
+      return [];
     }
-  }, []);
-
-   const detectMatchField = (doctor: DoctorFilteredApiResponse, query: string): 'name' | 'email' | 'license' => {
-    const lowerQuery = query.toLowerCase();
-    
-    if (doctor.username?.toLowerCase().includes(lowerQuery)) {
-      return 'name';
-    }
-    if (doctor.email?.toLowerCase().includes(lowerQuery)) {
-      return 'email';
-    }
-    if (doctor.licenseNumber?.toLowerCase().includes(lowerQuery)) {
-      return 'license';
-    }
-    return 'name'; // Default
   };
 
-  // Debounce para la búsqueda
- /*  useEffect(() => {
-    const timer = setTimeout(() => {
-      searchDoctors(searchTerm);
-    }, 300);
+  const handleSelectDoctor = (doctor: DoctorFilteredApiResponse) => {
+    setSelectedDoctorId(doctor.doctorId);
+    setValue("doctorName", doctor.username);
+    clearErrors("doctorName");
 
-    return () => clearTimeout(timer);
-  }, [searchTerm, searchDoctors]); */
+    console.log("Doctor seleccionado:", {
+      id: doctor.doctorId,
+      name: doctor.username,
+      email: doctor.email,
+      license: doctor.licenseNumber,
+    });
+  };
 
-   useEffect(() => {
+  const handleSearchChange = (value: string) => {
+    setValue("doctorName", value);
+    if (value === "") {
+      setSelectedDoctorId("");
+    }
+  };
+
+  useEffect(() => {
     const fetchDoctors = async () => {
       try {
         setIsLoading(true);
@@ -150,7 +133,6 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps){
     setIsLoading(true);
 
     try {
-      
     } catch (error) {
       toast.error(getErrorMessage(error));
     } finally {
@@ -158,29 +140,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps){
     }
   }
 
-  useEffect(() => {
-   const fetchDoctors = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getAllDoctorsFiltered(0, 10, "2");
-        
-        setDoctorData(response);
-        
-        console.log("Doctores obtenidos:", response);
-        
-      } catch (err) {
-        console.error("Error to load the doctors: ", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDoctors();
-  }, [])
-  
-
-    return(
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <SectionHeader
         title={"Titulo de nueva cita"}
         description={"descripcion"}
@@ -192,25 +153,44 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps){
             disabled={isLoading}
             className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           >
-          cargando ?
+            cargando ?
           </Button>
         )}
       </SectionHeader>
 
-      <Card className="border bg-background border-border rounded-lg w-full">
+      <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
-          <FormFieldInput
+          <FormFieldSearchSelect
             id="doctorName"
-            label={"doctorName"}
-            placeholder={"doctorName"}
+            label="Buscar Doctor"
+            placeholder="Escribe nombre, email o licencia..."
             disabled={disableFields}
-            register={register("doctorName")}
+            value={watch("doctorName") || ""}
+            onChange={handleSearchChange}
+            onSelect={handleSelectDoctor}
+            searchItems={searchDoctors}
             error={errors.doctorName?.message}
+            minChars={1}
+            debounceDelay={200}
+            maxResults={10}
           />
-          
+
+          <FormFieldSearchSelect
+            id="doctorName"
+            label="Buscar Paciente"
+            placeholder="Escribe nombre, email o licencia..."
+            disabled={disableFields}
+            value={watch("doctorName") || ""}
+            onChange={handleSearchChange}
+            onSelect={handleSelectDoctor}
+            searchItems={searchDoctors}
+            error={errors.doctorName?.message}
+            minChars={1}
+            debounceDelay={200}
+            maxResults={10}
+          />
         </CardContent>
       </Card>
     </form>
-    )
-
+  );
 }
