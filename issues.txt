@@ -9,6 +9,10 @@ hacerlo generico es decir que se pasen todos los campos que se quieren mostrar o
 extraer la logica del padre y ponerla en el autention
 seguir con el resto de los campos del formulario
 
+// tengo que incluir el componente generico de text area
+// comenzar a ver las validaciones de formulario para crear cita y ver que se manden lso ids
+// ver los caso de actualizar, eliminar asi como motivo de cancelacion de las citas
+
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 
