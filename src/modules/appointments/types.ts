@@ -6,8 +6,8 @@ export interface AppointmentApiResponse {
   durationMinutes: number;
   consultationReason: string;
   status: APPOINTMENT_STATUS;
-  cancelledBy: string,
-  cancellationReason: string,
+  cancelledBy: string;
+  cancellationReason: string;
   createdBy: string;
   createdAt: string;
   confirmedAt: string;
@@ -17,3 +17,10 @@ export interface AppointmentApiResponse {
   doctorFullName: string;
 }
 
+export enum APPOINTMENT_STATUS_TYPE {
+  SCHEDULED="SCHEDULED",
+  CONFIRMED="CONFIRMED",
+  ATTENDED="ATTENDED",
+  CANCELLED="CANCELLED",
+  NO_SHOW="NO_SHOW",
+}

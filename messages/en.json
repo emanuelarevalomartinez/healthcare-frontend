@@ -195,19 +195,23 @@
       "createSectionSubtitle": "Enter the details to schedule a new appointment in the clinical system.",
       "createNewAppointmentButton": "New Appointment",
       "save": "Save",
-      "status": {
-        "CONFIRMED": "Confirmed",
-        "SCHEDULED": "Scheduled",
-        "ATTENDED": "Attended",
-        "CANCELLED": "Cancelled",
-        "NO_SHOW": "No Show",
-        "PENDING": "Pending",
-        "RESCHEDULED": "Rescheduled",
-        "COMPLETED": "Completed",
-        "IN_PROGRESS": "In Progress",
-        "WAITING": "Waiting"
+      "appointmentStatusOptions": {
+        "scheduled": "SCHEDULED",
+        "confirmed": "CONFIRMED",
+        "attended": "ATTENDED",
+        "cancelled": "CANCELLED",
+        "no_show": "NO SHOW"
       },
-      "validation": {}
+      "validation": {
+        "doctorRequired": "Doctor is required.",
+        "patientRequired": "Patient is required.",
+        "appointmentDateTimeRequired": "Appointment date and time are required.",
+        "durationRequired": "Appointment duration must be a positive number.",
+        "consultationReasonRequired": "Consultation reason is required.",
+        "consultationReasonMaxLength": "Consultation reason cannot exceed 255 characters.",
+        "cancellationReasonMaxLength": "Cancellation reason cannot exceed 255 characters.",
+        "notesMaxLength": "Notes cannot exceed 500 characters."
+      }
     }
   },
   "auth": {

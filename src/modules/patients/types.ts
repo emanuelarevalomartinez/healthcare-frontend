@@ -14,6 +14,22 @@ export interface PatientApiResponse {
   createdAt: string;
 }
 
+export interface PatientFilteredApiResponse {
+  id: string;
+  medicalRecordNumber: string;
+  fullName: string;
+  documentType: string;
+  documentNumber: string;
+  birthDate: string;
+  sex: string;
+  phone: string;
+  email: string;
+  address: string;
+  notes: string;
+  createdById: string;
+  createdAt: string;
+}
+
 export interface PatientCreateRequest {
   medicalRecordNumber: string;
   fullName: string;

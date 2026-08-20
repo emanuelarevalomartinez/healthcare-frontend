@@ -5,6 +5,7 @@ import { PaginatedData } from "@/lib/server/api-response";
 import {
   PatientApiResponse,
   PatientCreateRequest,
+  PatientFilteredApiResponse,
   PatientUpdateRequest,
 } from "./types";
 
@@ -35,6 +36,22 @@ export const getAllPatients = async (page: number = 0, size: number = 10) => {
   return await fetcher<PaginatedData<PatientApiResponse>>(urlWithParams, {
     ...GET_OPTIONS,
   });
+};
+
+export const getAllPatientsFiltered = async (page: number = 0, size: number = 10, search: string) => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+    search: search,
+  });
+
+  const urlWithParams = `${apiRoutes.patients.filter}?${queryParams.toString()}`;
+
+  const response = await fetcher<PaginatedData<PatientFilteredApiResponse>>(urlWithParams, {
+    ...GET_OPTIONS,
+  });
+
+  return response;
 };
 
 export const findPatientById = async (id: string) => {

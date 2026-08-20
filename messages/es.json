@@ -195,19 +195,23 @@
       "createSectionSubtitle": "Ingresa los datos para programar una nueva cita en el sistema clínico.",
       "createNewAppointmentButton": "Nueva Cita",
       "save": "Guardar",
-      "status": {
-        "CONFIRMED": "Confirmada",
-        "SCHEDULED": "Agendada",
-        "ATTENDED": "Atendida",
-        "CANCELLED": "Cancelada",
-        "NO_SHOW": "No Asistió",
-        "PENDING": "Pendiente",
-        "RESCHEDULED": "Reagendada",
-        "COMPLETED": "Completada",
-        "IN_PROGRESS": "En Progreso",
-        "WAITING": "En Espera"
+      "appointmentStatusOptions": {
+        "scheduled": "PROGRAMADA",
+        "confirmed": "CONFIRMADA",
+        "attended": "ATENDIDA",
+        "cancelled": "CANCELADA",
+        "no_show": "NO ASISTIÓ"
       },
-      "validation": {}
+      "validation": {
+        "doctorRequired": "El médico es obligatorio.",
+        "patientRequired": "El paciente es obligatorio.",
+        "appointmentDateTimeRequired": "La fecha y hora de la cita son obligatorias.",
+        "durationRequired": "La duración de la cita debe ser un número positivo.",
+        "consultationReasonRequired": "El motivo de consulta es obligatorio.",
+        "consultationReasonMaxLength": "El motivo de consulta no puede exceder los 255 caracteres.",
+        "cancellationReasonMaxLength": "El motivo de cancelación no puede exceder los 255 caracteres.",
+        "notesMaxLength": "Las notas no pueden exceder los 500 caracteres."
+      }
     }
   },
   "auth": {
