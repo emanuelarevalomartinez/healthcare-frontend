@@ -195,6 +195,34 @@
       "createSectionSubtitle": "Ingresa los datos para programar una nueva cita en el sistema clínico.",
       "createNewAppointmentButton": "Nueva Cita",
       "save": "Guardar",
+      "doctorLabel": "Doctor",
+      "doctorPlaceholder": "Escribe el nombre, correo electrónico o número de licencia del doctor...",
+      "patientLabel": "Paciente",
+      "patientPlaceholder": "Escribe el nombre, número de historia clínica o documento del paciente...",
+      "appointmentDateTimeLabel": "Fecha de la Cita",
+      "appointmentDateTimePlaceholder": "Selecciona la fecha de la cita",
+      "durationMinutesLabel": "Duración (minutos)",
+      "durationMinutesPlaceholder": "0",
+      "consultationReasonLabel": "Motivo de Consulta",
+      "consultationReasonPlaceholder": "Ingresa el motivo de la consulta",
+      "appointmentTimeLabel": "Hora de la Cita",
+      "appointmentTimePlaceholder": "Selecciona la hora de la cita",
+
+      "statusLabel": "Estado",
+      "statusPlaceholder": "Selecciona el estado de la cita",
+
+      "notesLabel": "Notas",
+      "notesPlaceholder": "Ingresa notas adicionales",
+      "doctorSearchFields": {
+        "username": "Usuario",
+        "email": "Correo electrónico",
+        "licenseNumber": "Licencia"
+      },
+      "patientSearchFields": {
+        "fullName": "Nombre completo",
+        "medicalRecordNumber": "Número de historia clínica",
+        "documentNumber": "Número de documento"
+      },
       "appointmentStatusOptions": {
         "scheduled": "PROGRAMADA",
         "confirmed": "CONFIRMADA",
@@ -202,11 +230,15 @@
         "cancelled": "CANCELADA",
         "no_show": "NO ASISTIÓ"
       },
+      "toastSuccess": "Cita creada correctamente.",
+      "toastUpdateSuccess": "Cita actualizada correctamente.",
       "validation": {
         "doctorRequired": "El médico es obligatorio.",
         "patientRequired": "El paciente es obligatorio.",
         "appointmentDateTimeRequired": "La fecha y hora de la cita son obligatorias.",
         "durationRequired": "La duración de la cita debe ser un número positivo.",
+        "appointmentTimeRequired": "La hora de la cita es obligatoria.",
+        "appointmentTimeInvalid": "La hora de la cita debe ser válida.",
         "consultationReasonRequired": "El motivo de consulta es obligatorio.",
         "consultationReasonMaxLength": "El motivo de consulta no puede exceder los 255 caracteres.",
         "cancellationReasonMaxLength": "El motivo de cancelación no puede exceder los 255 caracteres.",

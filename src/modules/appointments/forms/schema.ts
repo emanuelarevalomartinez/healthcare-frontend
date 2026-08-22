@@ -11,22 +11,28 @@ export const getCreateAppointmentSchema = (
 
     patientId: z.string().uuid(v.patientRequired),
 
-    appointmentDateTime: z.string().min(1, v.appointmentDateTimeRequired),
+    appointmentDateTime: z
+      .string({
+        error: v.appointmentDateTimeRequired,
+      })
+      .min(1, v.appointmentDateTimeRequired),
 
-    durationMinutes: z.number().positive(v.durationRequired),
+    appointmentTime: z
+      .string()
+      .min(1, v.appointmentTimeRequired)
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, v.appointmentTimeInvalid),
+
+    durationMinutes: z
+      .number({
+        error: v.durationRequired,
+      })
+      .positive(v.durationRequired),
 
     consultationReason: z
       .string()
       .trim()
       .min(1, v.consultationReasonRequired)
       .max(255, v.consultationReasonMaxLength),
-
-      status: z.string(),
-
-      cancellationReason: z
-      .string()
-      .trim()
-      .max(255, v.cancellationReasonMaxLength),
 
     notes: z
       .string()
@@ -43,13 +49,26 @@ export const getUpdateAppointmentSchema = (
   const v = dictionary.dashboard.appointments.validation;
 
   return z.object({
-
     doctorId: z.string().uuid(v.doctorRequired).optional(),
     patientId: z.string().uuid(v.patientRequired).optional(),
 
-    appointmentDateTime: z.string().optional(),
+    appointmentDateTime: z
+      .string({
+        error: v.appointmentDateTimeRequired,
+      })
+      .optional(),
 
-    durationMinutes: z.number().positive(v.durationRequired).optional(),
+    appointmentTime: z
+      .string()
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, v.appointmentTimeInvalid)
+      .optional(),
+
+    durationMinutes: z
+      .number({
+        error: v.durationRequired,
+      })
+      .positive(v.durationRequired)
+      .optional(),
 
     consultationReason: z
       .string()

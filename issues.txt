@@ -2,16 +2,10 @@
 
 // TODO
 
-// el select
-añadir la traduccion de los campos
-quitar todos los anys esos que tiene
-hacerlo generico es decir que se pasen todos los campos que se quieren mostrar o separarlo en otro componente que envie el padre
-extraer la logica del padre y ponerla en el autention
-seguir con el resto de los campos del formulario
-
-// tengo que incluir el componente generico de text area
-// comenzar a ver las validaciones de formulario para crear cita y ver que se manden lso ids
 // ver los caso de actualizar, eliminar asi como motivo de cancelacion de las citas
+// añadir accion a la derecha de las cards para las acciones ylas acciones rapidas
+// mover la logica al autention
+// ver el tema de la fecha para una cita debe ser futura obligatoriamente o no
 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion

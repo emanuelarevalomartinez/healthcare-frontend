@@ -1,6 +1,6 @@
 "use client";
 
-import { FormMode, getErrorMessage, useLanguage } from "@/lib";
+import { FormMode, getErrorMessage, routes, useLanguage } from "@/lib";
 import { useAppointmentActions } from "../list/appointment-actions";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
@@ -17,7 +17,12 @@ import {
   getUpdateAppointmentSchema,
 } from "./schema";
 
-import { APPOINTMENT_STATUS_TYPE, AppointmentApiResponse } from "../types";
+import {
+  APPOINTMENT_STATUS_TYPE,
+  AppointmentApiResponse,
+  AppointmentCreateRequest,
+  AppointmentUpdateRequest,
+} from "../types";
 
 import { getAllDoctorsFiltered } from "@/modules/doctors/services";
 import { DoctorFilteredApiResponse } from "@/modules/doctors/types";
@@ -31,6 +36,22 @@ import { PatientFilteredApiResponse } from "@/modules/patients/types";
 import { getAllPatientsFiltered } from "@/modules/patients/services";
 import { FormFieldInput } from "@/components/customs/form-field-input";
 import { FormFieldSelect } from "@/components/customs/form-field-select";
+import {
+  formatDateTimeToApiString,
+  formatSelectedDateToInputString,
+  parseInputStringToDate,
+} from "@/lib/utils/functions";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
+import { createAppointment, updateAppointment } from "../services";
 
 interface AppointmentFormProps {
   appointment: AppointmentApiResponse;
@@ -53,6 +74,10 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
   const [selectedPatientId, setSelectedPatientId] = useState<string>("");
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const [doctorSearch, setDoctorSearch] = useState("");
+  const [patientSearch, setPatientSearch] = useState("");
 
   const isEditMode = mode === "edit";
   const isViewMode = mode === "details";
@@ -86,6 +111,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     watch,
     setValue,
     clearErrors,
+    trigger,
     register,
     formState: { errors },
   } = useForm<AppointmentSchema>({
@@ -93,11 +119,17 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     defaultValues: {
       doctorId: "",
       patientId: "",
-      status: ""
+      status: "",
     },
   });
 
   const currentAppointmentStatus = watch("status");
+  const appointmentDateValue = watch("appointmentDateTime");
+
+  const selectedDate = useMemo(
+    () => parseInputStringToDate(appointmentDateValue),
+    [appointmentDateValue]
+  );
 
   const searchDoctors = async (
     query: string
@@ -125,10 +157,10 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     }
   };
 
-  const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
+  /*   const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
     setSelectedDoctorId(doctor.doctorId);
 
-    setValue("doctorId", doctor.username);
+    setValue("doctorId", doctor.doctorId);
 
     clearErrors("doctorId");
 
@@ -141,9 +173,9 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   };
 
   const handleSelectPatient = (patient: PatientFilteredApiResponse): void => {
-    setSelectedDoctorId(patient.id);
+    setSelectedPatientId(patient.id);
 
-    setValue("patientId", patient.fullName);
+    setValue("patientId", patient.id);
 
     clearErrors("patientId");
 
@@ -151,54 +183,67 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
       id: patient.id,
       fullName: patient.fullName,
     });
+  }; */
+
+  const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
+    setSelectedDoctorId(doctor.doctorId);
+    setDoctorSearch(doctor.username);
+
+    setValue("doctorId", doctor.doctorId, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    clearErrors("doctorId");
   };
 
-  const handleSearchDoctorChange = (value: string): void => {
-    setValue("doctorId", value);
+  const handleSelectPatient = (patient: PatientFilteredApiResponse): void => {
+    setSelectedPatientId(patient.id);
+    setPatientSearch(patient.fullName);
 
-    if (value === "") {
-      setSelectedDoctorId("");
-    }
+    setValue("patientId", patient.id, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    clearErrors("patientId");
   };
 
-  const handleSearchPatientChange = (value: string): void => {
-    setValue("patientId", value);
-
-    if (value === "") {
-      setSelectedPatientId("");
-    }
-  };
-
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        setIsLoading(true);
-
-        const response = await getAllDoctorsFiltered(0, 10, "");
-
-        setDoctorData(response);
-
-        console.log("Doctores obtenidos:", response);
-      } catch (err) {
-        console.error("Error to load the doctors: ", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDoctors();
-  }, []);
-
-  async function onSubmit(data: AppointmentSchema): Promise<void> {
+  async function onSubmit(data: AppointmentSchema) {
     if (isViewMode) return;
 
     setIsLoading(true);
 
+  //  console.log("Datos:", data);
+
     try {
-      console.log("Datos:", data);
-      console.log("Doctor ID:", selectedDoctorId);
+      const payload = {
+        patientId: data.patientId,
+        doctorId: data.doctorId,
+        appointmentDateTime: formatDateTimeToApiString(
+        data.appointmentDateTime,
+        data.appointmentTime
+      ),
+        durationMinutes: data.durationMinutes,
+        consultationReason: data.consultationReason,
+        notes: data.notes || null,
+      };
+
+      /*  const response = isEditMode
+        ? await updateAppointment(patient.id, payload as AppointmentUpdateRequest)
+        : await createAppointment(payload as AppointmentCreateRequest); */
+
+      const response = await createAppointment(
+        payload as AppointmentCreateRequest
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
+        router.push(routes.appointments.root);
+      }
     } catch (error) {
       toast.error(getErrorMessage(error));
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -208,17 +253,17 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     [
       {
         key: "username",
-        label: "Usuario",
+        label: t.doctorSearchFields.username,
         getValue: (doctor) => doctor.username,
       },
       {
         key: "email",
-        label: "Email",
+        label: t.doctorSearchFields.email,
         getValue: (doctor) => doctor.email,
       },
       {
         key: "licenseNumber",
-        label: "Licencia",
+        label: t.doctorSearchFields.licenseNumber,
         getValue: (doctor) => doctor.licenseNumber,
         condition: (doctor) => !!doctor.licenseNumber,
       },
@@ -228,23 +273,28 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     [
       {
         key: "fullName",
-        label: "Usuario",
+        label: t.patientSearchFields.fullName,
         getValue: (patient) => patient.fullName,
       },
       {
         key: "medicalRecordNumber",
-        label: "# Historia",
+        label: t.patientSearchFields.medicalRecordNumber,
         getValue: (patient) => patient.medicalRecordNumber,
       },
       {
         key: "documentNumber",
-        label: "# Documento",
+        label: t.patientSearchFields.documentNumber,
         getValue: (patient) => patient.documentNumber,
       },
     ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        console.log("❌ Errores de React Hook Form:", errors);
+      })}
+      noValidate
+    >
       <SectionHeader
         title={t.createSectionTitle}
         description={t.createSectionSubtitle}
@@ -263,13 +313,14 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
       <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
+
           <FormFieldSearchSelect<DoctorFilteredApiResponse>
             id="doctorName"
-            label="Buscar Doctor"
-            placeholder="Escribe nombre, email o licencia..."
+            label={t.doctorLabel}
+            placeholder={t.doctorPlaceholder}
             disabled={disableFields}
-            value={watch("doctorId") || ""}
-            onChange={handleSearchDoctorChange}
+            value={doctorSearch}
+            onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
             searchItems={searchDoctors}
             getDisplayLabel={(doctor) => doctor.username}
@@ -282,11 +333,11 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
           <FormFieldSearchSelect<PatientFilteredApiResponse>
             id="patientName"
-            label="Buscar Paciente"
-            placeholder="Escribe nombre, número de historia o documento..."
+            label={t.patientLabel}
+            placeholder={t.patientPlaceholder}
             disabled={disableFields}
-            value={watch("patientId") || ""}
-            onChange={handleSearchPatientChange}
+            value={patientSearch}
+            onChange={setPatientSearch}
             onSelect={handleSelectPatient}
             searchItems={searchPatients}
             getDisplayLabel={(patient) => patient.fullName}
@@ -297,55 +348,99 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             maxResults={10}
           />
 
+          <div className="grid gap-2">
+            <Label htmlFor="birthDate">{t.appointmentDateTimeLabel}</Label>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  id="birthDate"
+                  variant="outline"
+                  disabled={disableFields}
+                  className={cn(
+                    "w-full justify-start text-left font-normal px-3",
+                    !appointmentDateValue && "text-muted-foreground"
+                  )}
+                  aria-invalid={errors.appointmentDateTime ? "true" : "false"}
+                >
+                  <CalendarIcon className="mr-2 size-4 text-muted-foreground" />
+                  {appointmentDateValue ? (
+                    appointmentDateValue
+                  ) : (
+                    <span>{t.appointmentDateTimePlaceholder}</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent className="w-auto p-0 bg-card" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setValue(
+                        "appointmentDateTime",
+                        formatSelectedDateToInputString(date),
+                        { shouldValidate: true }
+                      );
+                    } else {
+                      setValue("appointmentDateTime", "");
+                    }
+                    trigger("appointmentDateTime");
+                    setIsCalendarOpen(false);
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+            <div className="text-sm h-5 text-red-500">
+              {errors.appointmentDateTime ? (
+                (errors.appointmentDateTime.message as string)
+              ) : (
+                <>&nbsp;</>
+              )}
+            </div>
+          </div>
+
           <FormFieldInput
-            id="appointmentDateTime"
-            label={"appointmentDateTime"}
-            placeholder={"placeholder"}
-            disabled={disableFields}
-            register={register("appointmentDateTime")}
-            error={errors.appointmentDateTime?.message as string}
+            id="appointmentTime"
+            type="time"
+            label={t.appointmentTimeLabel}
+            placeholder={t.appointmentTimePlaceholder}
+            register={register("appointmentTime")}
+            error={errors.appointmentTime?.message as string}
           />
 
           <FormFieldInput
             id="durationMinutes"
-            label={"durationMinutes"}
-            placeholder={"placeholder"}
+            label={t.durationMinutesLabel}
+            placeholder={t.durationMinutesPlaceholder}
             disabled={disableFields}
-            register={register("durationMinutes")}
+            integer
+            min={1}
+            register={register("durationMinutes", {
+              valueAsNumber: true,
+            })}
             error={errors.durationMinutes?.message as string}
           />
+        </CardContent>
 
-          <FormFieldInput
+        <CardContent className="grid grid-cols-1 gap-x-6 gap-y-2 pt-6">
+          <FormFieldTextArea
             id="consultationReason"
-            label={"consultationReason"}
-            placeholder={"placeholder"}
+            label={t.consultationReasonLabel}
+            placeholder={t.consultationReasonPlaceholder}
             disabled={disableFields}
             register={register("consultationReason")}
             error={errors.consultationReason?.message as string}
+            maxLength={255}
           />
 
-          <FormFieldSelect
-            id="status"
-            label={"status"}
-            placeholder={"status"}
-            disabled={disableFields}
-            value={currentAppointmentStatus}
-            onValueChange={(value) =>
-              setValue("status", value as APPOINTMENT_STATUS_TYPE, {
-                shouldValidate: true,
-              })
-            }
-            options={appointmentStatusOptions}
-            error={errors.status?.message as string}
-          />
-
-          <FormFieldInput
+          <FormFieldTextArea
             id="notes"
-            label={"notes"}
-            placeholder={"placeholder"}
-            disabled={disableFields}
+            label={t.notesLabel}
+            placeholder={t.notesPlaceholder}
             register={register("notes")}
             error={errors.notes?.message as string}
+            maxLength={500}
           />
         </CardContent>
       </Card>

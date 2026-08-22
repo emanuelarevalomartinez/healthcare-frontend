@@ -195,6 +195,34 @@
       "createSectionSubtitle": "Enter the details to schedule a new appointment in the clinical system.",
       "createNewAppointmentButton": "New Appointment",
       "save": "Save",
+      "doctorLabel": "Doctor",
+      "doctorPlaceholder": "Enter doctor's name, email, or license number...",
+      "patientLabel": "Patient",
+      "patientPlaceholder": "Enter patient's name, medical record number, or document number...",
+      "appointmentDateTimeLabel": "Appointment Date",
+      "appointmentDateTimePlaceholder": "Select appointment date",
+      "durationMinutesLabel": "Duration (minutes)",
+      "durationMinutesPlaceholder": "0",
+      "consultationReasonLabel": "Consultation Reason",
+      "consultationReasonPlaceholder": "Enter consultation reason",
+      "appointmentTimeLabel": "Appointment Time",
+      "appointmentTimePlaceholder": "Select appointment time",
+
+      "statusLabel": "Status",
+      "statusPlaceholder": "Select appointment status",
+
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Enter additional notes",
+      "doctorSearchFields": {
+        "username": "Username",
+        "email": "Email",
+        "licenseNumber": "License"
+      },
+      "patientSearchFields": {
+        "fullName": "Full Name",
+        "medicalRecordNumber": "Medical Record Number",
+        "documentNumber": "Document Number"
+      },
       "appointmentStatusOptions": {
         "scheduled": "SCHEDULED",
         "confirmed": "CONFIRMED",
@@ -202,10 +230,14 @@
         "cancelled": "CANCELLED",
         "no_show": "NO SHOW"
       },
+      "toastSuccess": "Appointment successfully created.",
+      "toastUpdateSuccess": "Appointment updated successfully.",
       "validation": {
         "doctorRequired": "Doctor is required.",
         "patientRequired": "Patient is required.",
         "appointmentDateTimeRequired": "Appointment date and time are required.",
+        "appointmentTimeRequired": "Appointment time is required.",
+        "appointmentTimeInvalid": "Appointment time must be a valid time.",
         "durationRequired": "Appointment duration must be a positive number.",
         "consultationReasonRequired": "Consultation reason is required.",
         "consultationReasonMaxLength": "Consultation reason cannot exceed 255 characters.",

@@ -1,4 +1,5 @@
 import { APPOINTMENT_STATUS } from "@/lib";
+import { string } from "zod";
 
 export interface AppointmentApiResponse {
   id: string;
@@ -17,10 +18,21 @@ export interface AppointmentApiResponse {
   doctorFullName: string;
 }
 
+export interface AppointmentCreateRequest {
+  patientId: string;
+  doctorId: string;
+  appointmentDateTime: string;
+  durationMinutes: number;
+  consultationReason: string;
+  notes: string;
+}
+
+export interface AppointmentUpdateRequest extends AppointmentCreateRequest {}
+
 export enum APPOINTMENT_STATUS_TYPE {
-  SCHEDULED="SCHEDULED",
-  CONFIRMED="CONFIRMED",
-  ATTENDED="ATTENDED",
-  CANCELLED="CANCELLED",
-  NO_SHOW="NO_SHOW",
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  ATTENDED = "ATTENDED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
 }

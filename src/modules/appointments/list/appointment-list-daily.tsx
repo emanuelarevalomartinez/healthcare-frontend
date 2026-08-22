@@ -42,6 +42,12 @@ export function AppointmentListDaily({
   const totalAppointments = appointmentsData?.totalElements ?? 0;
   const hasAppointments = appointments.length > 0;
 
+  const getAppointmentStatusLabel = (status: APPOINTMENT_STATUS): string => {
+  const statusKey = status.toLowerCase() as keyof typeof t.appointmentStatusOptions;
+
+  return t.appointmentStatusOptions[statusKey];
+};
+
   const LoadingState = () => (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center h-[64vh] 2xl:h-[64vh] w-full">
       <Loader2Icon className="size-10 animate-spin text-primary mb-4" />
@@ -117,7 +123,7 @@ export function AppointmentListDaily({
                       statusBadgeMap[appointment.status as APPOINTMENT_STATUS]
                     }
                   >
-                    {t.status[appointment.status as APPOINTMENT_STATUS]}
+                    {getAppointmentStatusLabel(appointment.status as APPOINTMENT_STATUS)}
                   </BadgeWrapper>
                 </div>
               </button>
