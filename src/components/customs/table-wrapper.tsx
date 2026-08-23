@@ -97,7 +97,7 @@ export function TableWrapper<T>({
                 <div className="absolute top-4 right-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="size-8">
+                      <Button variant="ghost" size="icon" className="size-8 cursor-pointer">
                         <MoreHorizontalIcon />
                       </Button>
                     </DropdownMenuTrigger>
@@ -106,6 +106,7 @@ export function TableWrapper<T>({
                         <div key={actionIndex}>
                           {action.separatorBefore && <DropdownMenuSeparator />}
                           <DropdownMenuItem
+                          className="cursor-pointer"
                           disabled={action.disabled?.(row)}
                             variant={
                               action.variant === "destructive"
@@ -195,7 +196,7 @@ export function TableWrapper<T>({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8"
+                            className="size-8 cursor-pointer"
                           >
                             <MoreHorizontalIcon />
                           </Button>
@@ -207,6 +208,7 @@ export function TableWrapper<T>({
                                 <DropdownMenuSeparator />
                               )}
                               <DropdownMenuItem
+                              className="cursor-pointer"
                               disabled={action.disabled?.(row)}
                                 variant={
                                   action.variant === "destructive"

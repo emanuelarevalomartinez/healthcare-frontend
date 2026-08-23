@@ -2,10 +2,12 @@
 
 // TODO
 
-// ver los caso de actualizar, eliminar asi como motivo de cancelacion de las citas
-// añadir accion a la derecha de las cards para las acciones ylas acciones rapidas
-// mover la logica al autention
+// ver los caso de actualizar, asi como motivo de cancelacion de las citas
+// mover la logica de los componentes a las actions de las citas
 // ver el tema de la fecha para una cita debe ser futura obligatoriamente o no
+// al cancelar una cita opcionalmente añadir una descripcion o informacion al respecto
+// ver el tema de por que en los detalles de la cita no sale el texto correspondiente
+// al editar ver el tema de las fechas, quien las crea, elimina etc
 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion

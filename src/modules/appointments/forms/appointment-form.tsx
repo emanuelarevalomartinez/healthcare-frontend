@@ -117,9 +117,15 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   } = useForm<AppointmentSchema>({
     resolver: zodResolver(currentSchema) as Resolver<AppointmentSchema>,
     defaultValues: {
-      doctorId: "",
-      patientId: "",
-      status: "",
+      status: appointment.status,
+      attendedAt: appointment.attendedAt,
+      cancellationReason: appointment.cancellationReason,
+      confirmedAt: appointment.confirmedAt,
+      appointmentDateTime: appointment.appointmentDateTime,
+      appointmentTime: appointment.appointmentDateTime,
+      durationMinutes: appointment.durationMinutes,
+      consultationReason: appointment.consultationReason,
+      notes: appointment.notes,
     },
   });
 
@@ -157,34 +163,6 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     }
   };
 
-  /*   const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
-    setSelectedDoctorId(doctor.doctorId);
-
-    setValue("doctorId", doctor.doctorId);
-
-    clearErrors("doctorId");
-
-    console.log("Doctor seleccionado:", {
-      id: doctor.doctorId,
-      name: doctor.username,
-      email: doctor.email,
-      license: doctor.licenseNumber,
-    });
-  };
-
-  const handleSelectPatient = (patient: PatientFilteredApiResponse): void => {
-    setSelectedPatientId(patient.id);
-
-    setValue("patientId", patient.id);
-
-    clearErrors("patientId");
-
-    console.log("Paciente seleccionado:", {
-      id: patient.id,
-      fullName: patient.fullName,
-    });
-  }; */
-
   const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
     setSelectedDoctorId(doctor.doctorId);
     setDoctorSearch(doctor.username);
@@ -211,19 +189,16 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
   async function onSubmit(data: AppointmentSchema) {
     if (isViewMode) return;
-
     setIsLoading(true);
-
-  //  console.log("Datos:", data);
 
     try {
       const payload = {
         patientId: data.patientId,
         doctorId: data.doctorId,
         appointmentDateTime: formatDateTimeToApiString(
-        data.appointmentDateTime,
-        data.appointmentTime
-      ),
+          data.appointmentDateTime,
+          data.appointmentTime
+        ),
         durationMinutes: data.durationMinutes,
         consultationReason: data.consultationReason,
         notes: data.notes || null,
@@ -289,12 +264,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     ];
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit, (errors) => {
-        console.log("❌ Errores de React Hook Form:", errors);
-      })}
-      noValidate
-    >
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <SectionHeader
         title={t.createSectionTitle}
         description={t.createSectionSubtitle}
@@ -313,7 +283,6 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
       <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
-
           <FormFieldSearchSelect<DoctorFilteredApiResponse>
             id="doctorName"
             label={t.doctorLabel}

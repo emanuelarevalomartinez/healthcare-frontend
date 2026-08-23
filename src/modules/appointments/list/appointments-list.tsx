@@ -40,14 +40,15 @@ export function AppointmentsList() {
   const {
     appointmentsData,
     setCurrentPage,
-    openDetails,
-    setOpenDetails,
     selectedDate,
     setSelectedDate,
-    selectedAppointment,
-    setSelectedAppointment,
     fetchAppointmentsFiltered,
     isLoading,
+    appointmentActions,
+    isAlertOpen,
+    setIsAlertOpen,
+    handleExecuteDelete,
+    setAppointmentToDelete,
   } = useAppointmentActions({ dictionary });
 
   useEffect(() => {
@@ -105,14 +106,15 @@ export function AppointmentsList() {
             <Card className="flex w-full 2xl:w-1/3 bg-transparent border border-border h-[74vh]">
               <CardContent>
                 <AppointmentListDaily
+                  actions={appointmentActions}
                   appointmentsData={appointmentsData}
-                  openDetails={openDetails}
-                  setOpenDetails={setOpenDetails}
                   selectedDate={selectedDate}
-                  selectedAppointment={selectedAppointment}
-                  setSelectedAppointment={setSelectedAppointment}
                   isLoading={isLoading}
                   setCurrentPage={setCurrentPage}
+                  isAlertOpen={isAlertOpen}
+                  setIsAlertOpen={setIsAlertOpen}
+                  handleExecuteDelete={handleExecuteDelete}
+                  setAppointmentToDelete={setAppointmentToDelete}
                 />
               </CardContent>
             </Card>

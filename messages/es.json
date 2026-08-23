@@ -230,8 +230,13 @@
         "cancelled": "CANCELADA",
         "no_show": "NO ASISTIÓ"
       },
-      "toastSuccess": "Cita creada correctamente.",
-      "toastUpdateSuccess": "Cita actualizada correctamente.",
+      "appointmentsOn": "Citas del",
+      "appointmentCount": "cita",
+      "appointmentCountPlural": "citas",
+      "noAppointmentsForDay": "No hay citas para este día",
+      "doctor": "Doctor",
+      "patient": "Paciente",
+      "minutes": "min",
       "validation": {
         "doctorRequired": "El médico es obligatorio.",
         "patientRequired": "El paciente es obligatorio.",
@@ -243,7 +248,15 @@
         "consultationReasonMaxLength": "El motivo de consulta no puede exceder los 255 caracteres.",
         "cancellationReasonMaxLength": "El motivo de cancelación no puede exceder los 255 caracteres.",
         "notesMaxLength": "Las notas no pueden exceder los 500 caracteres."
-      }
+      },
+      "toastSuccess": "Cita creada correctamente.",
+      "toastUpdateSuccess": "Cita actualizada correctamente.",
+      "successDeleteAppointmentToast": "Cita eliminada correctamente.",
+      "errorDeleteAppointmentToast": "No se pudo eliminar la cita.",
+      "deleteAlertTitle": "¿Está seguro de que desea eliminar esta cita?",
+      "deleteAlertDescription": "Esta acción no se puede deshacer. La cita se eliminará permanentemente.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
     }
   },
   "auth": {
@@ -318,7 +331,8 @@
       "activate": "Activar",
       "deactivate": "Desactivar",
       "edit": "Editar",
-      "delete": "Eliminar"
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
     },
     "loading": {
       "text": "Cargando"

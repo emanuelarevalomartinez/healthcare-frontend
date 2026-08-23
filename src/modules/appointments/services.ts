@@ -60,3 +60,20 @@ export const getAllAppointmetsFiltered = async (
 
   return response;
 };
+
+export const findAppointmentById = async (id: string) => {
+  const response = await fetcher<AppointmentApiResponse>(
+    apiRoutes.appointments.details.replace(":id", id),
+    {
+      ...GET_OPTIONS,
+    }
+  );
+  return response;
+};
+
+export const deleteAppointment = async (id: string) => {
+  const response = await fetcher(apiRoutes.appointments.delete.replace(":id", id), {
+    method: "DELETE",
+  });
+  return response;
+};

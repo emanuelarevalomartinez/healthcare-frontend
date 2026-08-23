@@ -2,11 +2,13 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { TranslationDictionary } from "@/lib";
+import { routes, TranslationDictionary } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { AppointmentApiResponse } from "../types";
-import { getAllAppointmetsFiltered } from "../services";
+import { deleteAppointment, getAllAppointmetsFiltered } from "../services";
 import { format } from "date-fns";
+import { TableAction } from "@/components/customs/table-wrapper";
+import { toast } from "sonner";
 
 interface UsePatientsActionsProps {
   dictionary: TranslationDictionary;
@@ -16,78 +18,115 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
   const t = dictionary.dashboard.appointments;
 
-  const [openDetails, setOpenDetails] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentApiResponse | null>(null);
-  const [appointmentsData, setAppointmentsData] = useState<PaginatedData<AppointmentApiResponse>>();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<{
+    id: string;
+  } | null>(null);
+  const [appointmentsData, setAppointmentsData] =
+    useState<PaginatedData<AppointmentApiResponse>>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const pageSize = 10;
 
-  const fetchAppointmentsFiltered = useCallback(async (date?: Date) => {
-    setIsLoading(true);
+  const fetchAppointmentsFiltered = useCallback(
+    async (date?: Date) => {
+      setIsLoading(true);
+      try {
+        const dateToUse = date || selectedDate;
+        const dateString = format(dateToUse, "yyyy-MM-dd");
+
+        const response = await getAllAppointmetsFiltered(
+          currentPage,
+          pageSize,
+          dateString
+        );
+        setAppointmentsData(response.data);
+      } catch (error) {
+        console.error("Error to load the appointments: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, pageSize, selectedDate]
+  );
+
+  const handleDateChange = useCallback(
+    (newDate: Date | undefined) => {
+      if (newDate) {
+        setSelectedDate(newDate);
+
+        fetchAppointmentsFiltered(newDate);
+      }
+    },
+    [fetchAppointmentsFiltered]
+  );
+
+  const handleOpenDeleteConfirm = (id: string) => {
+    setAppointmentToDelete({ id });
+    setIsAlertOpen(true);
+  };
+
+  const handleExecuteDelete = async () => {
+    if (!appointmentToDelete) return;
     try {
-
-      const dateToUse = date || selectedDate;
-      const dateString = format(dateToUse, 'yyyy-MM-dd');
-
-      const response = await getAllAppointmetsFiltered(currentPage, pageSize, dateString);
-      setAppointmentsData(response.data);
+      const response = await deleteAppointment(appointmentToDelete.id);
+      if (response.status === 200 || response.status === 204) {
+        toast.success(t.successDeleteAppointmentToast);
+        if (appointmentsData?.content.length === 1 && currentPage > 0) {
+          setCurrentPage((prev) => prev - 1);
+        } else {
+          await fetchAppointmentsFiltered();
+        }
+      }
     } catch (error) {
-      console.error("Error to load the appointments: ", error);
+      console.error("Error to delete:", error);
+      toast.error(t.errorDeleteAppointmentToast);
     } finally {
-      setIsLoading(false);
+      setIsAlertOpen(false);
+      setAppointmentToDelete(null);
     }
-  }, [currentPage, pageSize, selectedDate]);
+  };
 
-    const handleDateChange = useCallback((newDate: Date | undefined) => {
-    if (newDate) {
-      setSelectedDate(newDate);
-
-      fetchAppointmentsFiltered(newDate);
-    }
-  }, [fetchAppointmentsFiltered]);
-
-/* 
-  const appointmentsActions: TableAction<UserApiResponse>[] = [
+  const appointmentActions: TableAction<AppointmentApiResponse>[] = [
     {
       label: dictionary.components.actions.viewDetails,
-      onClick: (e) => router.push(routes.users.details.replace(":id", e.id)),
-    },
-    {
-      label: (user) =>
-        user.isActive
-          ? dictionary.components.actions.deactivate
-          : dictionary.components.actions.activate,
-      onClick: (user) => {
-        console.log(user.isActive);
-        handleActivateUser(user.id, user.isActive);
-      },
+      onClick: (p) =>
+        router.push(routes.appointments.details.replace(":id", p.id)),
     },
     {
       label: dictionary.components.actions.edit,
-      onClick: (e) => router.push(routes.users.edit.replace(":id", e.id)),
+      onClick: (p) => {
+        console.log("hola 2");
+      },
+    },
+
+    {
+      label: dictionary.components.actions.cancel,
+      onClick: (p) => {
+        console.log("hola 3");
+      },
     },
     {
       label: dictionary.components.actions.delete,
       variant: "destructive",
       separatorBefore: true,
-      onClick: (e) => handleOpenDeleteConfirm(e.id, e.username),
-      disabled: (user) => user.id === currentUserId,
+      onClick: (p) => handleOpenDeleteConfirm(p.id),
     },
-  ]; */
+  ];
 
   return {
     appointmentsData,
-    openDetails,
-    setOpenDetails,
-    selectedAppointment,
-    setSelectedAppointment,
     currentPage,
     setCurrentPage,
     isLoading,
     selectedDate,
     setSelectedDate: handleDateChange,
     fetchAppointmentsFiltered,
+    appointmentActions,
+    isAlertOpen,
+    setIsAlertOpen,
+    handleExecuteDelete,
+    setAppointmentToDelete,
   };
 }
