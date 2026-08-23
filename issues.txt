@@ -2,10 +2,9 @@
 
 // TODO
 
-// ver los caso de actualizar, asi como motivo de cancelacion de las citas
-// mover la logica de los componentes a las actions de las citas
+// ver los caso de actualizar y detalles de la cita
+// mover la logica del formulario a las actions de las citas
 // ver el tema de la fecha para una cita debe ser futura obligatoriamente o no
-// al cancelar una cita opcionalmente añadir una descripcion o informacion al respecto
 // ver el tema de por que en los detalles de la cita no sale el texto correspondiente
 // al editar ver el tema de las fechas, quien las crea, elimina etc
 

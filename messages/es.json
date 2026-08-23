@@ -193,8 +193,13 @@
       "tableSectionSubtitle": "Administra y supervisa todas las citas.",
       "createSectionTitle": "Crear Cita",
       "createSectionSubtitle": "Ingresa los datos para programar una nueva cita en el sistema clínico.",
+      "editSectionTitle": "Editar cita",
+      "editSectionSubtitle": "Actualice los detalles de la cita en el sistema clínico.",
+      "viewSectionTitle": "Detalles de la cita",
+      "viewSectionSubtitle": "Consulte los detalles y la información de esta cita.",
       "createNewAppointmentButton": "Nueva Cita",
       "save": "Guardar",
+      "saving": "Guardando...",
       "doctorLabel": "Doctor",
       "doctorPlaceholder": "Escribe el nombre, correo electrónico o número de licencia del doctor...",
       "patientLabel": "Paciente",
@@ -237,6 +242,10 @@
       "doctor": "Doctor",
       "patient": "Paciente",
       "minutes": "min",
+      "cancelSectionTitle": "Cancelar cita",
+      "cancelSectionSubtitle": "¿Está seguro de que desea cancelar esta cita?",
+      "cancellationReasonLabel": "Motivo de cancelación",
+      "cancellationReasonPlaceholder": "Ingrese el motivo de la cancelación de esta cita...",
       "validation": {
         "doctorRequired": "El médico es obligatorio.",
         "patientRequired": "El paciente es obligatorio.",
@@ -255,8 +264,11 @@
       "errorDeleteAppointmentToast": "No se pudo eliminar la cita.",
       "deleteAlertTitle": "¿Está seguro de que desea eliminar esta cita?",
       "deleteAlertDescription": "Esta acción no se puede deshacer. La cita se eliminará permanentemente.",
+      "cancelAlertTitle": "¿Está seguro de que desea cancelar esta cita?",
+      "cancelAlertDescription": "Esta acción cancelará la cita.",
       "cancel": "Cancel",
-      "confirm": "Delete"
+      "confirm": "Delete",
+      "apply": "Aplicar"
     }
   },
   "auth": {

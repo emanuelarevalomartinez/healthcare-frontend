@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { routes, TranslationDictionary } from "@/lib";
+import { APPOINTMENT_STATUS, routes, TranslationDictionary } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { AppointmentApiResponse } from "../types";
 import { deleteAppointment, getAllAppointmetsFiltered } from "../services";
@@ -22,11 +22,14 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const [appointmentToDelete, setAppointmentToDelete] = useState<{
     id: string;
   } | null>(null);
+   const [appointmentDataToCancel, setAppointmentDataToCancel] = useState<AppointmentApiResponse | null>(null);
   const [appointmentsData, setAppointmentsData] =
     useState<PaginatedData<AppointmentApiResponse>>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  const [isCancelDialogWrapperOpen, setIsCancelDialogWrapperOpen] = useState<boolean>(false);
   const pageSize = 10;
 
   const fetchAppointmentsFiltered = useCallback(
@@ -67,6 +70,11 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     setIsAlertOpen(true);
   };
 
+   const handleOpenCancelConfirm = (appointment: AppointmentApiResponse) => {
+    setAppointmentDataToCancel(appointment);
+    setIsCancelDialogWrapperOpen(true);
+  };
+
   const handleExecuteDelete = async () => {
     if (!appointmentToDelete) return;
     try {
@@ -85,6 +93,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     } finally {
       setIsAlertOpen(false);
       setAppointmentToDelete(null);
+      setIsCancelDialogWrapperOpen(false);
     }
   };
 
@@ -96,16 +105,13 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     },
     {
       label: dictionary.components.actions.edit,
-      onClick: (p) => {
-        console.log("hola 2");
-      },
+      onClick: (p) => router.push(routes.appointments.edit.replace(":id", p.id)),
     },
 
     {
       label: dictionary.components.actions.cancel,
-      onClick: (p) => {
-        console.log("hola 3");
-      },
+      onClick: (p) => handleOpenCancelConfirm(p),
+      disabled: (p) => p.status === APPOINTMENT_STATUS.CANCELLED,
     },
     {
       label: dictionary.components.actions.delete,
@@ -128,5 +134,8 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     setIsAlertOpen,
     handleExecuteDelete,
     setAppointmentToDelete,
+    isCancelDialogWrapperOpen,
+    setIsCancelDialogWrapperOpen,
+    appointmentDataToCancel
   };
 }

@@ -39,6 +39,7 @@ export function AppointmentsList() {
 
   const {
     appointmentsData,
+    appointmentDataToCancel,
     setCurrentPage,
     selectedDate,
     setSelectedDate,
@@ -49,6 +50,8 @@ export function AppointmentsList() {
     setIsAlertOpen,
     handleExecuteDelete,
     setAppointmentToDelete,
+    isCancelDialogWrapperOpen,
+    setIsCancelDialogWrapperOpen,
   } = useAppointmentActions({ dictionary });
 
   useEffect(() => {
@@ -107,6 +110,7 @@ export function AppointmentsList() {
               <CardContent>
                 <AppointmentListDaily
                   actions={appointmentActions}
+                  appointmentDataToCancel={appointmentDataToCancel}
                   appointmentsData={appointmentsData}
                   selectedDate={selectedDate}
                   isLoading={isLoading}
@@ -115,6 +119,9 @@ export function AppointmentsList() {
                   setIsAlertOpen={setIsAlertOpen}
                   handleExecuteDelete={handleExecuteDelete}
                   setAppointmentToDelete={setAppointmentToDelete}
+                  isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
+                  setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
+                  fetchAppointmentsFiltered={fetchAppointmentsFiltered}
                 />
               </CardContent>
             </Card>

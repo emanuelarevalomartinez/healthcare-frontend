@@ -187,6 +187,12 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     clearErrors("patientId");
   };
 
+  const getHeaderTitle = () => {
+    if (isViewMode) return t.viewSectionTitle;
+    if (isEditMode) return t.editSectionTitle;
+    return t.createSectionTitle;
+  };
+
   async function onSubmit(data: AppointmentSchema) {
     if (isViewMode) return;
     setIsLoading(true);
@@ -266,8 +272,14 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <SectionHeader
-        title={t.createSectionTitle}
-        description={t.createSectionSubtitle}
+        title={getHeaderTitle()}
+        description={
+          isEditMode
+            ? t.editSectionSubtitle
+            : isViewMode
+            ? t.viewSectionSubtitle
+            : t.createSectionSubtitle
+        }
         onBack={() => router.back()}
       >
         {!isViewMode && (

@@ -193,8 +193,13 @@
       "tableSectionSubtitle": "Manage and monitor appointments.",
       "createSectionTitle": "Create Appointment",
       "createSectionSubtitle": "Enter the details to schedule a new appointment in the clinical system.",
+      "editSectionTitle": "Edit Appointment",
+      "editSectionSubtitle": "Update the appointment details in the clinical system.",
+      "viewSectionTitle": "Appointment Details",
+      "viewSectionSubtitle": "View the details and information of this appointment.",
       "createNewAppointmentButton": "New Appointment",
       "save": "Save",
+      "saving": "Saving...",
       "doctorLabel": "Doctor",
       "doctorPlaceholder": "Enter doctor's name, email, or license number...",
       "patientLabel": "Patient",
@@ -237,6 +242,10 @@
       "doctor": "Doctor",
       "patient": "Patient",
       "minutes": "min",
+      "cancelSectionTitle": "Cancel Appointment",
+      "cancelSectionSubtitle": "Are you sure you want to cancel this appointment?",
+      "cancellationReasonLabel": "Cancellation Reason",
+      "cancellationReasonPlaceholder": "Enter the reason for cancelling this appointment...",
       "validation": {
         "doctorRequired": "Doctor is required.",
         "patientRequired": "Patient is required.",
@@ -255,8 +264,11 @@
       "errorDeleteAppointmentToast": "Failed to delete the appointment.",
       "deleteAlertTitle": "Are you sure you want to delete this appointment?",
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the appointment.",
+      "cancelAlertTitle": "Are you sure you want to cancel this appointment?",
+      "cancelAlertDescription": "This action will cancel the appointment.",
       "cancel": "Cancel",
-      "confirm": "Delete"
+      "confirm": "Delete",
+      "apply": "Apply"
     }
   },
   "auth": {

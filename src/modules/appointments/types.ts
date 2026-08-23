@@ -27,7 +27,16 @@ export interface AppointmentCreateRequest {
   notes: string;
 }
 
-export interface AppointmentUpdateRequest extends AppointmentCreateRequest {}
+export interface AppointmentUpdateRequest {
+  appointmentDateTime?: string;
+  durationMinutes?: number;
+  consultationReason?: string;
+  status?: APPOINTMENT_STATUS;
+  cancellationReason?: string;
+  confirmedAt?: string;
+  attendedAt?: string;
+  notes?: string;
+}
 
 export enum APPOINTMENT_STATUS_TYPE {
   SCHEDULED = "SCHEDULED",

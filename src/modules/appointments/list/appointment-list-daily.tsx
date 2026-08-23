@@ -22,9 +22,12 @@ import { Button } from "@/components/ui/button";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
 import { Dispatch, SetStateAction } from "react";
+import { DialogWrapper } from "@/components/customs/dialog-wrapper";
+import { ItemAppointmentCancelForm } from "../forms/item-appointment-cancel-form";
 
 interface Props {
   appointmentsData?: PaginatedData<AppointmentApiResponse>;
+  appointmentDataToCancel: AppointmentApiResponse | null;
   selectedDate: Date;
   isLoading: boolean;
   setCurrentPage: (e: number) => void;
@@ -37,10 +40,14 @@ interface Props {
       id: string;
     } | null>
   >;
+  isCancelDialogWrapperOpen: boolean;
+  setIsCancelDialogWrapperOpen: (e: boolean) => void;
+  fetchAppointmentsFiltered: () => Promise<void>;
 }
 
 export function AppointmentListDaily({
   appointmentsData,
+  appointmentDataToCancel,
   selectedDate,
   isLoading,
   setCurrentPage,
@@ -49,6 +56,9 @@ export function AppointmentListDaily({
   setIsAlertOpen,
   handleExecuteDelete,
   setAppointmentToDelete,
+  isCancelDialogWrapperOpen,
+  setIsCancelDialogWrapperOpen,
+  fetchAppointmentsFiltered,
 }: Props) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.appointments;
@@ -83,9 +93,7 @@ export function AppointmentListDaily({
           </h3>
 
           <span className="text-sm text-muted-foreground space-x-1">
-            <span>
-              {totalAppointments}
-            </span>
+            <span>{totalAppointments}</span>
             <span>
               {totalAppointments === 1
                 ? t.appointmentCount
@@ -211,6 +219,20 @@ export function AppointmentListDaily({
         cancelText={t.cancel}
         confirmText={t.confirm}
       />
+
+      <DialogWrapper
+        open={isCancelDialogWrapperOpen}
+        onOpenChange={setIsCancelDialogWrapperOpen}
+        title={t.cancelSectionTitle}
+        description={t.cancelSectionSubtitle}
+        className="sm:min-w-xl"
+      >
+        <ItemAppointmentCancelForm
+          setOpenDetails={setIsCancelDialogWrapperOpen}
+          appointmentData={appointmentDataToCancel}
+          onSuccess={fetchAppointmentsFiltered}
+        />
+      </DialogWrapper>
     </>
   );
 }

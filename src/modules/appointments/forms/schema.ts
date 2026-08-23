@@ -76,7 +76,7 @@ export const getUpdateAppointmentSchema = (
       .max(255, v.consultationReasonMaxLength)
       .optional(),
 
-    status: z.string(),
+    status: z.string().optional(),
 
     cancellationReason: z
       .string()
