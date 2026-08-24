@@ -344,7 +344,8 @@
       "deactivate": "Deactivate",
       "edit": "Edit",
       "delete": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "confirm":"Confirm"
     },
     "loading": {
       "text": "Loading"
