@@ -2,6 +2,7 @@
 
 // TODO
 
+// el campo generico input para valores numericos no debe permitir letras
 // ver los caso de actualizar y detalles de la cita
 // mover la logica del formulario a las actions de las citas
 // ver el tema de la fecha para una cita debe ser futura obligatoriamente o no

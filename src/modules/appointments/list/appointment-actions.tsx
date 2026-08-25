@@ -2,7 +2,12 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { APPOINTMENT_STATUS, routes, TranslationDictionary } from "@/lib";
+import {
+  ALERT_ACTION,
+  APPOINTMENT_STATUS,
+  routes,
+  TranslationDictionary,
+} from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { AppointmentApiResponse } from "../types";
 import {
@@ -22,7 +27,9 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
   const t = dictionary.dashboard.appointments;
 
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertActionType, setAlertActionType] = useState<ALERT_ACTION | null>(
+    null
+  );
   const [appointmentToDelete, setAppointmentToDelete] = useState<{
     id: string;
   } | null>(null);
@@ -75,7 +82,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
 
   const handleOpenDeleteConfirm = (id: string) => {
     setAppointmentToDelete({ id });
-    setIsAlertOpen(true);
+    setAlertActionType(ALERT_ACTION.DELETE);
   };
 
   const handleOpenCancelConfirm = (appointment: AppointmentApiResponse) => {
@@ -85,7 +92,13 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
 
   const handleOpenConfirm = (appointment: AppointmentApiResponse) => {
     setAppointmentDataToConfirm(appointment);
-    setIsAlertOpen(true);
+    setAlertActionType(ALERT_ACTION.CONFIRM);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertActionType(null);
+    setAppointmentToDelete(null);
+    setAppointmentDataToConfirm(null);
   };
 
   const handleExecuteDelete = async () => {
@@ -104,7 +117,6 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       console.error("Error to delete:", error);
       toast.error(t.errorDeleteAppointmentToast);
     } finally {
-      setIsAlertOpen(false);
       setAppointmentToDelete(null);
       setIsCancelDialogWrapperOpen(false);
     }
@@ -128,9 +140,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       console.error("Error to delete:", error);
       toast.error(t.errorDeleteAppointmentToast);
     } finally {
-      setIsAlertOpen(false);
-      setAppointmentToDelete(null);
-      setIsCancelDialogWrapperOpen(false);
+      setAppointmentDataToConfirm(null);
     }
   };
 
@@ -173,12 +183,12 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     setSelectedDate: handleDateChange,
     fetchAppointmentsFiltered,
     appointmentActions,
-    isAlertOpen,
-    setIsAlertOpen,
     handleExecuteDelete,
-    setAppointmentToDelete,
     isCancelDialogWrapperOpen,
     setIsCancelDialogWrapperOpen,
     appointmentDataToCancel,
+    alertActionType,
+    handleExecuteConfirm,
+    handleCloseAlert,
   };
 }

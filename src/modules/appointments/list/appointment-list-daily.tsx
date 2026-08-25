@@ -1,6 +1,6 @@
 "use client";
 
-import { APPOINTMENT_STATUS, useLanguage } from "@/lib";
+import { ALERT_ACTION, APPOINTMENT_STATUS, useLanguage } from "@/lib";
 import {
   formatDisplayDateTimeToLocaleString,
   formatSelectedDateToInputString,
@@ -32,17 +32,13 @@ interface Props {
   isLoading: boolean;
   setCurrentPage: (e: number) => void;
   actions?: TableAction<AppointmentApiResponse>[];
-  isAlertOpen: boolean;
-  setIsAlertOpen: (e: boolean) => void;
   handleExecuteDelete: () => Promise<void>;
-  setAppointmentToDelete: Dispatch<
-    SetStateAction<{
-      id: string;
-    } | null>
-  >;
   isCancelDialogWrapperOpen: boolean;
   setIsCancelDialogWrapperOpen: (e: boolean) => void;
   fetchAppointmentsFiltered: () => Promise<void>;
+  alertActionType: ALERT_ACTION | null;
+  handleCloseAlert: () => void;
+  handleExecuteConfirm: () => Promise<void>;
 }
 
 export function AppointmentListDaily({
@@ -52,13 +48,13 @@ export function AppointmentListDaily({
   isLoading,
   setCurrentPage,
   actions,
-  isAlertOpen,
-  setIsAlertOpen,
   handleExecuteDelete,
-  setAppointmentToDelete,
   isCancelDialogWrapperOpen,
   setIsCancelDialogWrapperOpen,
   fetchAppointmentsFiltered,
+  alertActionType,
+  handleCloseAlert,
+  handleExecuteConfirm,
 }: Props) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.appointments;
@@ -208,16 +204,27 @@ export function AppointmentListDaily({
       </div>
 
       <SystemAlertDialog
-        isOpen={isAlertOpen}
-        onClose={() => {
-          setIsAlertOpen(false);
-          setAppointmentToDelete(null);
-        }}
-        onConfirm={handleExecuteDelete}
-        title={t.deleteAlertTitle}
-        description={t.deleteAlertDescription}
+        isOpen={alertActionType !== null}
+        onClose={handleCloseAlert}
+        onConfirm={
+          alertActionType === ALERT_ACTION.DELETE
+            ? handleExecuteDelete
+            : handleExecuteConfirm
+        }
+        title={
+          alertActionType === ALERT_ACTION.DELETE
+            ? t.deleteAlertTitle
+            : t.confirmAlertTitle
+        }
+        description={
+          alertActionType === ALERT_ACTION.DELETE
+            ? t.deleteAlertDescription
+            : t.confirmAlertDescription
+        }
         cancelText={t.cancel}
-        confirmText={t.confirm}
+        confirmText={
+          alertActionType === ALERT_ACTION.DELETE ? t.confirm : t.apply
+        }
       />
 
       <DialogWrapper

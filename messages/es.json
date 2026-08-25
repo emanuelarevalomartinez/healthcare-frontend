@@ -264,6 +264,8 @@
       "errorDeleteAppointmentToast": "No se pudo eliminar la cita.",
       "deleteAlertTitle": "¿Está seguro de que desea eliminar esta cita?",
       "deleteAlertDescription": "Esta acción no se puede deshacer. La cita se eliminará permanentemente.",
+      "confirmAlertTitle": "Confirmar cita",
+      "confirmAlertDescription": "¿Está seguro de que desea confirmar esta cita?",
       "cancelAlertTitle": "¿Está seguro de que desea cancelar esta cita?",
       "cancelAlertDescription": "Esta acción cancelará la cita.",
       "cancel": "Cancel",
@@ -345,7 +347,7 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "cancel": "Cancelar",
-      "confirm":"Confirmar"
+      "confirm": "Confirmar"
     },
     "loading": {
       "text": "Cargando"

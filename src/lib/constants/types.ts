@@ -14,8 +14,14 @@ export enum APPOINTMENT_STATUS {
   NO_SHOW = "NO_SHOW",
 }
 
+export enum ALERT_ACTION {
+   DELETE = "DELETE",
+   CONFIRM = "CONFIRM",
+}
+
 export type FormMode = "create" | "edit" | "details";
 export type DoctorFormMode = "create" | "complete";
+
 
 export type RedirectReason =
   (typeof REDIRECT_REASONS)[keyof typeof REDIRECT_REASONS];
