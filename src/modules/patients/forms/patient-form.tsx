@@ -368,7 +368,7 @@ export function PatientForm({ patient, mode }: PatientFormProps) {
             <Label htmlFor="notes">{t.notesLabel}</Label>
             <Textarea
               id="notes"
-              placeholder={t.notesPlaceholder}
+              placeholder={mode !== "details" ? t.notesPlaceholder : t.systemUnknown}
               rows={4}
               disabled={disableAllFields}
               {...register("notes")}

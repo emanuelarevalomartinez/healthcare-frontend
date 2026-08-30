@@ -1,6 +1,12 @@
 "use client";
 
-import { FormMode, getErrorMessage, routes, useLanguage } from "@/lib";
+import {
+  APPOINTMENT_STATUS,
+  FormMode,
+  getErrorMessage,
+  routes,
+  useLanguage,
+} from "@/lib";
 import { useAppointmentActions } from "../list/appointment-actions";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
@@ -37,7 +43,10 @@ import { getAllPatientsFiltered } from "@/modules/patients/services";
 import { FormFieldInput } from "@/components/customs/form-field-input";
 import { FormFieldSelect } from "@/components/customs/form-field-select";
 import {
+  formatApiDateToInputString,
+  formatApiDateToTimeInputString,
   formatDateTimeToApiString,
+  formatDisplayDateTimeToLocaleString,
   formatSelectedDateToInputString,
   parseInputStringToDate,
 } from "@/lib/utils/functions";
@@ -52,6 +61,8 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 import { createAppointment, updateAppointment } from "../services";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 
 interface AppointmentFormProps {
   appointment: AppointmentApiResponse;
@@ -89,6 +100,14 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
       : getCreateAppointmentSchema(dictionary);
   }, [dictionary, isEditMode]);
 
+  const initialAppointmentDate = useMemo(() => {
+    return formatApiDateToInputString(appointment?.appointmentDateTime);
+  }, [appointment?.appointmentDateTime]);
+
+  const initialAppointmentTime = useMemo(() => {
+    return formatApiDateToTimeInputString(appointment?.appointmentDateTime);
+  }, [appointment?.appointmentDateTime]);
+
   const getAppointmentStatusOptions = useCallback((optionsDict: any) => {
     return Object.values(APPOINTMENT_STATUS_TYPE).map((docType) => {
       const docTypeKey = docType.toLowerCase() as
@@ -117,12 +136,12 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   } = useForm<AppointmentSchema>({
     resolver: zodResolver(currentSchema) as Resolver<AppointmentSchema>,
     defaultValues: {
-      status: appointment.status,
+      status: appointment.status as APPOINTMENT_STATUS,
       attendedAt: appointment.attendedAt,
       cancellationReason: appointment.cancellationReason,
       confirmedAt: appointment.confirmedAt,
-      appointmentDateTime: appointment.appointmentDateTime,
-      appointmentTime: appointment.appointmentDateTime,
+      appointmentDateTime: initialAppointmentDate,
+      appointmentTime: initialAppointmentTime,
       durationMinutes: appointment.durationMinutes,
       consultationReason: appointment.consultationReason,
       notes: appointment.notes,
@@ -300,10 +319,12 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             label={t.doctorLabel}
             placeholder={t.doctorPlaceholder}
             disabled={disableFields}
-            value={doctorSearch}
+            value={
+              mode === "create" ? doctorSearch : appointment.doctorFullName
+            }
             onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
-            searchItems={searchDoctors}
+            searchItems={mode === "create" ? searchDoctors : mode === "edit" ? searchDoctors : undefined}
             getDisplayLabel={(doctor) => doctor.username}
             displayFields={doctorDisplayFields}
             error={errors.doctorId?.message}
@@ -317,10 +338,12 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             label={t.patientLabel}
             placeholder={t.patientPlaceholder}
             disabled={disableFields}
-            value={patientSearch}
+            value={
+              mode === "create" ? patientSearch : appointment.patientFullName
+            }
             onChange={setPatientSearch}
             onSelect={handleSelectPatient}
-            searchItems={searchPatients}
+            searchItems={mode === "create" ? searchPatients : mode === "edit" ? searchPatients : undefined}
             getDisplayLabel={(patient) => patient.fullName}
             displayFields={patientsDisplayFields}
             error={errors.patientId?.message}
@@ -330,11 +353,13 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
           />
 
           <div className="grid gap-2">
-            <Label htmlFor="birthDate">{t.appointmentDateTimeLabel}</Label>
+            <Label htmlFor="appointmentDateTime">
+              {t.appointmentDateTimeLabel}
+            </Label>
             <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  id="birthDate"
+                  id="appointmentDateTime"
                   variant="outline"
                   disabled={disableFields}
                   className={cn(
@@ -369,7 +394,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
                     trigger("appointmentDateTime");
                     setIsCalendarOpen(false);
                   }}
-                   disabled={(date) =>
+                  disabled={(date) =>
                     date < new Date(new Date().setHours(0, 0, 0, 0))
                   }
                 />
@@ -389,6 +414,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             type="time"
             label={t.appointmentTimeLabel}
             placeholder={t.appointmentTimePlaceholder}
+            disabled={disableFields}
             register={register("appointmentTime")}
             error={errors.appointmentTime?.message as string}
           />
@@ -405,9 +431,44 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             })}
             error={errors.durationMinutes?.message as string}
           />
+
+          {isViewMode && (
+            <FormFieldSelect
+              id="status"
+              label={t.statusLabel}
+              placeholder={t.statusPlaceholder}
+              disabled={disableFields}
+              value={currentAppointmentStatus ?? ""}
+              onValueChange={(value) =>
+                setValue("status", value as APPOINTMENT_STATUS, {
+                  shouldValidate: true,
+                })
+              }
+              options={appointmentStatusOptions}
+              error={errors.status?.message as string}
+            />
+          )}
         </CardContent>
 
-        <CardContent className="grid grid-cols-1 gap-x-6 gap-y-2 pt-6">
+        <CardContent className="grid grid-cols-1 gap-x-6">
+          {(isEditMode || isViewMode) && (
+            <FormFieldTextArea
+              id="cancellationReason"
+              label={t.cancellationReasonLabel}
+              placeholder={
+                mode !== "details"
+                  ? t.cancellationReasonPlaceholder
+                  : t.systemUnknown
+              }
+              disabled={disableFields}
+              register={register("cancellationReason")}
+              error={errors.cancellationReason?.message as string}
+              maxLength={255}
+            />
+          )}
+        </CardContent>
+
+        <CardContent className="grid grid-cols-1 gap-x-6">
           <FormFieldTextArea
             id="consultationReason"
             label={t.consultationReasonLabel}
@@ -421,11 +482,95 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
           <FormFieldTextArea
             id="notes"
             label={t.notesLabel}
-            placeholder={t.notesPlaceholder}
+            placeholder={
+              mode !== "details" ? t.notesPlaceholder : t.systemUnknown
+            }
+            disabled={disableFields}
             register={register("notes")}
             error={errors.notes?.message as string}
             maxLength={500}
           />
+        </CardContent>
+
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-2">
+          {(isEditMode || isViewMode) && (
+            <>
+              <Separator className="md:col-span-2 mt-2 mb-4" />
+
+              <div className="grid gap-2">
+                <Label htmlFor="createdBy">{t.createdByLabel}</Label>
+                <Input
+                  id="createdBy"
+                  value={appointment.createdBy || t.systemUnknown}
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="createdAt">{t.createdAtLabel}</Label>
+                <Input
+                  id="createdAt"
+                  value={
+                    appointment.createdAt
+                      ? formatDisplayDateTimeToLocaleString(
+                          appointment.createdAt
+                        )
+                      : ""
+                  }
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="confirmedAt">{t.confirmedAtLabel}</Label>
+                <Input
+                  id="confirmedAt"
+                  value={
+                    appointment.confirmedAt
+                      ? formatDisplayDateTimeToLocaleString(
+                          appointment.confirmedAt
+                        )
+                      : t.systemUnknown
+                  }
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="attendedAt">{t.attendedAtLabel}</Label>
+                <Input
+                  id="attendedAt"
+                  value={
+                    appointment.attendedAt
+                      ? formatDisplayDateTimeToLocaleString(
+                          appointment.attendedAt
+                        )
+                      : t.systemUnknown
+                  }
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="cancelledBy">{t.cancelledByLabel}</Label>
+                <Input
+                  id="cancelledBy"
+                  value={appointment.cancelledBy || t.systemUnknown}
+                  disabled={true}
+                  className="bg-muted text-muted-foreground"
+                />
+                <div className="text-sm h-5">&nbsp;</div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </form>

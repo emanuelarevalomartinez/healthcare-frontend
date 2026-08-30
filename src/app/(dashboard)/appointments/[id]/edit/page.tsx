@@ -1,6 +1,7 @@
 import { APPOINTMENT_STATUS } from "@/lib";
 import { AppointmentForm } from "@/modules/appointments/forms/appointment-form";
 import { findAppointmentById } from "@/modules/appointments/services";
+import { findUserById } from "@/modules/user/services";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -9,6 +10,7 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const response = await findAppointmentById(id);
+  const user = await findUserById(response.data.createdBy);
 
   return (
     <AppointmentForm
@@ -21,7 +23,7 @@ export default async function Page({ params }: PageProps) {
         status: response.data.status as APPOINTMENT_STATUS,
         cancelledBy: response.data.cancelledBy,
         cancellationReason: response.data.cancellationReason,
-        createdBy: response.data.createdBy,
+        createdBy: user.data.username,
         createdAt: response.data.createdAt,
         confirmedAt: response.data.confirmedAt,
         attendedAt: response.data.attendedAt,

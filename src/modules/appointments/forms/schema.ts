@@ -34,6 +34,14 @@ export const getCreateAppointmentSchema = (
       .min(1, v.consultationReasonRequired)
       .max(255, v.consultationReasonMaxLength),
 
+    status: z.string().optional(),
+
+    cancellationReason: z
+      .string()
+      .trim()
+      .max(255, v.cancellationReasonMaxLength)
+      .optional(),
+
     notes: z
       .string()
       .trim()

@@ -9,6 +9,14 @@ export function formatApiDateToInputString(
   return String(date).split("T")[0];
 }
 
+export function formatApiDateToTimeInputString(
+  date: string | Date | undefined | null
+): string {
+  if (!date) return "";
+  const value = String(date);
+  return value.slice(11, 16);
+}
+
 export function parseInputStringToDate(
   dateString: string | undefined | null
 ): Date | undefined {
@@ -63,11 +71,19 @@ export const statusBadgeMap: Record<APPOINTMENT_STATUS, BadgeType> = {
   NO_SHOW: "red",
 };
 
-export function formatDateTimeToApiString(
-  date: string | undefined | null,
-  time: string | undefined | null
+  export function formatDateTimeToApiString(
+date: string | undefined | null,
+time: string | undefined | null
 ): string {
-  if (!date || !time) return "";
+if (!date || !time) return "";
 
-  return `${date}T${time}:00`;
+const now = new Date();
+
+const milliseconds = now
+.getMilliseconds()
+.toString()
+.padStart(3, "0");
+
+return `${date}T${time}:00.${milliseconds}`;
 }
+

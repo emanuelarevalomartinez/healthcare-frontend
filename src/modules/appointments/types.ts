@@ -7,7 +7,7 @@ export interface AppointmentApiResponse {
   durationMinutes: number;
   consultationReason: string;
   status: APPOINTMENT_STATUS;
-  cancelledBy: string;
+  cancelledBy?: string;
   cancellationReason: string;
   createdBy: string;
   createdAt: string;

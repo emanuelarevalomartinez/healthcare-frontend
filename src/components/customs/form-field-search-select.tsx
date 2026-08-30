@@ -21,7 +21,7 @@ export interface FormFieldSearchSelectProps<T> {
   value: string;
   onChange: (value: string) => void;
   onSelect: (item: T) => void;
-  searchItems: (query: string) => Promise<T[]>;
+  searchItems?: (query: string) => Promise<T[]>;
   getDisplayLabel?: (item: T) => string;
   displayFields?: SearchSelectDisplayField<T>[];
   minChars?: number;
@@ -72,10 +72,12 @@ export function FormFieldSearchSelect<T>({
 
       try {
         setIsLoading(true);
-        const searchResults = await searchItems(query);
-        const limitedResults = searchResults.slice(0, maxResults);
-        setResults(limitedResults);
-        setShowDropdown(limitedResults.length > 0);
+        if (searchItems) {
+          const searchResults = await searchItems(query);
+          const limitedResults = searchResults.slice(0, maxResults);
+          setResults(limitedResults);
+          setShowDropdown(limitedResults.length > 0);
+        }
       } catch (error) {
         console.error("Error searching:", error);
         setResults([]);
