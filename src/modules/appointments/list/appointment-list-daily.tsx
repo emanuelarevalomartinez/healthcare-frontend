@@ -71,7 +71,7 @@ export function AppointmentListDaily({
   };
 
   const LoadingState = () => (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center h-[64vh] 2xl:h-[64vh] w-full">
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center h-[54vh] w-full">
       <Loader2Icon className="size-10 animate-spin text-primary mb-4" />
 
       <p className="text-sm text-muted-foreground animate-pulse">
@@ -101,15 +101,15 @@ export function AppointmentListDaily({
         {isLoading ? (
           <LoadingState />
         ) : !hasAppointments ? (
-          <div className="text-center place-content-center items-center py-8 text-muted-foreground h-[74vh]">
+          <div className="text-center place-content-center items-center py-8 text-muted-foreground h-[54vh]">
             {t.noAppointmentsForDay}
           </div>
         ) : (
-          <div className="space-y-2 overflow-y-auto h-[60vh] border-y py-2 border-border">
+          <div className="space-y-2 overflow-y-auto h-[52vh] rounded-md">
             {appointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="relative w-full border border-border rounded-md p-3 mb-2 text-left"
+                className="relative w-full border border-border rounded-md p-3 mb-3 text-left"
               >
                 <div className="absolute top-2 right-2 flex items-center gap-1">
                   <span className="text-xs text-muted-foreground whitespace-nowrap">

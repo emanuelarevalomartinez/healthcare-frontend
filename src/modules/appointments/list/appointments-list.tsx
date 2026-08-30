@@ -88,25 +88,8 @@ export function AppointmentsList() {
             />
           </div>
 
-          <div className="flex flex-col 2xl:flex-row gap-1 pt-4">
-            <Card className="flex w-full 2xl:w-2/3 bg-transparent border border-border h-auto 2xl:h-[74vh] overflow-y-auto">
-              <CardContent>
-                <Calendar
-                  className="w-full rounded-lg"
-                  captionLayout="dropdown"
-                  buttonVariant="outline"
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
-                    if (date) {
-                      setSelectedDate(date);
-                    }
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="flex w-full 2xl:w-1/3 bg-transparent border border-border h-[74vh]">
+          <div className="flex flex-col 2xl:flex-row gap-2 pt-4">
+            <Card className="flex w-full bg-transparent border border-border h-[62vh]">
               <CardContent>
                 <AppointmentListDaily
                   actions={appointmentActions}
@@ -122,6 +105,23 @@ export function AppointmentsList() {
                   alertActionType={alertActionType}
                   handleCloseAlert={handleCloseAlert}
                   handleExecuteConfirm={handleExecuteConfirm}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
+              <CardContent>
+                <Calendar
+                  className="w-full rounded-lg"
+                  captionLayout="dropdown"
+                  buttonVariant="outline"
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date);
+                    }
+                  }}
                 />
               </CardContent>
             </Card>

@@ -40,7 +40,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const [appointmentsData, setAppointmentsData] =
     useState<PaginatedData<AppointmentApiResponse>>();
   const [currentPage, setCurrentPage] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const [isCancelDialogWrapperOpen, setIsCancelDialogWrapperOpen] =
