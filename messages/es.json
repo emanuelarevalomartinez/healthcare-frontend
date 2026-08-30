@@ -262,6 +262,7 @@
       "toastUpdateSuccess": "Cita actualizada correctamente.",
       "successDeleteAppointmentToast": "Cita eliminada correctamente.",
       "errorDeleteAppointmentToast": "No se pudo eliminar la cita.",
+      "errorConfirmAppointmentToast": "No se pudo confirmar la cita.",
       "deleteAlertTitle": "¿Está seguro de que desea eliminar esta cita?",
       "deleteAlertDescription": "Esta acción no se puede deshacer. La cita se eliminará permanentemente.",
       "confirmAlertTitle": "Confirmar cita",

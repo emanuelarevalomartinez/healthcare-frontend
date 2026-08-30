@@ -369,6 +369,9 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
                     trigger("appointmentDateTime");
                     setIsCalendarOpen(false);
                   }}
+                   disabled={(date) =>
+                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                  }
                 />
               </PopoverContent>
             </Popover>
@@ -395,7 +398,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             label={t.durationMinutesLabel}
             placeholder={t.durationMinutesPlaceholder}
             disabled={disableFields}
-            integer
+            type="number"
             min={1}
             register={register("durationMinutes", {
               valueAsNumber: true,

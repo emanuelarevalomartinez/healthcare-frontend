@@ -11,7 +11,6 @@ export interface FormFieldInputProps
   label: string;
   error?: string;
   register: UseFormRegisterReturn;
-  integer?: boolean;
 }
 
 export function FormFieldInput({
@@ -22,30 +21,39 @@ export function FormFieldInput({
   disabled,
   type = "text",
   placeholder,
-  integer = false,
   className,
+  onChange,
   ...props
 }: FormFieldInputProps) {
+  const isNumeric = type === "number";
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isNumeric) {
+      event.target.value = event.target.value.replace(/[^0-9.]/g, "");
+    }
+
+    onChange?.(event);
+    register.onChange(event);
+  };
+
   return (
     <div className="grid gap-2">
       <Label htmlFor={id}>{label}</Label>
 
       <Input
         id={id}
-        type={integer ? "number" : type}
+        type={isNumeric ? "text" : type}
         placeholder={placeholder}
         disabled={disabled}
-        step={integer ? 1 : props.step}
-        inputMode={integer ? "numeric" : props.inputMode}
-        className={`${integer ? "text-right" : ""} ${
-          className ?? ""
-        }`}
+        inputMode={isNumeric ? "decimal" : props.inputMode}
+        className={`${isNumeric ? "text-right" : ""} ${className ?? ""}`}
         {...register}
-        aria-invalid={error ? "true" : "false"}
         {...props}
+        onChange={handleChange}
+        aria-invalid={error ? "true" : "false"}
       />
 
-      <div className="text-sm h-5 text-red-500">
+      <div className="h-5 text-sm text-red-500">
         {error ? error : <>&nbsp;</>}
       </div>
     </div>

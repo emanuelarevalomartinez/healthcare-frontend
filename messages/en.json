@@ -262,6 +262,7 @@
       "toastUpdateSuccess": "Appointment updated successfully.",
       "successDeleteAppointmentToast": "Appointment deleted successfully.",
       "errorDeleteAppointmentToast": "Failed to delete the appointment.",
+      "errorConfirmAppointmentToast": "Failed to confirm the appointment.",
       "deleteAlertTitle": "Are you sure you want to delete this appointment?",
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the appointment.",
       "confirmAlertTitle": "Confirm Appointment",

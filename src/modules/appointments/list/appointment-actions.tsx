@@ -137,8 +137,8 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
         }
       }
     } catch (error) {
-      console.error("Error to delete:", error);
-      toast.error(t.errorDeleteAppointmentToast);
+      console.error("Error to confirm:", error);
+      toast.error(t.errorConfirmAppointmentToast);
     } finally {
       setAppointmentDataToConfirm(null);
     }
@@ -164,7 +164,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     {
       label: dictionary.components.actions.confirm,
       onClick: (p) => handleOpenConfirm(p),
-      disabled: (p) => p.status === APPOINTMENT_STATUS.CONFIRMED,
+      disabled: (p) => p.status === APPOINTMENT_STATUS.CONFIRMED || p.status === APPOINTMENT_STATUS.CANCELLED,
     },
     {
       label: dictionary.components.actions.delete,
