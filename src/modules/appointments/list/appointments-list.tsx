@@ -88,8 +88,8 @@ export function AppointmentsList() {
             />
           </div>
 
-          <div className="flex flex-col 2xl:flex-row gap-2 pt-4">
-            <Card className="flex w-full bg-transparent border border-border h-[62vh]">
+          <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
+            <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
               <CardContent>
                 <AppointmentListDaily
                   actions={appointmentActions}
@@ -109,7 +109,7 @@ export function AppointmentsList() {
               </CardContent>
             </Card>
 
-            <Card className="flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
+            <Card className="row-start-1 flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
               <CardContent>
                 <Calendar
                   className="w-full rounded-lg"
