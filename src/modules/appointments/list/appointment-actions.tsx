@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ALERT_ACTION,
   APPOINTMENT_STATUS,
+  getErrorMessage,
   routes,
   TranslationDictionary,
 } from "@/lib";
@@ -115,6 +116,8 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       }
     } catch (error) {
       console.error("Error to delete:", error);
+     /*  const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage ?? t.errorDeleteAppointmentToast); */
       toast.error(t.errorDeleteAppointmentToast);
     } finally {
       setAppointmentToDelete(null);
@@ -138,7 +141,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       }
     } catch (error) {
       console.error("Error to confirm:", error);
-      toast.error(t.errorConfirmAppointmentToast);
+      toast.error(t.errorDeleteAppointmentToast);
     } finally {
       setAppointmentDataToConfirm(null);
     }
@@ -159,12 +162,12 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     {
       label: dictionary.components.actions.cancel,
       onClick: (p) => handleOpenCancelConfirm(p),
-      disabled: (p) => p.status === APPOINTMENT_STATUS.CANCELLED,
+      disabled: (p) => p.status === APPOINTMENT_STATUS.CANCELLED || p.status === APPOINTMENT_STATUS.ATTENDED || p.status === APPOINTMENT_STATUS.NO_SHOW,
     },
     {
       label: dictionary.components.actions.confirm,
       onClick: (p) => handleOpenConfirm(p),
-      disabled: (p) => p.status === APPOINTMENT_STATUS.CONFIRMED || p.status === APPOINTMENT_STATUS.CANCELLED,
+      disabled: (p) => p.status === APPOINTMENT_STATUS.CONFIRMED || p.status === APPOINTMENT_STATUS.CANCELLED || p.status === APPOINTMENT_STATUS.ATTENDED || p.status === APPOINTMENT_STATUS.NO_SHOW,
     },
     {
       label: dictionary.components.actions.delete,

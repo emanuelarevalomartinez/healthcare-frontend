@@ -8,7 +8,7 @@ import {
   useLanguage,
 } from "@/lib";
 import { useAppointmentActions } from "../list/appointment-actions";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -24,7 +24,6 @@ import {
 } from "./schema";
 
 import {
-  APPOINTMENT_STATUS_TYPE,
   AppointmentApiResponse,
   AppointmentCreateRequest,
   AppointmentUpdateRequest,
@@ -108,17 +107,49 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     return formatApiDateToTimeInputString(appointment?.appointmentDateTime);
   }, [appointment?.appointmentDateTime]);
 
-  const getAppointmentStatusOptions = useCallback((optionsDict: any) => {
-    return Object.values(APPOINTMENT_STATUS_TYPE).map((docType) => {
-      const docTypeKey = docType.toLowerCase() as
-        | "scheduled"
-        | "confirmed"
-        | "attended"
-        | "cancelled"
-        | "no_show";
-      return { value: docType, label: optionsDict[docTypeKey] };
-    });
-  }, []);
+  const getAppointmentStatusOptions = useCallback(
+    (optionsDict: any) => {
+      let availableStatuses: APPOINTMENT_STATUS[];
+
+      if (appointment.status === APPOINTMENT_STATUS.SCHEDULED) {
+        availableStatuses = [
+          APPOINTMENT_STATUS.SCHEDULED,
+          APPOINTMENT_STATUS.CONFIRMED,
+          APPOINTMENT_STATUS.CANCELLED,
+        ];
+      } else if (appointment.status === APPOINTMENT_STATUS.CONFIRMED) {
+        availableStatuses = [
+          APPOINTMENT_STATUS.CONFIRMED,
+          APPOINTMENT_STATUS.ATTENDED,
+          APPOINTMENT_STATUS.CANCELLED,
+          APPOINTMENT_STATUS.NO_SHOW,
+        ];
+      } else if (appointment.status === APPOINTMENT_STATUS.CANCELLED) {
+        availableStatuses = [APPOINTMENT_STATUS.CANCELLED];
+      } else if (appointment.status === APPOINTMENT_STATUS.NO_SHOW) {
+        availableStatuses = [APPOINTMENT_STATUS.NO_SHOW];
+      } else if (appointment.status === APPOINTMENT_STATUS.ATTENDED) {
+        availableStatuses = [APPOINTMENT_STATUS.ATTENDED];
+      } else {
+        availableStatuses = [];
+      }
+
+      return availableStatuses.map((status) => {
+        const statusKey = status.toLowerCase() as
+          | "scheduled"
+          | "confirmed"
+          | "attended"
+          | "cancelled"
+          | "no_show";
+
+        return {
+          value: status,
+          label: optionsDict[statusKey],
+        };
+      });
+    },
+    [appointment.status]
+  );
 
   const appointmentStatusOptions = useMemo(
     () => getAppointmentStatusOptions(t.appointmentStatusOptions),
@@ -288,7 +319,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     ];
 
   return (
-     <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <SectionHeader
         title={getHeaderTitle()}
         description={
@@ -452,8 +483,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         <CardContent className="grid grid-cols-1 gap-x-6">
           {(isViewMode ||
             (isEditMode &&
-              currentAppointmentStatus ===
-                APPOINTMENT_STATUS_TYPE.CANCELLED)) && (
+              currentAppointmentStatus === APPOINTMENT_STATUS.CANCELLED)) && (
             <FormFieldTextArea
               id="cancellationReason"
               label={t.cancellationReasonLabel}

@@ -37,11 +37,3 @@ export interface AppointmentUpdateRequest {
   attendedAt?: string;
   notes?: string;
 }
-
-export enum APPOINTMENT_STATUS_TYPE {
-  SCHEDULED = "SCHEDULED",
-  CONFIRMED = "CONFIRMED",
-  ATTENDED = "ATTENDED",
-  CANCELLED = "CANCELLED",
-  NO_SHOW = "NO_SHOW",
-}

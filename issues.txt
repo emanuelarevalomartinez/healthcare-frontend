@@ -2,19 +2,8 @@
 
 // TODO
 
-// incluir el select de los posibles nuevos estados de la cita a partir del estado previo es decir no puede volver a un estado que ya no tiene
 // mover la logica del formulario a las actions de las citas
-
-cambios de estados posibles:
-SCHEDULED
-   ├──> CONFIRMED
-   └──> CANCELLED
-
-CONFIRMED
-   ├──> ATTENDED
-   ├──> CANCELLED
-   └──> NO_SHOW
-
+// ver cuando recargar la pagina de la cita usando localstorage o si no recargar la del dia de hoy
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 

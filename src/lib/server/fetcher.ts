@@ -22,7 +22,11 @@ export const fetcher = async <T = any>(
   const data: ApiResponse<T> = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Server request error");
+    const validationMessage = data.error?.errors?.[0]?.message;
+
+    throw new Error(
+      validationMessage || data.message || "Server request error"
+    );
   }
 
   return data;
