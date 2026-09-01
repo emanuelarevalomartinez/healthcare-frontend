@@ -262,7 +262,8 @@
         "consultationReasonRequired": "El motivo de consulta es obligatorio.",
         "consultationReasonMaxLength": "El motivo de consulta no puede exceder los 255 caracteres.",
         "cancellationReasonMaxLength": "El motivo de cancelación no puede exceder los 255 caracteres.",
-        "notesMaxLength": "Las notas no pueden exceder los 500 caracteres."
+        "notesMaxLength": "Las notas no pueden exceder los 500 caracteres.",
+        "cancellationReasonRequired": "El motivo de la cancelación es obligatorio."
       },
       "toastSuccess": "Cita creada correctamente.",
       "toastUpdateSuccess": "Cita actualizada correctamente.",

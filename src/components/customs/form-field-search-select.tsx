@@ -56,6 +56,8 @@ export function FormFieldSearchSelect<T>({
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+
   const [shouldKeepClosed, setShouldKeepClosed] = useState<boolean>(false);
 
   const performSearch = useCallback(
@@ -90,6 +92,10 @@ export function FormFieldSearchSelect<T>({
   );
 
   useEffect(() => {
+    if (!hasUserInteracted) {
+      return;
+    }
+
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
@@ -103,7 +109,7 @@ export function FormFieldSearchSelect<T>({
         clearTimeout(debounceTimer.current);
       }
     };
-  }, [searchTerm, performSearch, debounceDelay]);
+  }, [searchTerm, performSearch, debounceDelay, hasUserInteracted]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -148,6 +154,8 @@ export function FormFieldSearchSelect<T>({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = e.target.value;
+
+    setHasUserInteracted(true);
 
     setSearchTerm(newValue);
     onChange(newValue);

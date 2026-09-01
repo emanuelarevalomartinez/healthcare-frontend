@@ -262,7 +262,8 @@
         "consultationReasonRequired": "Consultation reason is required.",
         "consultationReasonMaxLength": "Consultation reason cannot exceed 255 characters.",
         "cancellationReasonMaxLength": "Cancellation reason cannot exceed 255 characters.",
-        "notesMaxLength": "Notes cannot exceed 500 characters."
+        "notesMaxLength": "Notes cannot exceed 500 characters.",
+        "cancellationReasonRequired": "Cancellation reason is required."
       },
       "toastSuccess": "Appointment successfully created.",
       "toastUpdateSuccess": "Appointment updated successfully.",

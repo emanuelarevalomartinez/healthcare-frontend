@@ -5,7 +5,12 @@ import { AppointmentApiResponse, AppointmentUpdateRequest } from "../types";
 import { APPOINTMENT_STATUS, getErrorMessage, useLanguage } from "@/lib";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getUpdateAppointmentSchema, UpdateAppointmentSchema } from "./schema";
+import {
+  CancelAppointmentSchema,
+  getCancelAppointmentSchema,
+  getUpdateAppointmentSchema,
+  UpdateAppointmentSchema,
+} from "./schema";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { updateAppointment } from "../services";
@@ -27,16 +32,16 @@ export function ItemAppointmentCancelForm({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const currentSchema = getUpdateAppointmentSchema(dictionary);
+  const currentSchema = getCancelAppointmentSchema(dictionary);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<UpdateAppointmentSchema>({
+  } = useForm<CancelAppointmentSchema>({
     resolver: zodResolver(currentSchema),
     defaultValues: {
-      cancellationReason: appointmentData?.cancellationReason,
+      cancellationReason: appointmentData?.cancellationReason ?? "",
     },
   });
 
@@ -44,9 +49,9 @@ export function ItemAppointmentCancelForm({
     setIsLoading(true);
 
     try {
-      const payload: AppointmentUpdateRequest = {
-        cancellationReason: data.cancellationReason,
-        status: APPOINTMENT_STATUS.CANCELLED
+      let payload: AppointmentUpdateRequest = {
+        cancellationReason: data.cancellationReason?.trim(),
+        status: APPOINTMENT_STATUS.CANCELLED,
       };
 
       if (appointmentData) {
@@ -54,7 +59,7 @@ export function ItemAppointmentCancelForm({
 
         if (response.status === 200) {
           toast.success(t.toastUpdateSuccess);
-           await onSuccess();
+          await onSuccess();
           setOpenDetails(false);
         } else {
           toast.error(dictionary.components.toast.unexpectedResponseStatus);
@@ -78,9 +83,14 @@ export function ItemAppointmentCancelForm({
           error={errors.cancellationReason?.message}
         />
 
-        <div className="flex flex-col gap-y-2 sm:flex-row sm:gap-y-0 gap-x-1 place-content-end">
-          <Button variant="outline" type="button" disabled={isLoading}
-          onClick={() => { setOpenDetails(false) } }
+        <div className="flex flex-col gap-y-2 sm:flex-row sm:gap-y-0 gap-x-1 place-content-end mt-2">
+          <Button
+            variant="outline"
+            type="button"
+            disabled={isLoading}
+            onClick={() => {
+              setOpenDetails(false);
+            }}
           >
             {t.cancel}
           </Button>

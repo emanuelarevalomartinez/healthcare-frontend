@@ -11,6 +11,7 @@ export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const response = await findAppointmentById(id);
   const user = await findUserById(response.data.createdBy);
+  const userCancelledAppointment = response.data.cancelledBy ? await findUserById(response.data.cancelledBy) : undefined;
 
   return (
     <AppointmentForm
@@ -21,7 +22,7 @@ export default async function Page({ params }: PageProps) {
         durationMinutes: response.data.durationMinutes,
         consultationReason: response.data.consultationReason,
         status: response.data.status as APPOINTMENT_STATUS,
-        cancelledBy: response.data.cancelledBy,
+        cancelledBy: userCancelledAppointment?.data.username,
         cancellationReason: response.data.cancellationReason,
         createdBy: user.data.username,
         createdAt: response.data.createdAt,

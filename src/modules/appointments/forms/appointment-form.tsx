@@ -137,9 +137,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     resolver: zodResolver(currentSchema) as Resolver<AppointmentSchema>,
     defaultValues: {
       status: appointment.status as APPOINTMENT_STATUS,
-      attendedAt: appointment.attendedAt,
       cancellationReason: appointment.cancellationReason,
-      confirmedAt: appointment.confirmedAt,
       appointmentDateTime: initialAppointmentDate,
       appointmentTime: initialAppointmentTime,
       durationMinutes: appointment.durationMinutes,
@@ -226,16 +224,17 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         ),
         durationMinutes: data.durationMinutes,
         consultationReason: data.consultationReason,
+        status: data.status,
+        cancellationReason: data.cancellationReason || null,
         notes: data.notes || null,
       };
 
-      /*  const response = isEditMode
-        ? await updateAppointment(patient.id, payload as AppointmentUpdateRequest)
-        : await createAppointment(payload as AppointmentCreateRequest); */
-
-      const response = await createAppointment(
-        payload as AppointmentCreateRequest
-      );
+      const response = isEditMode
+        ? await updateAppointment(
+            appointment.id,
+            payload as AppointmentUpdateRequest
+          )
+        : await createAppointment(payload as AppointmentCreateRequest);
 
       if (response.status === 201 || response.status === 200) {
         toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
@@ -289,7 +288,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <SectionHeader
         title={getHeaderTitle()}
         description={
@@ -324,7 +323,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             }
             onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
-            searchItems={mode === "create" ? searchDoctors : mode === "edit" ? searchDoctors : undefined}
+            searchItems={searchDoctors}
             getDisplayLabel={(doctor) => doctor.username}
             displayFields={doctorDisplayFields}
             error={errors.doctorId?.message}
@@ -343,7 +342,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             }
             onChange={setPatientSearch}
             onSelect={handleSelectPatient}
-            searchItems={mode === "create" ? searchPatients : mode === "edit" ? searchPatients : undefined}
+            searchItems={searchPatients}
             getDisplayLabel={(patient) => patient.fullName}
             displayFields={patientsDisplayFields}
             error={errors.patientId?.message}
@@ -432,7 +431,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             error={errors.durationMinutes?.message as string}
           />
 
-          {isViewMode && (
+          {(isEditMode || isViewMode) && (
             <FormFieldSelect
               id="status"
               label={t.statusLabel}
@@ -451,7 +450,10 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         </CardContent>
 
         <CardContent className="grid grid-cols-1 gap-x-6">
-          {(isEditMode || isViewMode) && (
+          {(isViewMode ||
+            (isEditMode &&
+              currentAppointmentStatus ===
+                APPOINTMENT_STATUS_TYPE.CANCELLED)) && (
             <FormFieldTextArea
               id="cancellationReason"
               label={t.cancellationReasonLabel}

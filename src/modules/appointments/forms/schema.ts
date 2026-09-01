@@ -90,18 +90,29 @@ export const getUpdateAppointmentSchema = (
       .string()
       .trim()
       .max(255, v.cancellationReasonMaxLength)
-      .optional(),
-
-    confirmedAt: z.string().optional(),
-
-    attendedAt: z.string().optional(),
+      .optional()
+      .nullish(),
 
     notes: z
       .string()
       .trim()
       .max(500, v.notesMaxLength)
       .optional()
-      .or(z.literal("")),
+      .or(z.literal(""))
+      .nullish(),
+  });
+};
+
+export const getCancelAppointmentSchema = (
+  dictionary: TranslationDictionary
+) => {
+  const v = dictionary.dashboard.appointments.validation;
+  return z.object({
+    cancellationReason: z
+      .string({ error: v.cancellationReasonRequired })
+      .trim()
+      .min(1, v.cancellationReasonRequired)
+      .max(255, v.cancellationReasonMaxLength),
   });
 };
 
@@ -111,6 +122,10 @@ export type CreateAppointmentSchema = z.infer<
 
 export type UpdateAppointmentSchema = z.infer<
   ReturnType<typeof getUpdateAppointmentSchema>
+>;
+
+export type CancelAppointmentSchema = z.infer<
+  ReturnType<typeof getCancelAppointmentSchema>
 >;
 
 export type AppointmentSchema =

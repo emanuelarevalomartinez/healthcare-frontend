@@ -2,11 +2,18 @@
 
 // TODO
 
-// al actualizar una cita hacer que el campo razon de cancelacion solo aparezca si el estado es cancelar
-// corregir que cuando se abra el editar no se haga peticion directamente a la api a los campos de doctor y paciente
 // incluir el select de los posibles nuevos estados de la cita a partir del estado previo es decir no puede volver a un estado que ya no tiene
-// ver los caso de actualizar y detalles de la cita
 // mover la logica del formulario a las actions de las citas
+
+cambios de estados posibles:
+SCHEDULED
+   ├──> CONFIRMED
+   └──> CANCELLED
+
+CONFIRMED
+   ├──> ATTENDED
+   ├──> CANCELLED
+   └──> NO_SHOW
 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
