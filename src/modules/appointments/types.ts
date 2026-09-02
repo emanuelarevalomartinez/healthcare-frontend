@@ -1,5 +1,6 @@
 import { APPOINTMENT_STATUS } from "@/lib";
 import { string } from "zod";
+import { PATIENT_DOCUMENT_TYPE } from "../patients/types";
 
 export interface AppointmentApiResponse {
   id: string;
@@ -36,4 +37,19 @@ export interface AppointmentUpdateRequest {
   confirmedAt?: string;
   attendedAt?: string;
   notes?: string;
+}
+
+export interface GetAppointmentsFilteredParams {
+  page?: number;
+  size?: number;
+  ascending: boolean;
+  date: string;
+  appointmentStatus?: APPOINTMENT_STATUS;
+  patientFullName?: string;
+  doctorUserName?: string;
+  patientMedicalRecordNumber?: string;
+  patientDocumentType?: PATIENT_DOCUMENT_TYPE;
+  patientDocumentNumber?: string;
+  doctorSpecialty?: string;
+  doctorLicenseNumber?: string;
 }

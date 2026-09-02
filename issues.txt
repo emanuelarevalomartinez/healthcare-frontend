@@ -3,7 +3,7 @@
 // TODO
 
 // mover la logica del formulario a las actions de las citas
-// ver cuando recargar la pagina de la cita usando localstorage o si no recargar la del dia de hoy
+// refactorizar para ver como se van a filtrar las citas desde el input de search y si va a cambiar el endpoint para filtrar las citas actuales
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 

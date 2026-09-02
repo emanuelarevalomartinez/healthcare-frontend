@@ -12,6 +12,7 @@ import {
   AppointmentApiResponse,
   AppointmentCreateRequest,
   AppointmentUpdateRequest,
+  GetAppointmentsFilteredParams,
 } from "./types";
 
 export const createAppointment = async (data: AppointmentCreateRequest) => {
@@ -36,7 +37,7 @@ export const updateAppointment = async (
   return response;
 };
 
-export const getAllAppointmetsFiltered = async (
+/* export const getAllAppointmetsFiltered = async (
   page: number = 0,
   size: number = 10,
   date: string
@@ -46,6 +47,73 @@ export const getAllAppointmetsFiltered = async (
     size: size.toString(),
     date: date,
   });
+
+  const urlWithParams = `${
+    apiRoutes.appointments.filter
+  }?${queryParams.toString()}`;
+
+  const response = await fetcher<PaginatedData<AppointmentApiResponse>>(
+    urlWithParams,
+    {
+      ...GET_OPTIONS,
+    }
+  );
+
+  return response;
+}; */
+
+export const getAllAppointmetsFiltered = async ({
+  page = 0,
+  size = 10,
+  ascending,
+  date,
+  appointmentStatus,
+  patientFullName,
+  doctorUserName,
+  patientMedicalRecordNumber,
+  patientDocumentType,
+  patientDocumentNumber,
+  doctorSpecialty,
+  doctorLicenseNumber,
+}: GetAppointmentsFilteredParams) => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+    ascending: ascending.toString(),
+    date,
+  });
+
+  if (appointmentStatus) {
+    queryParams.set("appointmentStatus", appointmentStatus);
+  }
+
+  if (patientFullName) {
+    queryParams.set("patientFullName", patientFullName);
+  }
+
+  if (doctorUserName) {
+    queryParams.set("doctorUserName", doctorUserName);
+  }
+
+  if (patientMedicalRecordNumber) {
+    queryParams.set("patientMedicalRecordNumber", patientMedicalRecordNumber);
+  }
+
+  if (patientDocumentType) {
+    queryParams.set("patientDocumentType", patientDocumentType);
+  }
+
+  if (patientDocumentNumber) {
+    queryParams.set("patientDocumentNumber", patientDocumentNumber);
+  }
+
+  if (doctorSpecialty) {
+    queryParams.set("doctorSpecialty", doctorSpecialty);
+  }
+
+  if (doctorLicenseNumber) {
+    queryParams.set("doctorLicenseNumber", doctorLicenseNumber);
+  }
 
   const urlWithParams = `${
     apiRoutes.appointments.filter
@@ -72,8 +140,11 @@ export const findAppointmentById = async (id: string) => {
 };
 
 export const deleteAppointment = async (id: string) => {
-  const response = await fetcher(apiRoutes.appointments.delete.replace(":id", id), {
-    method: "DELETE",
-  });
+  const response = await fetcher(
+    apiRoutes.appointments.delete.replace(":id", id),
+    {
+      method: "DELETE",
+    }
+  );
   return response;
 };

@@ -80,11 +80,12 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       try {
         const dateString = format(dateToUse, "yyyy-MM-dd");
 
-        const response = await getAllAppointmetsFiltered(
-          currentPage,
-          pageSize,
-          dateString
-        );
+        const response = await getAllAppointmetsFiltered({
+          page: currentPage,
+          size: pageSize,
+          ascending: true,
+          date: dateString,
+        });
 
         setAppointmentsData(response.data);
       } catch (error) {
