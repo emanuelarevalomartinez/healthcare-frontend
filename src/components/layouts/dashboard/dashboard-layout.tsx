@@ -2,6 +2,7 @@ import { AppSidebar } from "@/components/customs/app-sidebar";
 import { SheetWrapper } from "@/components/customs/sheet-wrapper";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppointmentNavigationWatcher } from "@/modules/appointments/navigation-watcher/appointments-navigation-watcher";
 import { DoctorRender } from "@/modules/doctors/forms/doctor-render";
 import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
 import { PropsWithChildren } from "react";
@@ -14,6 +15,8 @@ export default async function DashBoardLayout({
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
+
+        <AppointmentNavigationWatcher />
 
         <main className="w-full">
           <div className="flex flex-col w-full sticky top-0 z-20 bg-background">

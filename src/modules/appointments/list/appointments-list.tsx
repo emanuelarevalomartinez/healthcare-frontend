@@ -58,6 +58,10 @@ export function AppointmentsList() {
     fetchAppointmentsFiltered();
   }, [fetchAppointmentsFiltered]);
 
+    if (!selectedDate) {
+    return null;
+  }
+
   return (
     <>
       <div className="space-y-4 p-1">

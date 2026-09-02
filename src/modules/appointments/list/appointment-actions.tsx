@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ALERT_ACTION,
@@ -16,9 +16,13 @@ import {
   getAllAppointmetsFiltered,
   updateAppointment,
 } from "../services";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { toast } from "sonner";
+import {
+  getAppointmentSelectedDateToViewLocalStorage,
+  setAppointmentSelectedDateToViewLocalStorage,
+} from "@/lib/utils/local-storage";
 
 interface UsePatientsActionsProps {
   dictionary: TranslationDictionary;
@@ -42,7 +46,24 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     useState<PaginatedData<AppointmentApiResponse>>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const savedData = getAppointmentSelectedDateToViewLocalStorage();
+
+    if (savedData) {
+      setSelectedDate(parse(savedData.selectedDate, "yyyy-MM-dd", new Date()));
+      return;
+    }
+
+    const currentDate = new Date();
+
+    setSelectedDate(currentDate);
+
+    setAppointmentSelectedDateToViewLocalStorage({
+      selectedDate: format(currentDate, "yyyy-MM-dd"),
+    });
+  }, []);
 
   const [isCancelDialogWrapperOpen, setIsCancelDialogWrapperOpen] =
     useState<boolean>(false);
@@ -50,9 +71,13 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
 
   const fetchAppointmentsFiltered = useCallback(
     async (date?: Date) => {
+      const dateToUse = date ?? selectedDate;
+
+      if (!dateToUse) return;
+
       setIsLoading(true);
+
       try {
-        const dateToUse = date || selectedDate;
         const dateString = format(dateToUse, "yyyy-MM-dd");
 
         const response = await getAllAppointmetsFiltered(
@@ -60,6 +85,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
           pageSize,
           dateString
         );
+
         setAppointmentsData(response.data);
       } catch (error) {
         console.error("Error to load the appointments: ", error);
@@ -67,16 +93,20 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
         setIsLoading(false);
       }
     },
-    [currentPage, pageSize, selectedDate]
+    [currentPage, selectedDate]
   );
 
   const handleDateChange = useCallback(
     (newDate: Date | undefined) => {
-      if (newDate) {
-        setSelectedDate(newDate);
+      if (!newDate) return;
 
-        fetchAppointmentsFiltered(newDate);
-      }
+      setSelectedDate(newDate);
+
+      setAppointmentSelectedDateToViewLocalStorage({
+        selectedDate: format(newDate, "yyyy-MM-dd"),
+      });
+
+      fetchAppointmentsFiltered(newDate);
     },
     [fetchAppointmentsFiltered]
   );
@@ -116,8 +146,6 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       }
     } catch (error) {
       console.error("Error to delete:", error);
-     /*  const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage ?? t.errorDeleteAppointmentToast); */
       toast.error(t.errorDeleteAppointmentToast);
     } finally {
       setAppointmentToDelete(null);
@@ -162,12 +190,19 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     {
       label: dictionary.components.actions.cancel,
       onClick: (p) => handleOpenCancelConfirm(p),
-      disabled: (p) => p.status === APPOINTMENT_STATUS.CANCELLED || p.status === APPOINTMENT_STATUS.ATTENDED || p.status === APPOINTMENT_STATUS.NO_SHOW,
+      disabled: (p) =>
+        p.status === APPOINTMENT_STATUS.CANCELLED ||
+        p.status === APPOINTMENT_STATUS.ATTENDED ||
+        p.status === APPOINTMENT_STATUS.NO_SHOW,
     },
     {
       label: dictionary.components.actions.confirm,
       onClick: (p) => handleOpenConfirm(p),
-      disabled: (p) => p.status === APPOINTMENT_STATUS.CONFIRMED || p.status === APPOINTMENT_STATUS.CANCELLED || p.status === APPOINTMENT_STATUS.ATTENDED || p.status === APPOINTMENT_STATUS.NO_SHOW,
+      disabled: (p) =>
+        p.status === APPOINTMENT_STATUS.CONFIRMED ||
+        p.status === APPOINTMENT_STATUS.CANCELLED ||
+        p.status === APPOINTMENT_STATUS.ATTENDED ||
+        p.status === APPOINTMENT_STATUS.NO_SHOW,
     },
     {
       label: dictionary.components.actions.delete,

@@ -7,3 +7,7 @@ export interface UserDataLocalStorageInterface {
   username: string;
   doctorProfileCompleted: boolean;
 }
+
+export interface AppointmentSelectedDateToViewLocalStorageInterface {
+  selectedDate: string;
+}
