@@ -15,6 +15,8 @@ export interface AppointmentApiResponse {
   confirmedAt: string;
   attendedAt: string;
   notes: string;
+  medicalRecordNumber: string;
+  documentType: PATIENT_DOCUMENT_TYPE,
   patientFullName: string;
   doctorFullName: string;
 }
