@@ -103,7 +103,7 @@ export function AppointmentSearch({
           {searchTerm && (
             <button
               onClick={() => handleSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             >
               <X className="h-4 w-4" />
             </button>

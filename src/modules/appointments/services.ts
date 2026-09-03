@@ -13,6 +13,7 @@ import {
   AppointmentCreateRequest,
   AppointmentUpdateRequest,
   GetAppointmentsFilteredParams,
+  GetAppointmentsSearchedParams,
 } from "./types";
 
 export const createAppointment = async (data: AppointmentCreateRequest) => {
@@ -36,31 +37,6 @@ export const updateAppointment = async (
   );
   return response;
 };
-
-/* export const getAllAppointmetsFiltered = async (
-  page: number = 0,
-  size: number = 10,
-  date: string
-) => {
-  const queryParams = new URLSearchParams({
-    page: page.toString(),
-    size: size.toString(),
-    date: date,
-  });
-
-  const urlWithParams = `${
-    apiRoutes.appointments.filter
-  }?${queryParams.toString()}`;
-
-  const response = await fetcher<PaginatedData<AppointmentApiResponse>>(
-    urlWithParams,
-    {
-      ...GET_OPTIONS,
-    }
-  );
-
-  return response;
-}; */
 
 export const getAllAppointmetsFiltered = async ({
   page = 0,
@@ -117,6 +93,43 @@ export const getAllAppointmetsFiltered = async ({
 
   const urlWithParams = `${
     apiRoutes.appointments.filter
+  }?${queryParams.toString()}`;
+
+  const response = await fetcher<PaginatedData<AppointmentApiResponse>>(
+    urlWithParams,
+    {
+      ...GET_OPTIONS,
+    }
+  );
+
+  return response;
+};
+
+export const getAllAppointmentsSearched = async ({
+  page = 0,
+  size = 10,
+  ascending = true,
+  searchTerm,
+  appointmentStatus,
+  documentType,
+}: GetAppointmentsSearchedParams) => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+    ascending: ascending.toString(),
+    searchTerm: searchTerm,
+  });
+
+  if (appointmentStatus) {
+    queryParams.set("appointmentStatus", appointmentStatus);
+  }
+
+  if (documentType) {
+    queryParams.set("documentType", documentType);
+  }
+
+  const urlWithParams = `${
+    apiRoutes.appointments.search
   }?${queryParams.toString()}`;
 
   const response = await fetcher<PaginatedData<AppointmentApiResponse>>(

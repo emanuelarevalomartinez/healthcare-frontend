@@ -28,14 +28,14 @@ import { ItemAppointmentCancelForm } from "../forms/item-appointment-cancel-form
 interface Props {
   appointmentsData?: PaginatedData<AppointmentApiResponse>;
   appointmentDataToCancel: AppointmentApiResponse | null;
-  selectedDate: Date;
+  selectedDate?: Date;
   isLoading: boolean;
   setCurrentPage: (e: number) => void;
   actions?: TableAction<AppointmentApiResponse>[];
   handleExecuteDelete: () => Promise<void>;
   isCancelDialogWrapperOpen: boolean;
   setIsCancelDialogWrapperOpen: (e: boolean) => void;
-  fetchAppointmentsFiltered: () => Promise<void>;
+  fetchAppointmentsFiltered: (searchTerm?: string) => Promise<void>;
   alertActionType: ALERT_ACTION | null;
   handleCloseAlert: () => void;
   handleExecuteConfirm: () => Promise<void>;
@@ -85,7 +85,7 @@ export function AppointmentListDaily({
       <div className="w-full rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold">
-            {t.appointmentsOn} {formatSelectedDateToInputString(selectedDate)}
+            { selectedDate ? formatSelectedDateToInputString(selectedDate) : t.searchResults }
           </h3>
 
           <span className="text-sm text-muted-foreground space-x-1">
@@ -102,7 +102,7 @@ export function AppointmentListDaily({
           <LoadingState />
         ) : !hasAppointments ? (
           <div className="text-center place-content-center items-center py-8 text-muted-foreground h-[54vh]">
-            {t.noAppointmentsForDay}
+            {selectedDate ? t.noAppointmentsForDay : t.noAppointmentsFound}
           </div>
         ) : (
           <div className="space-y-2 overflow-y-auto h-[52vh] rounded-md">

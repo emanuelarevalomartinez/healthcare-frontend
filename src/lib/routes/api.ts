@@ -41,6 +41,7 @@ export const apiRoutes = {
    appointments: {
     list: `${API_URL}/appointments`,
     filter: `${API_URL}/appointments/filter`,
+    search: `${API_URL}/appointments/search`,
     create: `${API_URL}/appointments`,
     edit: `${API_URL}/appointments/:id`,
     details: `${API_URL}/appointments/:id`,

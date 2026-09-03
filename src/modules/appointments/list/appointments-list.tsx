@@ -17,7 +17,27 @@ export function AppointmentsList() {
   const t = dictionary.dashboard.appointments;
   const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const {
+    appointmentsData,
+    appointmentDataToCancel,
+    setCurrentPage,
+    selectedDate,
+    setSelectedDate,
+    isLoading,
+    appointmentActions,
+    handleExecuteDelete,
+    isCancelDialogWrapperOpen,
+    setIsCancelDialogWrapperOpen,
+    alertActionType,
+    handleCloseAlert,
+    handleExecuteConfirm,
+    searchTerm,
+    setSearchTerm,
+    fetchAppointments,
+    isSearchView
+  } = useAppointmentActions({ dictionary });
+
+  
   const [statusFilter, setStatusFilter] = useState<APPOINTMENT_STATUS | "ALL">(
     "ALL"
   );
@@ -26,6 +46,8 @@ export function AppointmentsList() {
   );
 
   const handleSearch = (term: string) => {
+    console.log("searchTerm", term);
+    
     setSearchTerm(term);
   };
 
@@ -37,28 +59,11 @@ export function AppointmentsList() {
     setDocumentTypeFilter(docType);
   };
 
-  const {
-    appointmentsData,
-    appointmentDataToCancel,
-    setCurrentPage,
-    selectedDate,
-    setSelectedDate,
-    fetchAppointmentsFiltered,
-    isLoading,
-    appointmentActions,
-    handleExecuteDelete,
-    isCancelDialogWrapperOpen,
-    setIsCancelDialogWrapperOpen,
-    alertActionType,
-    handleCloseAlert,
-    handleExecuteConfirm,
-  } = useAppointmentActions({ dictionary });
-
   useEffect(() => {
-    fetchAppointmentsFiltered();
-  }, [fetchAppointmentsFiltered]);
+    fetchAppointments(searchTerm);
+  }, [fetchAppointments, searchTerm, isSearchView]);
 
-    if (!selectedDate) {
+  if (!selectedDate) {
     return null;
   }
 
@@ -92,44 +97,67 @@ export function AppointmentsList() {
             />
           </div>
 
-          <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
-            <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
-              <CardContent>
-                <AppointmentListDaily
-                  actions={appointmentActions}
-                  appointmentDataToCancel={appointmentDataToCancel}
-                  appointmentsData={appointmentsData}
-                  selectedDate={selectedDate}
-                  isLoading={isLoading}
-                  setCurrentPage={setCurrentPage}
-                  handleExecuteDelete={handleExecuteDelete}
-                  isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
-                  setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
-                  fetchAppointmentsFiltered={fetchAppointmentsFiltered}
-                  alertActionType={alertActionType}
-                  handleCloseAlert={handleCloseAlert}
-                  handleExecuteConfirm={handleExecuteConfirm}
-                />
-              </CardContent>
-            </Card>
+          {searchTerm !== "" ? (
+            <div className="flex gap-2 pt-4">
+              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
+                <CardContent>
+                  <AppointmentListDaily
+                    actions={appointmentActions}
+                    appointmentDataToCancel={appointmentDataToCancel}
+                    appointmentsData={appointmentsData}
+                    isLoading={isLoading}
+                    setCurrentPage={setCurrentPage}
+                    handleExecuteDelete={handleExecuteDelete}
+                    isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
+                    setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
+                    fetchAppointmentsFiltered={fetchAppointments}
+                    alertActionType={alertActionType}
+                    handleCloseAlert={handleCloseAlert}
+                    handleExecuteConfirm={handleExecuteConfirm}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
+              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
+                <CardContent>
+                  <AppointmentListDaily
+                    actions={appointmentActions}
+                    appointmentDataToCancel={appointmentDataToCancel}
+                    appointmentsData={appointmentsData}
+                    selectedDate={selectedDate}
+                    isLoading={isLoading}
+                    setCurrentPage={setCurrentPage}
+                    handleExecuteDelete={handleExecuteDelete}
+                    isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
+                    setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
+                    fetchAppointmentsFiltered={fetchAppointments}
+                    alertActionType={alertActionType}
+                    handleCloseAlert={handleCloseAlert}
+                    handleExecuteConfirm={handleExecuteConfirm}
+                  />
+                </CardContent>
+              </Card>
 
-            <Card className="row-start-1 flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
-              <CardContent>
-                <Calendar
-                  className="w-full rounded-lg"
-                  captionLayout="dropdown"
-                  buttonVariant="outline"
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
-                    if (date) {
-                      setSelectedDate(date);
-                    }
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </div>
+              <Card className="row-start-1 flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
+                <CardContent>
+                  <Calendar
+                    className="w-full rounded-lg"
+                    captionLayout="dropdown"
+                    buttonVariant="outline"
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => {
+                      if (date) {
+                        setSelectedDate(date);
+                      }
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </>

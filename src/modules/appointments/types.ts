@@ -55,3 +55,12 @@ export interface GetAppointmentsFilteredParams {
   doctorSpecialty?: string;
   doctorLicenseNumber?: string;
 }
+
+export interface GetAppointmentsSearchedParams {
+  page?: number;
+  size?: number;
+  ascending?: boolean;
+  searchTerm: string;
+  appointmentStatus?: APPOINTMENT_STATUS;
+  documentType?: PATIENT_DOCUMENT_TYPE
+}

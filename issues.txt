@@ -3,7 +3,13 @@
 // TODO
 
 // mover la logica del formulario a las actions de las citas
-// refactorizar para ver como se van a filtrar las citas desde el input de search y si va a cambiar el endpoint para filtrar las citas actuales
+// añadir al buscar los filtros de tipo documento y estado de la cita, 
+// incluir en la lista en cada item el medical record number para que se sepa cual es asi como en los detalles de la misma y en el modo editar como no editable
+// hacer la interfaz del filtro un poco mas bonita
+// ver que cuando se busque y se borre la busqueda el calendario continue con la ultima fecha el calendario
+
+
+// fecha actual 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 

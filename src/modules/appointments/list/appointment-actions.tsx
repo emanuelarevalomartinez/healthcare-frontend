@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   ALERT_ACTION,
   APPOINTMENT_STATUS,
-  getErrorMessage,
   routes,
   TranslationDictionary,
 } from "@/lib";
@@ -13,6 +12,7 @@ import { PaginatedData } from "@/lib/server/api-response";
 import { AppointmentApiResponse } from "../types";
 import {
   deleteAppointment,
+  getAllAppointmentsSearched,
   getAllAppointmetsFiltered,
   updateAppointment,
 } from "../services";
@@ -35,6 +35,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const [alertActionType, setAlertActionType] = useState<ALERT_ACTION | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState("");
   const [appointmentToDelete, setAppointmentToDelete] = useState<{
     id: string;
   } | null>(null);
@@ -44,9 +45,11 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     useState<AppointmentApiResponse | null>(null);
   const [appointmentsData, setAppointmentsData] =
     useState<PaginatedData<AppointmentApiResponse>>();
+
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isSearchView, setIsSearchView] = useState(false);
 
   useEffect(() => {
     const savedData = getAppointmentSelectedDateToViewLocalStorage();
@@ -97,6 +100,46 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     [currentPage, selectedDate]
   );
 
+  const fetchAppointmentsSearched = useCallback(
+    async (searchTerm: string) => {
+      setIsLoading(true);
+
+      try {
+        const response = await getAllAppointmentsSearched({
+          page: currentPage,
+          size: pageSize,
+          ascending: true,
+          searchTerm: searchTerm,
+        });
+
+        setAppointmentsData(response.data);
+      } catch (error) {
+        console.error("Error to load searched appointments: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, searchTerm]
+  );
+
+  const fetchAppointments = useCallback(
+    async (searchTerm?: string) => {
+      if (searchTerm) {
+        setIsSearchView(true);
+        await fetchAppointmentsSearched(searchTerm);
+      } else {
+        setIsSearchView(false);
+        await fetchAppointmentsFiltered();
+      }
+    },
+    [
+      fetchAppointmentsFiltered,
+      fetchAppointmentsSearched,
+      isSearchView,
+      searchTerm,
+    ]
+  );
+
   const handleDateChange = useCallback(
     (newDate: Date | undefined) => {
       if (!newDate) return;
@@ -139,10 +182,11 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       const response = await deleteAppointment(appointmentToDelete.id);
       if (response.status === 200 || response.status === 204) {
         toast.success(t.successDeleteAppointmentToast);
+
         if (appointmentsData?.content.length === 1 && currentPage > 0) {
           setCurrentPage((prev) => prev - 1);
         } else {
-          await fetchAppointmentsFiltered();
+          await fetchAppointments();
         }
       }
     } catch (error) {
@@ -162,10 +206,11 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       });
       if (response.status === 200 || response.status === 204) {
         toast.success(t.toastUpdateSuccess);
+
         if (appointmentsData?.content.length === 1 && currentPage > 0) {
           setCurrentPage((prev) => prev - 1);
         } else {
-          await fetchAppointmentsFiltered();
+          await fetchAppointments();
         }
       }
     } catch (error) {
@@ -220,7 +265,6 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     isLoading,
     selectedDate,
     setSelectedDate: handleDateChange,
-    fetchAppointmentsFiltered,
     appointmentActions,
     handleExecuteDelete,
     isCancelDialogWrapperOpen,
@@ -229,5 +273,9 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     alertActionType,
     handleExecuteConfirm,
     handleCloseAlert,
+    searchTerm,
+    setSearchTerm,
+    fetchAppointments,
+    isSearchView,
   };
 }

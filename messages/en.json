@@ -239,6 +239,8 @@
       "appointmentCount": "appointment",
       "appointmentCountPlural": "appointments",
       "noAppointmentsForDay": "No appointments for this day",
+      "noAppointmentsFound": "No appointments found matching your search criteria",
+      "searchResults": "Search Results",
       "doctor": "Doctor",
       "patient": "Patient",
       "minutes": "min",
