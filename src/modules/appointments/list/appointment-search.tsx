@@ -25,6 +25,8 @@ interface AppointmentSearchProps {
     value: PATIENT_DOCUMENT_TYPE;
     label: any;
   }[];
+  isFiltersVisible: boolean;
+  setIsFiltersVisible: (e: boolean) => void;
 }
 
 export function AppointmentSearch({
@@ -36,12 +38,13 @@ export function AppointmentSearch({
   documentType,
   getAppointmentStatusOptions,
   getDocumentTypeStatusOptions,
+  isFiltersVisible,
+  setIsFiltersVisible
 }: AppointmentSearchProps) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.appointments;
 
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);

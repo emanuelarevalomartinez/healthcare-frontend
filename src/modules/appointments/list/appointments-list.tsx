@@ -19,6 +19,7 @@ export function AppointmentsList() {
 
   const {
     appointmentsData,
+    appointmentsSearchData,
     appointmentDataToCancel,
     setCurrentPage,
     selectedDate,
@@ -40,7 +41,9 @@ export function AppointmentsList() {
     documentTypeFilter,
     setDocumentTypeFilter,
     getAppointmentStatusOptions,
-    getDocumentTypeStatusOptions
+    getDocumentTypeStatusOptions,
+    isFiltersVisible,
+    setIsFiltersVisible
   } = useAppointmentActions({ dictionary });
 
   const handleSearch = (term: string) => {
@@ -84,6 +87,8 @@ export function AppointmentsList() {
               documentType={documentTypeFilter}
               getAppointmentStatusOptions={getAppointmentStatusOptions}
               getDocumentTypeStatusOptions={getDocumentTypeStatusOptions}
+              isFiltersVisible={isFiltersVisible}
+              setIsFiltersVisible={setIsFiltersVisible}
             />
           </div>
 
@@ -94,7 +99,7 @@ export function AppointmentsList() {
                   <AppointmentListDaily
                     actions={appointmentActions}
                     appointmentDataToCancel={appointmentDataToCancel}
-                    appointmentsData={appointmentsData}
+                    appointmentsData={appointmentsSearchData}
                     isLoading={isLoading}
                     setCurrentPage={setCurrentPage}
                     handleExecuteDelete={handleExecuteDelete}

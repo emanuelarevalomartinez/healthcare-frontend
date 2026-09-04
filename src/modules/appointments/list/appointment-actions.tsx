@@ -47,6 +47,9 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const [appointmentsData, setAppointmentsData] =
     useState<PaginatedData<AppointmentApiResponse>>();
 
+  const [appointmentsSearchData, setAppointmentsSearchData] =
+    useState<PaginatedData<AppointmentApiResponse>>();
+
   const [statusFilter, setStatusFilter] = useState<
     APPOINTMENT_STATUS | undefined
   >(undefined);
@@ -58,6 +61,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isSearchView, setIsSearchView] = useState(false);
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
   useEffect(() => {
     const savedData = getAppointmentSelectedDateToViewLocalStorage();
@@ -126,7 +130,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
           }),
         });
 
-        setAppointmentsData(response.data);
+        setAppointmentsSearchData(response.data);
       } catch (error) {
         console.error("Error to load searched appointments: ", error);
       } finally {
@@ -138,10 +142,17 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
 
   const fetchAppointments = useCallback(
     async (searchTerm?: string) => {
-      if (searchTerm) {
+      const normalizedSearchTerm = searchTerm?.trim();
+
+      if (isFiltersVisible && !normalizedSearchTerm) {
+        return;
+      } else if (
+        (isFiltersVisible || !isFiltersVisible) &&
+        normalizedSearchTerm
+      ) {
         setIsSearchView(true);
-        await fetchAppointmentsSearched(searchTerm);
-      } else {
+        await fetchAppointmentsSearched(normalizedSearchTerm);
+      } else if (!isFiltersVisible && !normalizedSearchTerm) {
         setIsSearchView(false);
         await fetchAppointmentsFiltered();
       }
@@ -268,30 +279,31 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
   ];
 
   const getAppointmentStatusOptions = useCallback((optionsDict: any) => {
-      return Object.values(APPOINTMENT_STATUS).map((appointmentItem) => {
-        const appointmentKey = appointmentItem.toLowerCase() as
-          | "scheduled"
-          | "confirmed"
-          | "attended"
-          | "cancelled"
-          | "no_show";
-        return { value: appointmentItem, label: optionsDict[appointmentKey] };
-      });
-    }, []);
-  
-    const getDocumentTypeStatusOptions = useCallback((optionsDict: any) => {
-      return Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
-        const docTypeKey = docType.toLowerCase() as
-          | "dni"
-          | "passport"
-          | "id_card"
-          | "other";
-        return { value: docType, label: optionsDict[docTypeKey] };
-      });
-    }, []);
+    return Object.values(APPOINTMENT_STATUS).map((appointmentItem) => {
+      const appointmentKey = appointmentItem.toLowerCase() as
+        | "scheduled"
+        | "confirmed"
+        | "attended"
+        | "cancelled"
+        | "no_show";
+      return { value: appointmentItem, label: optionsDict[appointmentKey] };
+    });
+  }, []);
+
+  const getDocumentTypeStatusOptions = useCallback((optionsDict: any) => {
+    return Object.values(PATIENT_DOCUMENT_TYPE).map((docType) => {
+      const docTypeKey = docType.toLowerCase() as
+        | "dni"
+        | "passport"
+        | "id_card"
+        | "other";
+      return { value: docType, label: optionsDict[docTypeKey] };
+    });
+  }, []);
 
   return {
     appointmentsData,
+    appointmentsSearchData,
     currentPage,
     setCurrentPage,
     isLoading,
@@ -314,6 +326,8 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     documentTypeFilter,
     setDocumentTypeFilter,
     getAppointmentStatusOptions,
-    getDocumentTypeStatusOptions
+    getDocumentTypeStatusOptions,
+    isFiltersVisible,
+    setIsFiltersVisible,
   };
 }

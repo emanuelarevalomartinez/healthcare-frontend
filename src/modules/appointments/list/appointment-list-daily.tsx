@@ -100,7 +100,7 @@ export function AppointmentListDaily({
         {isLoading ? (
           <LoadingState />
         ) : !hasAppointments ? (
-          <div className="text-center place-content-center items-center py-8 text-muted-foreground">
+          <div className="text-center place-content-center items-center py-8 text-muted-foreground h-[80vh]">
             {selectedDate ? t.noAppointmentsForDay : t.noAppointmentsFound}
           </div>
         ) : (
