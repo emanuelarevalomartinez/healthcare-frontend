@@ -1,6 +1,7 @@
 import { APPOINTMENT_STATUS } from "@/lib";
 import { AppointmentForm } from "@/modules/appointments/forms/appointment-form";
 import { findAppointmentById } from "@/modules/appointments/services";
+import { PATIENT_DOCUMENT_TYPE } from "@/modules/patients/types";
 import { findUserById } from "@/modules/user/services";
 
 interface PageProps {
@@ -29,6 +30,8 @@ export default async function Page({ params }: PageProps) {
         confirmedAt: response.data.confirmedAt,
         attendedAt: response.data.attendedAt,
         notes: response.data.notes,
+        medicalRecordNumber: response.data.medicalRecordNumber,
+                documentType: response.data.documentType as PATIENT_DOCUMENT_TYPE,
         patientFullName: response.data.patientFullName,
         doctorFullName: response.data.doctorFullName,
       }}

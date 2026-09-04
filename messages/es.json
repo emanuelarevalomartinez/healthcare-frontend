@@ -235,6 +235,17 @@
         "cancelled": "CANCELADA",
         "no_show": "NO ASISTIÓ"
       },
+      "documentTypeOptions": {
+        "dni": "Identificación Nacional / DNI",
+        "passport": "Pasaporte",
+        "id_card": "Tarjeta de Identidad Estatal / Nacional",
+        "other": "Otra identificación"
+      },
+      "documentTypeLabel": "Tipo de Documento",
+      "documentTypePlaceholder": "Seleccione un tipo de documento",
+      "currentDocumentTypeLabel": "Tipo de Documento Actual",
+      "filters": "Filtros",
+      "clear": "Borrar",
       "appointmentsOn": "Citas del",
       "appointmentCount": "cita",
       "appointmentCountPlural": "citas",

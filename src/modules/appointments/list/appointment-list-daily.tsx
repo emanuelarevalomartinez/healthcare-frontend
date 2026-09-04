@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
-import { Dispatch, SetStateAction } from "react";
 import { DialogWrapper } from "@/components/customs/dialog-wrapper";
 import { ItemAppointmentCancelForm } from "../forms/item-appointment-cancel-form";
 
@@ -71,7 +70,7 @@ export function AppointmentListDaily({
   };
 
   const LoadingState = () => (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center h-[54vh] w-full">
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center h-[80vh] w-full">
       <Loader2Icon className="size-10 animate-spin text-primary mb-4" />
 
       <p className="text-sm text-muted-foreground animate-pulse">
@@ -101,11 +100,11 @@ export function AppointmentListDaily({
         {isLoading ? (
           <LoadingState />
         ) : !hasAppointments ? (
-          <div className="text-center place-content-center items-center py-8 text-muted-foreground h-[54vh]">
+          <div className="text-center place-content-center items-center py-8 text-muted-foreground">
             {selectedDate ? t.noAppointmentsForDay : t.noAppointmentsFound}
           </div>
         ) : (
-          <div className="space-y-2 overflow-y-auto h-[52vh] rounded-md">
+          <div className="space-y-2 overflow-y-auto h-[62vh] rounded-md">
             {appointments.map((appointment) => (
               <div
                 key={appointment.id}
@@ -172,6 +171,10 @@ export function AppointmentListDaily({
 
                   <div className="text-sm text-muted-foreground">
                     {t.patient}: {appointment.patientFullName}
+                  </div>
+
+                  <div className="text-sm text-muted-foreground">
+                    {t.documentTypeLabel}: {appointment.documentType}
                   </div>
 
                   <div className="mt-1">

@@ -5,8 +5,8 @@ import { SectionHeader } from "@/components/customs/secction-header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { UserPlusIcon } from "lucide-react";
-import { APPOINTMENT_STATUS, routes, useLanguage } from "@/lib";
-import { useEffect, useState } from "react";
+import { routes, useLanguage } from "@/lib";
+import { useEffect } from "react";
 import { useAppointmentActions } from "./appointment-actions";
 import { AppointmentListDaily } from "./appointment-list-daily";
 import { AppointmentSearch } from "./appointment-search";
@@ -34,34 +34,22 @@ export function AppointmentsList() {
     searchTerm,
     setSearchTerm,
     fetchAppointments,
-    isSearchView
+    isSearchView,
+    statusFilter,
+    setStatusFilter,
+    documentTypeFilter,
+    setDocumentTypeFilter,
+    getAppointmentStatusOptions,
+    getDocumentTypeStatusOptions
   } = useAppointmentActions({ dictionary });
 
-  
-  const [statusFilter, setStatusFilter] = useState<APPOINTMENT_STATUS | "ALL">(
-    "ALL"
-  );
-  const [documentTypeFilter, setDocumentTypeFilter] = useState<string | "ALL">(
-    "ALL"
-  );
-
   const handleSearch = (term: string) => {
-    console.log("searchTerm", term);
-    
     setSearchTerm(term);
-  };
-
-  const handleStatusFilter = (status: APPOINTMENT_STATUS | "ALL") => {
-    setStatusFilter(status);
-  };
-
-  const handleDocumentTypeFilter = (docType: string | "ALL") => {
-    setDocumentTypeFilter(docType);
   };
 
   useEffect(() => {
     fetchAppointments(searchTerm);
-  }, [fetchAppointments, searchTerm, isSearchView]);
+  }, [fetchAppointments, searchTerm]);
 
   if (!selectedDate) {
     return null;
@@ -89,17 +77,19 @@ export function AppointmentsList() {
           <div>
             <AppointmentSearch
               onSearch={handleSearch}
-              onStatusFilter={handleStatusFilter}
-              onDocumentTypeFilter={handleDocumentTypeFilter}
+              onStatusFilter={setStatusFilter}
+              onDocumentTypeFilter={setDocumentTypeFilter}
               initialSearchTerm={searchTerm}
-              initialStatus={statusFilter}
-              initialDocumentType={documentTypeFilter}
+              status={statusFilter}
+              documentType={documentTypeFilter}
+              getAppointmentStatusOptions={getAppointmentStatusOptions}
+              getDocumentTypeStatusOptions={getDocumentTypeStatusOptions}
             />
           </div>
 
           {searchTerm !== "" ? (
             <div className="flex gap-2 pt-4">
-              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
+              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
                 <CardContent>
                   <AppointmentListDaily
                     actions={appointmentActions}
@@ -120,7 +110,7 @@ export function AppointmentsList() {
             </div>
           ) : (
             <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
-              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[62vh]">
+              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
                 <CardContent>
                   <AppointmentListDaily
                     actions={appointmentActions}

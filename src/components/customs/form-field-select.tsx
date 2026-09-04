@@ -22,7 +22,7 @@ export interface FormFieldSelectProps {
   disabled?: boolean;
   placeholder?: string;
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   options: SelectOption[];
 }
 

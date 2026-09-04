@@ -235,6 +235,17 @@
         "cancelled": "CANCELLED",
         "no_show": "NO SHOW"
       },
+      "documentTypeOptions": {
+        "dni": "National ID / DNI",
+        "passport": "Passport",
+        "id_card": "State / National Identity Card",
+        "other": "Other identification"
+      },
+      "documentTypeLabel": "Document Type",
+      "documentTypePlaceholder": "Select a document type",
+      "currentDocumentTypeLabel": "Current Document Type",
+      "filters": "Filters",
+      "clear": "Clear",
       "appointmentsOn": "Appointments on",
       "appointmentCount": "appointment",
       "appointmentCountPlural": "appointments",

@@ -74,13 +74,11 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.appointments;
 
-  const {} = useAppointmentActions({ dictionary });
+  const { getDocumentTypeStatusOptions } = useAppointmentActions({
+    dictionary,
+  });
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [doctorData, setDoctorData] = useState<ApiResponse<
-    PaginatedData<DoctorFilteredApiResponse>
-  > | null>(null);
 
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
   const [selectedPatientId, setSelectedPatientId] = useState<string>("");
@@ -183,6 +181,11 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   const selectedDate = useMemo(
     () => parseInputStringToDate(appointmentDateValue),
     [appointmentDateValue]
+  );
+
+  const documentTypeStatusOptions = useMemo(
+    () => getDocumentTypeStatusOptions(t.documentTypeOptions),
+    [t.documentTypeOptions, getDocumentTypeStatusOptions]
   );
 
   const searchDoctors = async (
@@ -461,6 +464,16 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             })}
             error={errors.durationMinutes?.message as string}
           />
+
+          {(isEditMode || isViewMode) && (
+            <FormFieldSelect
+              id="documentType"
+              label={t.currentDocumentTypeLabel}
+              disabled={true}
+              value={appointment.documentType ?? ""}
+              options={documentTypeStatusOptions}
+            />
+          )}
 
           {(isEditMode || isViewMode) && (
             <FormFieldSelect
