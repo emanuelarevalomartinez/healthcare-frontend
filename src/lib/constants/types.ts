@@ -19,6 +19,16 @@ export enum ALERT_ACTION {
    CONFIRM = "CONFIRM",
 }
 
+export enum DOCTOR_SCHEDULE_DAY_OF_WEEK {
+    MONDAY = "MONDAY",
+    TUESDAY = "TUESDAY",
+    WEDNESDAY = "WEDNESDAY",
+    THURSDAY = "THURSDAY",
+    FRIDAY = "FRIDAY",
+    SATURDAY = "SATURDAY",
+    SUNDAY = "SUNDAY",
+}
+
 export type FormMode = "create" | "edit" | "details";
 export type DoctorFormMode = "create" | "complete";
 

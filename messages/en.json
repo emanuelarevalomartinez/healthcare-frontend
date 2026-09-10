@@ -292,6 +292,29 @@
       "cancel": "Cancel",
       "confirm": "Delete",
       "apply": "Apply"
+    },
+    "doctorSchedule": {
+      "schedulesTitle": "Consultation schedules",
+      "addSchedule": "Add another schedule",
+      "dayLabel": "Day",
+      "startTimeLabel": "Start time",
+      "endTimeLabel": "End time",
+      "notesLabel": "Notes",
+      "availableLabel": "Available",
+      "removeLabel": "Remove",
+      "selectAllDays": "Select all days",
+      "selectWeekend": "Weekend",
+      "selectSpecificDays": "Specific days",
+      "noSchedules": "No schedules registered.",
+      "errorEndBeforeStart": "End time must be later than start time.",
+      "errorDayAlreadyUsed": "A schedule already exists for this day. Please choose another day.",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
     }
   },
   "auth": {

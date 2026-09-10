@@ -30,7 +30,6 @@ import {
 } from "../types";
 
 import { getAllDoctorsFiltered } from "@/modules/doctors/services";
-import { DoctorFilteredApiResponse } from "@/modules/doctors/types";
 
 import { ApiResponse, PaginatedData } from "@/lib/server/api-response";
 import {
@@ -62,6 +61,7 @@ import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 import { createAppointment, updateAppointment } from "../services";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { DoctorWithUserAndScheduleApiResponse } from "@/modules/doctors/types";
 
 interface AppointmentFormProps {
   appointment: AppointmentApiResponse;
@@ -190,7 +190,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
   const searchDoctors = async (
     query: string
-  ): Promise<DoctorFilteredApiResponse[]> => {
+  ): Promise<DoctorWithUserAndScheduleApiResponse[]> => {
     try {
       const response = await getAllDoctorsFiltered(0, 10, query);
 
@@ -214,11 +214,14 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     }
   };
 
-  const handleSelectDoctor = (doctor: DoctorFilteredApiResponse): void => {
-    setSelectedDoctorId(doctor.doctorId);
-    setDoctorSearch(doctor.username);
+  const handleSelectDoctor = (doctorWithDetails: DoctorWithUserAndScheduleApiResponse): void => {
 
-    setValue("doctorId", doctor.doctorId, {
+    const { doctor, user } = doctorWithDetails;
+
+    setSelectedDoctorId(doctor.id);
+    setDoctorSearch(user.username);
+
+    setValue("doctorId", doctor.id, {
       shouldValidate: true,
       shouldDirty: true,
     });
@@ -282,23 +285,23 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     }
   }
 
-  const doctorDisplayFields: SearchSelectDisplayField<DoctorFilteredApiResponse>[] =
+  const doctorDisplayFields: SearchSelectDisplayField<DoctorWithUserAndScheduleApiResponse>[] =
     [
       {
-        key: "username",
+        key: "user",
         label: t.doctorSearchFields.username,
-        getValue: (doctor) => doctor.username,
+        getValue: ( doctorWithDetails ) => doctorWithDetails.user.username,
       },
       {
-        key: "email",
+        key: "user",
         label: t.doctorSearchFields.email,
-        getValue: (doctor) => doctor.email,
+        getValue: (doctorWithDetails) => doctorWithDetails.user.email,
       },
       {
-        key: "licenseNumber",
+        key: "doctor",
         label: t.doctorSearchFields.licenseNumber,
-        getValue: (doctor) => doctor.licenseNumber,
-        condition: (doctor) => !!doctor.licenseNumber,
+        getValue: (doctorWithDetails) => doctorWithDetails.doctor.licenseNumber,
+        condition: (doctorWithDetails) => !!doctorWithDetails.doctor.licenseNumber,
       },
     ];
 
@@ -347,7 +350,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
       <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
-          <FormFieldSearchSelect<DoctorFilteredApiResponse>
+          <FormFieldSearchSelect<DoctorWithUserAndScheduleApiResponse>
             id="doctorName"
             label={t.doctorLabel}
             placeholder={t.doctorPlaceholder}
@@ -358,7 +361,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
             searchItems={searchDoctors}
-            getDisplayLabel={(doctor) => doctor.username}
+            getDisplayLabel={(doctorWithDetails) => doctorWithDetails.user.username}
             displayFields={doctorDisplayFields}
             error={errors.doctorId?.message}
             minChars={1}

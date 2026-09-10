@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { routes, TranslationDictionary, USER_ROLE } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
-import { UserApiResponse, UserUpdateRequest } from "../types";
+import { UserUpdateRequest, UserWithDoctorandScheduleApiResponse } from "../types";
 import { deleteUser, getAllUsers, updateUser } from "../services";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 
@@ -21,7 +21,7 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
   const user = getUserDataLocalStore();
   const currentUserId = user?.id;
 
-  const [usersData, setUsersData] = useState<PaginatedData<UserApiResponse>>();
+  const [usersData, setUsersData] = useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [userToDelete, setUserToDelete] = useState<{
@@ -103,7 +103,7 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     }
   };
 
-  const usersActions: TableAction<UserApiResponse>[] = [
+  const usersActions: TableAction<UserWithDoctorandScheduleApiResponse>[] = [
     {
       label: dictionary.components.actions.viewDetails,
       onClick: (e) => router.push(routes.users.details.replace(":id", e.id)),

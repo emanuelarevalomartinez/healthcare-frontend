@@ -28,9 +28,9 @@ import { FormFieldSelect } from "@/components/customs/form-field-select";
 import { createUser, updateUser } from "../services";
 
 import {
-  UserApiResponse,
   UserCreateRequest,
   UserUpdateRequest,
+  UserWithDoctorandScheduleApiResponse,
 } from "../types";
 
 import {
@@ -53,9 +53,11 @@ import {
   deleteDoctorByUserId,
   updateDoctorWithUser,
 } from "@/modules/doctors/services";
+import { DoctorScheduleApiResponse } from "@/modules/doctor_schedule/types";
+import { DoctorSchedulesManager } from "@/modules/doctor_schedule/form/doctor-schedules-manager";
 
 interface UserFormProps {
-  user: UserApiResponse;
+  user: UserWithDoctorandScheduleApiResponse;
   mode: FormMode;
 }
 
@@ -82,6 +84,18 @@ export function UserForm({ user, mode }: UserFormProps) {
   const roleOptions = useMemo(
     () => getRoleOptions(t.roleOptions),
     [getRoleOptions, t.roleOptions]
+  );
+
+  const [schedules, setSchedules] = useState<DoctorScheduleApiResponse[]>(
+    () =>
+      user.schedules?.map((s) => ({
+        id: s.id,
+        dayOfWeek: s.dayOfWeek,
+        startTime: s.startTime.slice(0, 5), // "08:00:00" -> "08:00"
+        endTime: s.endTime.slice(0, 5),
+        available: s.available,
+        notes: s.notes ?? "",
+      })) ?? []
   );
 
   const {
@@ -124,21 +138,19 @@ export function UserForm({ user, mode }: UserFormProps) {
         const updateData = data as UpdateUserSchema;
 
         if (currentRole == USER_ROLE.DOCTOR) {
-            const updateDoctorWithUserPayload: DoctorUpdateWithUserRequest = {
-              username: updateData.username,
-              email: updateData.email,
-              role: currentRole,
-              isActive: currentActive,
-              specialty: updateData.specialty ?? "",
-              licenseNumber: data.licenseNumber ?? "",
-              defaultConsultationDuration:
-                data.defaultConsultationDuration ?? 0,
-              ...(updateData.password?.trim()
-                ? { password: updateData.password }
-                : {}),
-            };
-            await updateDoctorWithUser(user.id, updateDoctorWithUserPayload);
-          
+          const updateDoctorWithUserPayload: DoctorUpdateWithUserRequest = {
+            username: updateData.username,
+            email: updateData.email,
+            role: currentRole,
+            isActive: currentActive,
+            specialty: updateData.specialty ?? "",
+            licenseNumber: data.licenseNumber ?? "",
+            defaultConsultationDuration: data.defaultConsultationDuration ?? 0,
+            ...(updateData.password?.trim()
+              ? { password: updateData.password }
+              : {}),
+          };
+          await updateDoctorWithUser(user.id, updateDoctorWithUserPayload);
         } else {
           const updateUserPayload: UserUpdateRequest = {
             username: updateData.username,
@@ -340,6 +352,17 @@ export function UserForm({ user, mode }: UserFormProps) {
               )}
             </div>
           </FieldGroup>
+
+          <>
+            <Separator className="md:col-span-2 mt-2 mb-4" />
+
+            <FieldGroup className="col-start-1 col-span-2">
+              <DoctorSchedulesManager
+                mode="create" // "create" | "edit" | "details"
+                onChange={(s) => console.log("schedules →", s)}
+              />
+            </FieldGroup>
+          </>
 
           {(isEditMode || isViewMode) && (
             <>

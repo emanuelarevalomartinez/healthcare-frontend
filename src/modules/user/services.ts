@@ -2,10 +2,10 @@
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
 import { ApiResponse, PaginatedData } from "@/lib/server/api-response";
-import { UserApiResponse, UserCreateRequest, UserUpdateRequest } from "./types";
+import { UserCreateRequest, UserUpdateRequest, UserWithDoctorandScheduleApiResponse } from "./types";
 
 export const createUser = async (data: UserCreateRequest) => {
-  const response = await fetcher<UserApiResponse>(apiRoutes.users.create, {
+  const response = await fetcher<UserWithDoctorandScheduleApiResponse>(apiRoutes.users.create, {
     ...POST_OPTIONS,
     body: JSON.stringify(data),
   });
@@ -13,7 +13,7 @@ export const createUser = async (data: UserCreateRequest) => {
 };
 
 export const updateUser = async (id: string, data: UserUpdateRequest) => {
-  const response = await fetcher<UserApiResponse>(apiRoutes.users.edit.replace(":id", id), {
+  const response = await fetcher<UserWithDoctorandScheduleApiResponse>(apiRoutes.users.edit.replace(":id", id), {
     ...PUT_OPTIONS,
     body: JSON.stringify(data),
   });
@@ -28,7 +28,7 @@ export const getAllUsers = async (page: number = 0, size: number = 10) => {
 
   const urlWithParams = `${apiRoutes.users.list}?${queryParams.toString()}`;
 
-  const response = await fetcher<PaginatedData<UserApiResponse>>(urlWithParams, {
+  const response = await fetcher<PaginatedData<UserWithDoctorandScheduleApiResponse>>(urlWithParams, {
     ...GET_OPTIONS,
   });
 
@@ -36,7 +36,7 @@ export const getAllUsers = async (page: number = 0, size: number = 10) => {
 };
 
 export const findUserById = async (id: string) => {
-  const response = await fetcher<UserApiResponse>(
+  const response = await fetcher<UserWithDoctorandScheduleApiResponse>(
     apiRoutes.users.details.replace(":id", id),
     {
       ...GET_OPTIONS,

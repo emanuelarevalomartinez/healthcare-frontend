@@ -1,4 +1,6 @@
 import { USER_ROLE } from "@/lib";
+import { UserApiResponse } from "../user/types";
+import { DoctorScheduleApiResponse } from "../doctor_schedule/types";
 
 export interface DoctorApiResponse {
   id: string;
@@ -18,6 +20,12 @@ export interface DoctorFilteredApiResponse {
   specialty: string;
   licenseNumber: string;
   defaultConsultationDuration: number;
+}
+
+export interface DoctorWithUserAndScheduleApiResponse {
+  user: UserApiResponse;
+  doctor: DoctorApiResponse;
+  schedules: DoctorScheduleApiResponse[];
 }
 
 export interface DoctorCreateRequest {

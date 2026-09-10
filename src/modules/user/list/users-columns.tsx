@@ -1,11 +1,11 @@
 import { TableColumn } from "@/components/customs/table-wrapper";
-import { UserApiResponse } from "../types";
+import { UserWithDoctorandScheduleApiResponse } from "../types";
 import { TranslationDictionary, USER_ROLE } from "@/lib";
 import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
 
 export const getUserColumns = (
   dictionary: TranslationDictionary
-): TableColumn<UserApiResponse>[] => {
+): TableColumn<UserWithDoctorandScheduleApiResponse>[] => {
   const t = dictionary.dashboard.users;
 
   return [

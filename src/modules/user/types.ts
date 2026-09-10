@@ -1,5 +1,6 @@
 import { USER_ROLE } from "@/lib";
 import { DoctorApiResponse } from "../doctors/types";
+import { DoctorScheduleApiResponse } from "../doctor_schedule/types";
 
 export interface UserApiResponse {
   id: string;
@@ -7,7 +8,19 @@ export interface UserApiResponse {
   email: string;
   role: USER_ROLE;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string;
+}
+
+export interface UserWithDoctorandScheduleApiResponse {
+  id: string;
+  username: string;
+  email: string;
+  role: USER_ROLE;
+  isActive: boolean;
   doctor: DoctorApiResponse | null,
+  schedules: DoctorScheduleApiResponse[] | null,
   createdAt: string;
   updatedAt: string;
   lastLogin: string;
