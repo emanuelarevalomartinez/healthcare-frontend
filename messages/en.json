@@ -132,6 +132,18 @@
         "doctor": "DOCTOR",
         "receptionist": "RECEPTIONIST"
       },
+      "doctorScheduleDayOfWeekOptions": {
+        "all_week": "ALL WEEK",
+        "weekdays": "WEEKDAYS",
+        "weekend": "WEEKEND",
+        "monday": "MONDAY",
+        "tuesday": "TUESDAY",
+        "wednesday": "WEDNESDAY",
+        "thursday": "THURSDAY",
+        "friday": "FRIDAY",
+        "saturday": "SATURDAY",
+        "sunday": "SUNDAY"
+      },
       "validation": {
         "usernameMin": "Username must be at least 3 characters long.",
         "usernameMax": "Username cannot exceed 50 characters.",
@@ -294,18 +306,7 @@
       "apply": "Apply"
     },
     "doctorSchedule": {
-      "doctorScheduleDayOfWeekOptions": {
-        "all_week": "ALL WEEK",
-        "weekdays": "WEEKDAYS",
-        "weekend": "WEEKEND",
-        "monday": "MONDAY",
-        "tuesday": "TUESDAY",
-        "wednesday": "WEDNESDAY",
-        "thursday": "THURSDAY",
-        "friday": "FRIDAY",
-        "saturday": "SATURDAY",
-        "sunday": "SUNDAY"
-      }
+      
     }
   },
   "auth": {

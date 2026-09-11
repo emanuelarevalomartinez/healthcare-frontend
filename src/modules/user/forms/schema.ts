@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { TranslationDictionary, USER_ROLE } from "@/lib";
+import {
+  DOCTOR_SCHEDULE_DAY_OF_WEEK,
+  TranslationDictionary,
+  USER_ROLE,
+} from "@/lib";
 
 const usernameRegex = /^[a-zA-Z0-9_]+$/;
 
@@ -54,6 +58,10 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
 
       isActive: z.boolean({
         message: v.activeRequired,
+      }),
+
+      currentDaysOfWeekType: z.enum(DOCTOR_SCHEDULE_DAY_OF_WEEK, {
+        error: () => ({ message: "mensaje de error" }),
       }),
 
       ...doctorFields,
@@ -123,6 +131,10 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
 
       isActive: z.boolean({
         message: v.activeRequired,
+      }),
+
+      currentDaysOfWeekType: z.enum(DOCTOR_SCHEDULE_DAY_OF_WEEK, {
+        error: () => ({ message: "mensaje de error" }),
       }),
 
       ...doctorFields,

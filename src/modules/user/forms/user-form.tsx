@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import {
+  DOCTOR_SCHEDULE_DAY_OF_WEEK,
   FormMode,
   getErrorMessage,
   routes,
@@ -54,7 +55,9 @@ import {
   updateDoctorWithUser,
 } from "@/modules/doctors/services";
 import { DoctorScheduleApiResponse } from "@/modules/doctor_schedule/types";
-import { DoctorSchedulesManager } from "@/modules/doctor_schedule/form/doctor-schedules-manager";
+import { Textarea } from "@/components/ui/textarea";
+import { CalendarDays } from "lucide-react";
+import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 
 interface UserFormProps {
   user: UserWithDoctorandScheduleApiResponse;
@@ -86,16 +89,35 @@ export function UserForm({ user, mode }: UserFormProps) {
     [getRoleOptions, t.roleOptions]
   );
 
-  const [schedules, setSchedules] = useState<DoctorScheduleApiResponse[]>(
+  const getDoctorScheduleDaysOfWeekTypeOptions = useCallback(
+    (optionsDict: any) => {
+      return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
+        (docScheduleType) => {
+          const docScheduleTypeKey = docScheduleType.toLowerCase() as
+            | "all_week"
+            | "weekdays"
+            | "weekend"
+            | "monday"
+            | "tuesday"
+            | "wednesday"
+            | "thursday"
+            | "friday"
+            | "saturday"
+            | "sunday";
+          return {
+            value: docScheduleType,
+            label: optionsDict[docScheduleTypeKey],
+          };
+        }
+      );
+    },
+    []
+  );
+
+  const doctorScheduleTypeOptions = useMemo(
     () =>
-      user.schedules?.map((s) => ({
-        id: s.id,
-        dayOfWeek: s.dayOfWeek,
-        startTime: s.startTime.slice(0, 5), // "08:00:00" -> "08:00"
-        endTime: s.endTime.slice(0, 5),
-        available: s.available,
-        notes: s.notes ?? "",
-      })) ?? []
+      getDoctorScheduleDaysOfWeekTypeOptions(t.doctorScheduleDayOfWeekOptions),
+    [t.doctorScheduleDayOfWeekOptions, getDoctorScheduleDaysOfWeekTypeOptions]
   );
 
   const {
@@ -121,6 +143,7 @@ export function UserForm({ user, mode }: UserFormProps) {
 
   const currentRole = watch("role");
   const currentActive = watch("isActive");
+  const currentDaysOfWeekType = watch("currentDaysOfWeekType");
 
   const getHeaderTitle = () => {
     if (isViewMode) return t.viewSectionTitle;
@@ -357,16 +380,119 @@ export function UserForm({ user, mode }: UserFormProps) {
             <Separator className="md:col-span-2 mt-2 mb-4" />
 
             <FieldGroup className="col-start-1 col-span-2">
-              <DoctorSchedulesManager
-                mode="create" // "create" | "edit" | "details"
-                onChange={(s) => console.log("schedules →", s)}
-              />
+              <div className="md:col-span-2 space-y-4">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  <h3 className="font-medium">Horarios de consulta</h3>
+                </div>
+
+                <Card className="border-dashed border-border bg-background">
+                  <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-4">
+                    <div className="row-start-1 lg:row-start-auto col-span-12 lg:col-span-4 grid gap-2">
+                      <FormFieldSelect
+                        id="daysOfWeek"
+                        label={"label"}
+                        placeholder={"placeholder"}
+                        disabled={false}
+                        value={currentDaysOfWeekType}
+                        onValueChange={(value) =>
+                          setValue(
+                            "currentDaysOfWeekType",
+                            value as DOCTOR_SCHEDULE_DAY_OF_WEEK,
+                            {
+                              shouldValidate: true,
+                            }
+                          )
+                        }
+                        options={doctorScheduleTypeOptions}
+                        error={errors.currentDaysOfWeekType?.message as string}
+                      />
+                    </div>
+
+                    <div className="row-start-2 lg:row-start-auto col-span-12 lg:col-span-3 grid gap-2">
+                      <FormFieldInput
+                        id="startTime"
+                        type="time"
+                        label={"inicio"}
+                        placeholder={"placeholder"}
+                        disabled={disableFields}
+                        register={register("defaultConsultationDuration", {
+                          valueAsNumber: true,
+                        })}
+                        error={errors.defaultConsultationDuration?.message}
+                      />
+                    </div>
+
+                    <div className="row-start-3 lg:row-start-auto col-span-12 lg:col-span-3 grid gap-2">
+                      <FormFieldInput
+                        id="endTime"
+                        type="time"
+                        label={"inicio"}
+                        placeholder={"placeholder"}
+                        disabled={disableFields}
+                        register={register("defaultConsultationDuration", {
+                          valueAsNumber: true,
+                        })}
+                        error={errors.defaultConsultationDuration?.message}
+                      />
+                    </div>
+
+                    <div className="row-start-4 lg:row-start-auto col-span-12 lg:col-span-2 grid gap-2">
+                      <FieldGroup className="">
+                        <Field
+                          orientation="vertical"
+                          className="flex justify-center"
+                        >
+                          <FieldLabel htmlFor="active">
+                            {currentActive
+                              ? t.activeUserLabel
+                              : t.inactiveUserLabel}
+                          </FieldLabel>
+
+                          <Switch
+                            id="scheduleAvailable"
+                            size="default"
+                            checked={currentActive}
+                            disabled={disableFields}
+                            onCheckedChange={(checked) =>
+                              setValue("isActive", checked, {
+                                shouldValidate: true,
+                              })
+                            }
+                          />
+                        </Field>
+                      </FieldGroup>
+                    </div>
+
+                    <div className="row-start-5 lg:row-start-2 col-span-12">
+                      <FormFieldTextArea
+                        id="scheduleNote"
+                        label={"label de text area"}
+                        placeholder={"placeholder"}
+                        disabled={disableFields}
+                        register={register("currentDaysOfWeekType")}
+                        /*  error={errors.cancellationReason?.message as string} */
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-background">
+                  <CardContent>
+                    <div className="flex flex-col w-full">
+                      <Button type="button">Añadir horario</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/*  aqui termina el codigo añadido  */}
+              </div>
             </FieldGroup>
           </>
 
           {(isEditMode || isViewMode) && (
             <>
-              <Separator className="md:col-span-2 mt-2 mb-4" />
+              <Separator className="lg:col-span-2 mt-2 mb-4" />
 
               <div className="grid gap-2">
                 <Label>{t.createdAtLabel}</Label>
