@@ -294,27 +294,18 @@
       "apply": "Apply"
     },
     "doctorSchedule": {
-      "schedulesTitle": "Consultation schedules",
-      "addSchedule": "Add another schedule",
-      "dayLabel": "Day",
-      "startTimeLabel": "Start time",
-      "endTimeLabel": "End time",
-      "notesLabel": "Notes",
-      "availableLabel": "Available",
-      "removeLabel": "Remove",
-      "selectAllDays": "Select all days",
-      "selectWeekend": "Weekend",
-      "selectSpecificDays": "Specific days",
-      "noSchedules": "No schedules registered.",
-      "errorEndBeforeStart": "End time must be later than start time.",
-      "errorDayAlreadyUsed": "A schedule already exists for this day. Please choose another day.",
-      "monday": "Monday",
-      "tuesday": "Tuesday",
-      "wednesday": "Wednesday",
-      "thursday": "Thursday",
-      "friday": "Friday",
-      "saturday": "Saturday",
-      "sunday": "Sunday"
+      "doctorScheduleDayOfWeekOptions": {
+        "all_week": "ALL WEEK",
+        "weekdays": "WEEKDAYS",
+        "weekend": "WEEKEND",
+        "monday": "MONDAY",
+        "tuesday": "TUESDAY",
+        "wednesday": "WEDNESDAY",
+        "thursday": "THURSDAY",
+        "friday": "FRIDAY",
+        "saturday": "SATURDAY",
+        "sunday": "SUNDAY"
+      }
     }
   },
   "auth": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Trash2, Plus, CalendarDays } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { FormFieldSelect } from "@/components/customs/form-field-select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DOCTOR_SCHEDULE_DAY_OF_WEEK, useLanguage } from "@/lib";
+import { DoctorScheduleSchema, getCreateDoctorScheduleSchema } from "./schema";
 
 export type DayOfWeek =
+  | "ALL_WEEK"
+  | "WEEKDAYS"
+  | "WEEKEND"
   | "MONDAY"
   | "TUESDAY"
   | "WEDNESDAY"
@@ -31,6 +39,9 @@ export interface DoctorScheduleFormValue {
 type FormMode = "create" | "edit" | "details";
 
 const ALL_DAYS: DayOfWeek[] = [
+  "ALL_WEEK",
+  "WEEKDAYS",
+  "WEEKEND",
   "MONDAY",
   "TUESDAY",
   "WEDNESDAY",
@@ -43,6 +54,9 @@ const ALL_DAYS: DayOfWeek[] = [
 const WEEKEND: DayOfWeek[] = ["SATURDAY", "SUNDAY"];
 
 const DAY_LABELS: Record<DayOfWeek, string> = {
+  ALL_WEEK: "Toda la semana",
+  WEEKDAYS: "Lunes a viernes",
+  WEEKEND: "Fin de semana",
   MONDAY: "Lunes",
   TUESDAY: "Martes",
   WEDNESDAY: "Miércoles",
@@ -91,6 +105,9 @@ export function DoctorSchedulesManager({
   onChange,
 }: DoctorSchedulesManagerProps) {
   const disabled = mode === "details";
+
+  const { dictionary } = useLanguage();
+  const t = dictionary.dashboard.doctorSchedule;
 
   const [schedules, setSchedules] =
     useState<DoctorScheduleFormValue[]>(initialSchedules);
@@ -144,65 +161,60 @@ export function DoctorSchedulesManager({
     resetDraftFor(next);
   };
 
-  const handleRemove = (index: number) => {
-    const next = commit(schedules.filter((_, i) => i !== index));
-    resetDraftFor(next);
-  };
+  /*  const currentSchema = useMemo(() => {
+      return isEditMode
+        ? getUpdatePatientSchema(dictionary)
+        : getCreatePatientSchema(dictionary);
+    }, [isEditMode, dictionary]); */
 
-  const handleUpdate = (
-    index: number,
-    patch: Partial<DoctorScheduleFormValue>
-  ) => {
-    const next = schedules.map((s, i) =>
-      i === index ? { ...s, ...patch } : s
-    );
-    commit(next);
-  };
+  const getDoctorScheduleDaysOfWeekTypeOptions = useCallback(
+    (optionsDict: any) => {
+      return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
+        (docScheduleType) => {
+          const docScheduleTypeKey = docScheduleType.toLowerCase() as
+            | "all_week"
+            | "weekdays"
+            | "weekend"
+            | "monday"
+            | "tuesday"
+            | "wednesday"
+            | "thursday"
+            | "friday"
+            | "saturday"
+            | "sunday";
+          return {
+            value: docScheduleType,
+            label: optionsDict[docScheduleTypeKey],
+          };
+        }
+      );
+    },
+    []
+  );
 
-  const handleSelectAllDays = () => {
-    const nuevos: DoctorScheduleFormValue[] = ALL_DAYS.filter(
-      (d) => !usedDays.has(d)
-    ).map((d) => ({
-      dayOfWeek: d,
-      startTime: "09:00",
-      endTime: "17:00",
-      available: true,
-      notes: "",
-    }));
-    const next = commit([...schedules, ...nuevos]);
-    resetDraftFor(next);
-  };
+  const doctorScheduleTypeOptions = useMemo(
+    () =>
+      getDoctorScheduleDaysOfWeekTypeOptions(t.doctorScheduleDayOfWeekOptions),
+    [t.doctorScheduleDayOfWeekOptions, getDoctorScheduleDaysOfWeekTypeOptions]
+  );
 
-  const handleSelectWeekend = () => {
-    const nuevos: DoctorScheduleFormValue[] = WEEKEND.filter(
-      (d) => !usedDays.has(d)
-    ).map((d) => ({
-      dayOfWeek: d,
-      startTime: "09:00",
-      endTime: "13:00",
-      available: true,
-      notes: "",
-    }));
-    const next = commit([...schedules, ...nuevos]);
-    resetDraftFor(next);
-  };
+  const currentSchema = useMemo(() => {
+    return getCreateDoctorScheduleSchema(dictionary);
+  }, [dictionary]);
 
-  const toggleDayChip = (day: DayOfWeek) => {
-    const exists = schedules.find((s) => s.dayOfWeek === day);
-    if (exists) {
-      handleRemove(schedules.indexOf(exists));
-    } else {
-      const nuevo: DoctorScheduleFormValue = {
-        dayOfWeek: day,
-        startTime: "09:00",
-        endTime: "17:00",
-        available: true,
-        notes: "",
-      };
-      const next = commit([...schedules, nuevo]);
-      resetDraftFor(next);
-    }
-  };
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useForm<DoctorScheduleSchema>({
+    resolver: zodResolver(currentSchema),
+    defaultValues: {},
+  });
+
+  const currentDaysOfWeekType = watch("currentDaysOfWeekType");
 
   return (
     <div className="md:col-span-2 space-y-4">
@@ -211,160 +223,33 @@ export function DoctorSchedulesManager({
         <h3 className="font-medium">Horarios de consulta</h3>
       </div>
 
-      {/* Atajos de selección */}
-      {!disabled && (
-        <>
-          <div>
-            <div className=" flex-col md:flex-row flex flex-wrap items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full md:w-auto"
-                onClick={handleSelectAllDays}
-              >
-                Seleccionar todos los días
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full md:w-auto"
-                onClick={handleSelectWeekend}
-              >
-                Fin de semana
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="">Días específicos:</span>
-
-            {ALL_DAYS.map((day) => {
-              const active = usedDays.has(day);
-              return (
-                <Button
-                  key={day}
-                  type="button"
-                  className={`w-full md:w-auto shadow-sm text-xs border transition ${
-                    active
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-background border-border hover:bg-primary"
-                  }`}
-                  onClick={() => toggleDayChip(day)}
-                >
-                  {DAY_LABELS[day]}
-                </Button>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {schedules.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No hay horarios registrados.
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {schedules.map((s, index) => (
-            <Card
-              key={`${s.dayOfWeek}-${index}`}
-              className="border-border bg-background"
-            >
-              <CardContent className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-4 items-end">
-                <div className="md:col-span-2 grid gap-2">
-                  <Label>Día</Label>
-                  <Input disabled value={DAY_LABELS[s.dayOfWeek]} />
-                </div>
-
-                <div className="md:col-span-3 grid gap-2">
-                  <Label>Hora de inicio</Label>
-                  <Input
-                    type="time"
-                    value={s.startTime}
-                    disabled={disabled}
-                    onChange={(e) =>
-                      handleUpdate(index, { startTime: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="md:col-span-3 grid gap-2">
-                  <Label>Hora de fin</Label>
-                  <Input
-                    type="time"
-                    value={s.endTime}
-                    disabled={disabled}
-                    onChange={(e) =>
-                      handleUpdate(index, { endTime: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="md:col-span-2 grid gap-2">
-                  <Label>Disponible</Label>
-                  <Switch
-                    checked={s.available}
-                    disabled={disabled}
-                    onCheckedChange={(v) =>
-                      handleUpdate(index, { available: v })
-                    }
-                  />
-                </div>
-
-                {!disabled && (
-                  <div className="md:col-span-2 flex justify-end">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemove(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </div>
-                )}
-
-                <Textarea
-                  id="notes"
-                  className="row-start-2 col-span-12"
-                  placeholder={"placeholder"}
-                  rows={4}
-                  disabled={false}
-                  /*   {...register("notes")} */
-                  /*  aria-invalid={errors.notes ? "true" : "false"} */
-                />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
       {/* Formulario nuevo bloque */}
       {!disabled && availableDays.length > 0 && (
         <Card className="border-dashed border-border bg-background">
-          <CardContent className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-4 items-end">
-            <div className="md:col-span-2 grid gap-2">
-              <Label>Día</Label>
-              <select
-                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                value={draft.dayOfWeek}
-                onChange={(e) =>
-                  setDraft((d) => ({
-                    ...d,
-                    dayOfWeek: e.target.value as DayOfWeek,
-                  }))
+          <CardContent className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-4 place-content-between">
+
+            <div className="row-start-1 md:row-start-auto md:col-span-4 grid gap-2">
+              <FormFieldSelect
+                id="daysOfWeek"
+                label={"label"}
+                placeholder={"placeholder"}
+                disabled={false}
+                value={currentDaysOfWeekType}
+                onValueChange={(value) =>
+                  setValue(
+                    "currentDaysOfWeekType",
+                    value as DOCTOR_SCHEDULE_DAY_OF_WEEK,
+                    {
+                      shouldValidate: true,
+                    }
+                  )
                 }
-              >
-                {availableDays.map((d) => (
-                  <option key={d} value={d}>
-                    {DAY_LABELS[d]}
-                  </option>
-                ))}
-              </select>
+                options={doctorScheduleTypeOptions}
+                error={errors.currentDaysOfWeekType?.message as string}
+              />
             </div>
 
-            <div className="md:col-span-3 grid gap-2">
+            <div className="row-start-2 md:row-start-auto md:col-span-3 grid gap-2">
               <Label>Hora de inicio</Label>
               <Input
                 type="time"
@@ -375,7 +260,7 @@ export function DoctorSchedulesManager({
               />
             </div>
 
-            <div className="md:col-span-3 grid gap-2">
+            <div className="row-start-3 md:row-start-auto md:col-span-3 grid gap-2">
               <Label>Hora de fin</Label>
               <Input
                 type="time"
@@ -386,7 +271,7 @@ export function DoctorSchedulesManager({
               />
             </div>
 
-            <div className="md:col-span-2 grid gap-2">
+            <div className="row-start-4 md:row-start-auto md:col-span-2 grid gap-2">
               <Label>Disponible</Label>
               <Switch
                 checked={draft.available}
@@ -396,19 +281,15 @@ export function DoctorSchedulesManager({
               />
             </div>
 
-            <div className="md:col-span-2 flex justify-end">
-              <Button type="button" size="icon" onClick={handleAdd}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-
             {error && (
-              <p className="md:col-span-12 text-sm text-red-500">{error}</p>
+              <p className="row-start-4 md:row-start-auto md:col-span-12 text-sm text-red-500">
+                {error}
+              </p>
             )}
 
             <Textarea
               id="notes"
-              className="row-start-2 col-span-12"
+              className="row-start-5 md:row-start-2 col-span-12"
               placeholder={"placeholder"}
               rows={4}
               disabled={false}
@@ -418,6 +299,16 @@ export function DoctorSchedulesManager({
           </CardContent>
         </Card>
       )}
+
+      <Card className="bg-background">
+        <CardContent>
+          <div className="flex flex-col w-full">
+            <Button type="button" onClick={handleAdd}>
+              Añadir horario
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {!disabled && availableDays.length === 0 && (
         <p className="text-xs text-muted-foreground">

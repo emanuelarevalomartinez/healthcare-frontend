@@ -294,27 +294,18 @@
       "apply": "Aplicar"
     },
     "doctorSchedule": {
-      "schedulesTitle": "Horarios de consulta",
-      "addSchedule": "Añadir otro horario",
-      "dayLabel": "Día",
-      "startTimeLabel": "Hora de inicio",
-      "endTimeLabel": "Hora de fin",
-      "notesLabel": "Notas",
-      "availableLabel": "Disponible",
-      "removeLabel": "Eliminar",
-      "selectAllDays": "Seleccionar todos los días",
-      "selectWeekend": "Fin de semana",
-      "selectSpecificDays": "Días específicos",
-      "noSchedules": "No hay horarios registrados.",
-      "errorEndBeforeStart": "La hora de fin debe ser posterior a la hora de inicio.",
-      "errorDayAlreadyUsed": "Ya existe un horario para este día. Selecciona otro día.",
-      "monday": "Lunes",
-      "tuesday": "Martes",
-      "wednesday": "Miércoles",
-      "thursday": "Jueves",
-      "friday": "Viernes",
-      "saturday": "Sábado",
-      "sunday": "Domingo"
+      "doctorScheduleDayOfWeekOptions": {
+        "all_week": "ALL WEEK",
+        "weekdays": "WEEKDAYS",
+        "weekend": "WEEKEND",
+        "monday": "MONDAY",
+        "tuesday": "TUESDAY",
+        "wednesday": "WEDNESDAY",
+        "thursday": "THURSDAY",
+        "friday": "FRIDAY",
+        "saturday": "SATURDAY",
+        "sunday": "SUNDAY"
+      }
     }
   },
   "auth": {
