@@ -26,6 +26,7 @@ export default async function Page({ params }: PageProps) {
           defaultConsultationDuration:
             response.data.doctor?.defaultConsultationDuration || undefined as unknown as number,
         },
+        schedules: response.data.schedules,
         createdAt: response.data.createdAt,
         updatedAt: response.data.updatedAt,
         lastLogin: response.data.lastLogin,

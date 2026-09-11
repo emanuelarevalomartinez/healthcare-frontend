@@ -18,6 +18,7 @@ export default async function Page() {
           licenseNumber: "",
           defaultConsultationDuration: undefined as unknown as number
         },
+        schedules: [],
         createdAt: "",
         updatedAt: "",
         lastLogin: "",

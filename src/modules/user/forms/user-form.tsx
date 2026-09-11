@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, Resolver } from "react-hook-form";
+import { useForm, Resolver, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
@@ -56,7 +56,7 @@ import {
 } from "@/modules/doctors/services";
 import { DoctorScheduleApiResponse } from "@/modules/doctor_schedule/types";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Trash2 } from "lucide-react";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 
 interface UserFormProps {
@@ -138,12 +138,19 @@ export function UserForm({ user, mode }: UserFormProps) {
       specialty: user.doctor?.specialty,
       licenseNumber: user.doctor?.licenseNumber,
       defaultConsultationDuration: user.doctor?.defaultConsultationDuration,
+      schedules:
+        user.schedules?.map((s: DoctorScheduleApiResponse) => ({
+          dayOfWeek: s.dayOfWeek,
+          startTime: s.startTime,
+          endTime: s.endTime,
+          available: s.available,
+          note: s.notes ?? "",
+        })) ?? [],
     },
   });
 
   const currentRole = watch("role");
   const currentActive = watch("isActive");
-  const currentDaysOfWeekType = watch("currentDaysOfWeekType");
 
   const getHeaderTitle = () => {
     if (isViewMode) return t.viewSectionTitle;
@@ -379,120 +386,154 @@ export function UserForm({ user, mode }: UserFormProps) {
           <>
             <Separator className="md:col-span-2 mt-2 mb-4" />
 
-            <FieldGroup className="col-start-1 col-span-2">
+            <FieldGroup className="md:col-span-2">
               <div className="md:col-span-2 space-y-4">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4" />
-                  <h3 className="font-medium">Horarios de consulta</h3>
+                  <h3 className="font-medium">{t.scheduleSectionTitle}</h3>
                 </div>
 
-                <Card className="border-dashed border-border bg-background">
-                  <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-4">
-                    <div className="row-start-1 lg:row-start-auto col-span-12 lg:col-span-4 grid gap-2">
-                      <FormFieldSelect
-                        id="daysOfWeek"
-                        label={"label"}
-                        placeholder={"placeholder"}
-                        disabled={false}
-                        value={currentDaysOfWeekType}
-                        onValueChange={(value) =>
-                          setValue(
-                            "currentDaysOfWeekType",
-                            value as DOCTOR_SCHEDULE_DAY_OF_WEEK,
-                            {
-                              shouldValidate: true,
-                            }
-                          )
-                        }
-                        options={doctorScheduleTypeOptions}
-                        error={errors.currentDaysOfWeekType?.message as string}
-                      />
-                    </div>
+                {user.schedules?.map((field, index) => {
+                  const scheduleErrors = (errors.schedules as any)?.[index];
+                  const currentDayOfWeek = watch(
+                    `schedules.${index}.dayOfWeek`
+                  );
 
-                    <div className="row-start-2 lg:row-start-auto col-span-12 lg:col-span-3 grid gap-2">
-                      <FormFieldInput
-                        id="startTime"
-                        type="time"
-                        label={"inicio"}
-                        placeholder={"placeholder"}
-                        disabled={disableFields}
-                        register={register("defaultConsultationDuration", {
-                          valueAsNumber: true,
-                        })}
-                        error={errors.defaultConsultationDuration?.message}
-                      />
-                    </div>
-
-                    <div className="row-start-3 lg:row-start-auto col-span-12 lg:col-span-3 grid gap-2">
-                      <FormFieldInput
-                        id="endTime"
-                        type="time"
-                        label={"inicio"}
-                        placeholder={"placeholder"}
-                        disabled={disableFields}
-                        register={register("defaultConsultationDuration", {
-                          valueAsNumber: true,
-                        })}
-                        error={errors.defaultConsultationDuration?.message}
-                      />
-                    </div>
-
-                    <div className="row-start-4 lg:row-start-auto col-span-12 lg:col-span-2 grid gap-2">
-                      <FieldGroup className="">
-                        <Field
-                          orientation="vertical"
-                          className="flex justify-center"
-                        >
-                          <FieldLabel htmlFor="active">
-                            {currentActive
-                              ? t.activeUserLabel
-                              : t.inactiveUserLabel}
-                          </FieldLabel>
-
-                          <Switch
-                            id="scheduleAvailable"
-                            size="default"
-                            checked={currentActive}
+                  return (
+                    <Card
+                      key={field.id}
+                      className="border-dashed border-border bg-background"
+                    >
+                      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+                        {/* Día de la semana */}
+                          <FormFieldSelect
+                            id={`schedules.${index}.dayOfWeek`}
+                            label={t.scheduleDayOfWeekLabel}
+                            placeholder={t.scheduleDayOfWeekPlaceholder}
                             disabled={disableFields}
-                            onCheckedChange={(checked) =>
-                              setValue("isActive", checked, {
-                                shouldValidate: true,
-                              })
+                            value={currentDayOfWeek}
+                            onValueChange={(value) =>
+                              setValue(
+                                `schedules.${index}.dayOfWeek`,
+                                value as DOCTOR_SCHEDULE_DAY_OF_WEEK,
+                                { shouldValidate: true }
+                              )
                             }
+                            options={doctorScheduleTypeOptions}
+                            error={scheduleErrors?.dayOfWeek?.message as string}
                           />
-                        </Field>
-                      </FieldGroup>
-                    </div>
 
-                    <div className="row-start-5 lg:row-start-2 col-span-12">
-                      <FormFieldTextArea
-                        id="scheduleNote"
-                        label={"label de text area"}
-                        placeholder={"placeholder"}
-                        disabled={disableFields}
-                        register={register("currentDaysOfWeekType")}
-                        /*  error={errors.cancellationReason?.message as string} */
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+                        {/* Hora inicio */}
+                          <FormFieldInput
+                            id={`schedules.${index}.startTime`}
+                            type="time"
+                            label={t.scheduleStartTimeLabel}
+                            placeholder={t.scheduleStartTimePlaceholder}
+                            disabled={disableFields}
+                            register={register(
+                              `schedules.${index}.startTime` as never
+                            )}
+                            error={scheduleErrors?.startTime?.message}
+                          />
 
-                <Card className="bg-background">
-                  <CardContent>
-                    <div className="flex flex-col w-full">
-                      <Button type="button">Añadir horario</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                        {/* Hora fin */}
+                          <FormFieldInput
+                            id={`schedules.${index}.endTime`}
+                            type="time"
+                            label={t.scheduleEndTimeLabel}
+                            placeholder={t.scheduleEndTimePlaceholder}
+                            disabled={disableFields}
+                            register={register(
+                              `schedules.${index}.endTime` as never
+                            )}
+                            error={scheduleErrors?.endTime?.message}
+                          />
 
-                {/*  aqui termina el codigo añadido  */}
+                          <FieldGroup>
+                            <Field
+                              orientation="vertical"
+                              className="flex justify-center"
+                            >
+                              <FieldLabel
+                                htmlFor={`schedules.${index}.available`}
+                              >
+                                {watch(`schedules.${index}.available`)
+                                  ? t.scheduleAvailableOnLabel
+                                  : t.scheduleAvailableOffLabel}
+                              </FieldLabel>
+
+                              <Switch
+                                id={`schedules.${index}.available`}
+                                checked={
+                                  !!watch(`schedules.${index}.available`)
+                                }
+                                disabled={disableFields}
+                                onCheckedChange={(checked) =>
+                                  setValue(
+                                    `schedules.${index}.available`,
+                                    checked,
+                                    {
+                                      shouldValidate: true,
+                                    }
+                                  )
+                                }
+                              />
+                            </Field>
+                          </FieldGroup>
+
+                        {/* Nota */}
+                        <div
+                          className={`${
+                            isEditMode
+                              ? "col-span-1 md:col-span-2"
+                              : "col-span-1"
+                          }`}
+                        >
+                          <FormFieldTextArea
+                            id={`schedules.${index}.note`}
+                            label={t.scheduleNoteLabel}
+                            placeholder={t.scheduleNotePlaceholder}
+                            disabled={disableFields}
+                            register={register(
+                              `schedules.${index}.note` as never
+                            )}
+                            error={scheduleErrors?.note?.message}
+                          />
+                        </div>
+
+                        {/* Eliminar */}
+                        {!disableFields && isEditMode && (
+                          <div
+                            className={`${
+                              isEditMode
+                                ? "col-span-1 md:col-span-2 flex items-center place-content-center w-full"
+                                : ""
+                            }`}
+                          >
+                            <Button
+                              className="w-full h-full md:h-auto py-2"
+                              type="button"
+                              variant="destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col w-full md:col-span-2">
+                          <Button type="button">{t.scheduleAddButton}</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </FieldGroup>
           </>
 
           {(isEditMode || isViewMode) && (
             <>
-              <Separator className="lg:col-span-2 mt-2 mb-4" />
+              <Separator className="md:col-span-2 mt-2 mb-4" />
 
               <div className="grid gap-2">
                 <Label>{t.createdAtLabel}</Label>

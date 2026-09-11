@@ -127,6 +127,21 @@
       "licenseNumberPlaceholder": "Enter license number",
       "defaultConsultationDurationLabel": "Default Consultation Duration",
       "defaultConsultationDurationPlaceholder": "Enter duration in minutes",
+      "scheduleSectionTitle": "Consultation Schedules",
+      "scheduleDayOfWeekLabel": "Day of Week",
+      "scheduleDayOfWeekPlaceholder": "Select day of week",
+      "scheduleStartTimeLabel": "Start Time",
+      "scheduleStartTimePlaceholder": "Select start time",
+      "scheduleEndTimeLabel": "End Time",
+      "scheduleEndTimePlaceholder": "Select end time",
+      "scheduleAvailableLabel": "Available",
+      "scheduleAvailableOnLabel": "Schedule available",
+      "scheduleAvailableOffLabel": "Schedule unavailable",
+      "scheduleNoteLabel": "Note",
+      "scheduleNotePlaceholder": "Enter a note for this schedule",
+      "scheduleAddButton": "Add schedule",
+      "scheduleRemoveButton": "Remove",
+      "scheduleListEmpty": "No schedules added yet.",
       "roleOptions": {
         "admin": "ADMINISTRATOR",
         "doctor": "DOCTOR",
@@ -162,7 +177,14 @@
         "passwordsMustMatch": "Passwords do not match.",
         "specialtyRequired": "Specialty is required.",
         "licenseNumberRequired": "License number is required.",
-        "defaultConsultationDurationRequired": "Default consultation duration is required."
+        "defaultConsultationDurationRequired": "Default consultation duration is required.",
+        "scheduleDayOfWeekRequired": "Day of week is required.",
+        "scheduleStartTimeRequired": "Start time is required.",
+        "scheduleEndTimeRequired": "End time is required.",
+        "scheduleEndTimeAfterStartTime": "End time must be after start time.",
+        "scheduleNoteMax": "Note cannot exceed 250 characters.",
+        "scheduleAtLeastOne": "You must add at least one schedule.",
+        "scheduleOverlapError": "This schedule overlaps with an existing one."
       },
       "toastSuccess": "User created successfully.",
       "toastUpdateSuccess": "User updated successfully.",
@@ -305,9 +327,7 @@
       "confirm": "Delete",
       "apply": "Apply"
     },
-    "doctorSchedule": {
-      
-    }
+    "doctorSchedule": {}
   },
   "auth": {
     "login": {
