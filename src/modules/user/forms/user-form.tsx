@@ -51,10 +51,13 @@ import {
 } from "@/modules/doctors/types";
 import {
   createDoctorWithUser,
-  deleteDoctorByUserId,
-  updateDoctorWithUser,
+  deleteDoctorAndItScheduleByUserId,
+  updateDoctorWithUserAndSchedule,
 } from "@/modules/doctors/services";
-import { DoctorScheduleApiResponse } from "@/modules/doctor_schedule/types";
+import {
+  DoctorScheduleApiResponse,
+  UpdateDoctorWithUserAndScheduleRequest,
+} from "@/modules/doctor_schedule/types";
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarDays, Trash2 } from "lucide-react";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
@@ -140,6 +143,7 @@ export function UserForm({ user, mode }: UserFormProps) {
       defaultConsultationDuration: user.doctor?.defaultConsultationDuration,
       schedules:
         user.schedules?.map((s: DoctorScheduleApiResponse) => ({
+          id: s.id,
           dayOfWeek: s.dayOfWeek,
           startTime: s.startTime,
           endTime: s.endTime,
@@ -168,19 +172,38 @@ export function UserForm({ user, mode }: UserFormProps) {
         const updateData = data as UpdateUserSchema;
 
         if (currentRole == USER_ROLE.DOCTOR) {
-          const updateDoctorWithUserPayload: DoctorUpdateWithUserRequest = {
-            username: updateData.username,
-            email: updateData.email,
-            role: currentRole,
-            isActive: currentActive,
-            specialty: updateData.specialty ?? "",
-            licenseNumber: data.licenseNumber ?? "",
-            defaultConsultationDuration: data.defaultConsultationDuration ?? 0,
-            ...(updateData.password?.trim()
-              ? { password: updateData.password }
-              : {}),
-          };
-          await updateDoctorWithUser(user.id, updateDoctorWithUserPayload);
+          const updateDoctorWithUserAndSchedulePayload: UpdateDoctorWithUserAndScheduleRequest =
+            {
+              user: {
+                username: updateData.username,
+                email: updateData.email,
+                role: currentRole,
+                isActive: currentActive,
+                ...(updateData.password?.trim()
+                  ? { password: updateData.password }
+                  : {}),
+              },
+              doctor: {
+                specialty: updateData.specialty ?? "",
+                licenseNumber: data.licenseNumber ?? "",
+                defaultConsultationDuration:
+                  data.defaultConsultationDuration ?? 0,
+              },
+              schedule: {
+                schedules: data.schedules.map((s) => ({
+                  id: s.id,
+                  dayOfWeek: s.dayOfWeek,
+                  startTime: s.startTime,
+                  endTime: s.endTime,
+                  available: s.available,
+                  notes: s.note,
+                })),
+              },
+            };
+          await updateDoctorWithUserAndSchedule(
+            user.id,
+            updateDoctorWithUserAndSchedulePayload
+          );
         } else {
           const updateUserPayload: UserUpdateRequest = {
             username: updateData.username,
@@ -191,7 +214,7 @@ export function UserForm({ user, mode }: UserFormProps) {
               ? { password: updateData.password }
               : {}),
           };
-          await deleteDoctorByUserId(user.id);
+          await deleteDoctorAndItScheduleByUserId(user.id);
           await updateUser(user.id, updateUserPayload);
         }
         toast.success(t.toastUpdateSuccess);
@@ -383,29 +406,33 @@ export function UserForm({ user, mode }: UserFormProps) {
             </div>
           </FieldGroup>
 
-          <>
-            <Separator className="md:col-span-2 mt-2 mb-4" />
+          {currentRole === USER_ROLE.DOCTOR && (
+            <>
+              <Separator className="md:col-span-2 mt-2 mb-4" />
 
-            <FieldGroup className="md:col-span-2">
-              <div className="md:col-span-2 space-y-4">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  <h3 className="font-medium">{t.scheduleSectionTitle}</h3>
-                </div>
+              <FieldGroup className="md:col-span-2 border-2 border-border p-4 rounded-2xl">
+                <div className="md:col-span-2 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4" />
+                    <h3 className="font-medium">{t.scheduleSectionTitle}</h3>
+                  </div>
 
-                {user.schedules?.map((field, index) => {
-                  const scheduleErrors = (errors.schedules as any)?.[index];
-                  const currentDayOfWeek = watch(
-                    `schedules.${index}.dayOfWeek`
-                  );
+                  {user.schedules?.map((field, index) => {
+                    const scheduleErrors = (errors.schedules as any)?.[index];
+                    const currentDayOfWeek = watch(
+                      `schedules.${index}.dayOfWeek`
+                    );
+                    const currentAvailable = watch(
+                      `schedules.${index}.available`
+                    );
 
-                  return (
-                    <Card
-                      key={field.id}
-                      className="border-dashed border-border bg-background"
-                    >
-                      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
-                        {/* Día de la semana */}
+                    return (
+                      <Card
+                        key={index}
+                        className="border border-border bg-background"
+                      >
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+                          {/* Día de la semana */}
                           <FormFieldSelect
                             id={`schedules.${index}.dayOfWeek`}
                             label={t.scheduleDayOfWeekLabel}
@@ -423,7 +450,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                             error={scheduleErrors?.dayOfWeek?.message as string}
                           />
 
-                        {/* Hora inicio */}
+                          {/* Hora inicio */}
                           <FormFieldInput
                             id={`schedules.${index}.startTime`}
                             type="time"
@@ -436,7 +463,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                             error={scheduleErrors?.startTime?.message}
                           />
 
-                        {/* Hora fin */}
+                          {/* Hora fin */}
                           <FormFieldInput
                             id={`schedules.${index}.endTime`}
                             type="time"
@@ -481,55 +508,60 @@ export function UserForm({ user, mode }: UserFormProps) {
                             </Field>
                           </FieldGroup>
 
-                        {/* Nota */}
-                        <div
-                          className={`${
-                            isEditMode
-                              ? "col-span-1 md:col-span-2"
-                              : "col-span-1"
-                          }`}
-                        >
-                          <FormFieldTextArea
-                            id={`schedules.${index}.note`}
-                            label={t.scheduleNoteLabel}
-                            placeholder={t.scheduleNotePlaceholder}
-                            disabled={disableFields}
-                            register={register(
-                              `schedules.${index}.note` as never
-                            )}
-                            error={scheduleErrors?.note?.message}
-                          />
-                        </div>
-
-                        {/* Eliminar */}
-                        {!disableFields && isEditMode && (
+                          {/* Nota */}
                           <div
                             className={`${
                               isEditMode
-                                ? "col-span-1 md:col-span-2 flex items-center place-content-center w-full"
-                                : ""
+                                ? "col-span-1 md:col-span-2"
+                                : "col-span-1 md:col-span-2"
                             }`}
                           >
-                            <Button
-                              className="w-full h-full md:h-auto py-2"
-                              type="button"
-                              variant="destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <FormFieldTextArea
+                              id={`schedules.${index}.note`}
+                              label={t.scheduleNoteLabel}
+                              placeholder={t.scheduleNotePlaceholder}
+                              disabled={disableFields}
+                              register={register(
+                                `schedules.${index}.note` as never
+                              )}
+                              error={scheduleErrors?.note?.message}
+                            />
                           </div>
-                        )}
 
-                        <div className="flex flex-col w-full md:col-span-2">
-                          <Button type="button">{t.scheduleAddButton}</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </FieldGroup>
-          </>
+                          {/* Eliminar */}
+                          {!disableFields && isEditMode && (
+                            <div
+                              className={`${
+                                isEditMode
+                                  ? "col-span-1 md:col-span-2 flex items-center place-content-center w-full"
+                                  : ""
+                              }`}
+                            >
+                              <Button
+                                className="w-full h-full md:h-auto py-2"
+                                type="button"
+                                variant="destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+
+                  {isEditMode && (
+                    <div>
+                      <div className="flex flex-col w-full md:col-span-2">
+                        <Button type="button">{t.scheduleAddButton}</Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </FieldGroup>
+            </>
+          )}
 
           {(isEditMode || isViewMode) && (
             <>

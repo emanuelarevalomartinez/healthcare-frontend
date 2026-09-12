@@ -184,7 +184,8 @@
         "scheduleEndTimeAfterStartTime": "End time must be after start time.",
         "scheduleNoteMax": "Note cannot exceed 250 characters.",
         "scheduleAtLeastOne": "You must add at least one schedule.",
-        "scheduleOverlapError": "This schedule overlaps with an existing one."
+        "scheduleOverlapError": "This schedule overlaps with an existing one.",
+        "scheduleIdRequired": "Schedule id is required"
       },
       "toastSuccess": "User created successfully.",
       "toastUpdateSuccess": "User updated successfully.",

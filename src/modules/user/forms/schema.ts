@@ -26,6 +26,7 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
 
   const scheduleItemSchema = z
     .object({
+      id: z.string().uuid(v.scheduleIdRequired).optional(),
       dayOfWeek: z.enum(DOCTOR_SCHEDULE_DAY_OF_WEEK, {
         error: () => ({ message: v.scheduleDayOfWeekRequired }),
       }),
@@ -164,6 +165,7 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
 
   const scheduleItemSchema = z
     .object({
+      id: z.string().uuid(v.scheduleIdRequired).optional(),
       dayOfWeek: z.enum(DOCTOR_SCHEDULE_DAY_OF_WEEK, {
         error: () => ({ message: v.scheduleDayOfWeekRequired }),
       }),

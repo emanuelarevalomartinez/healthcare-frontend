@@ -47,12 +47,23 @@ export interface DoctorCreateWithUserRequest {
 }
 
 export interface DoctorUpdateRequest {
-  specialty: string;
-  licenseNumber: string;
-  defaultConsultationDuration: number;
+  specialty?: string;
+  licenseNumber?: string;
+  defaultConsultationDuration?: number;
 }
 
 export interface DoctorUpdateWithUserRequest {
+  username?: string;
+  password?: string;
+  email?: string;
+  role?: USER_ROLE;
+  isActive?: boolean;
+  specialty?: string;
+  licenseNumber?: string;
+  defaultConsultationDuration?: number;
+}
+
+export interface DoctorUpdateWithUserAndScheduleRequest {
   username?: string;
   password?: string;
   email?: string;

@@ -184,7 +184,8 @@
         "scheduleEndTimeAfterStartTime": "La hora de fin debe ser posterior a la hora de inicio.",
         "scheduleNoteMax": "La nota no puede superar los 250 caracteres.",
         "scheduleAtLeastOne": "Debes añadir al menos un horario.",
-        "scheduleOverlapError": "Este horario se solapa con otro existente."
+        "scheduleOverlapError": "Este horario se solapa con otro existente.",
+        "scheduleIdRequired": "El id del horario es obligatorio"
       },
       "toastSuccess": "Usuario creado correctamente.",
       "toastUpdateSuccess": "Usuario actualizado correctamente.",

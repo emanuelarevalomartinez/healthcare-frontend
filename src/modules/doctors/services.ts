@@ -3,6 +3,7 @@
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
 import { DoctorApiResponse, DoctorCreateRequest, DoctorCreateWithUserRequest, DoctorUpdateRequest, DoctorUpdateWithUserRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
+import { UpdateDoctorWithUserAndScheduleRequest } from "../doctor_schedule/types";
 
 export const createDoctor = async (data: DoctorCreateRequest) => {
   const response = await fetcher(apiRoutes.doctors.create, {
@@ -28,8 +29,7 @@ export const updateDoctor = async (id: string, data: DoctorUpdateRequest) => {
   return response;
 };
 
-export const updateDoctorWithUser = async (userId: string, data: DoctorUpdateWithUserRequest) => {
-  console.log("dentro");
+export const updateDoctorWithUserAndSchedule = async (userId: string, data: UpdateDoctorWithUserAndScheduleRequest) => {
   
   const response = await fetcher(apiRoutes.doctors.editWithUser.replace(":userId", userId), {
     ...PUT_OPTIONS,
@@ -84,7 +84,7 @@ export const deleteDoctor = async (id: string) => {
   return response;
 };
 
-export const deleteDoctorByUserId = async (userId: string) => {
+export const deleteDoctorAndItScheduleByUserId = async (userId: string) => {
   const response = await fetcher(apiRoutes.doctors.deleteDoctorByUserId.replace(":userId",userId), {
     method: "DELETE",
   });
