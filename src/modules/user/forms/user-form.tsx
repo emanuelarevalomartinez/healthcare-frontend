@@ -61,6 +61,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarDays, Trash2 } from "lucide-react";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
+import { FormFieldToggleGroup } from "@/components/customs/form-field-toggle-group";
 
 interface UserFormProps {
   user: UserWithDoctorandScheduleApiResponse;
@@ -127,6 +128,7 @@ export function UserForm({ user, mode }: UserFormProps) {
     register,
     handleSubmit,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<UserSchema>({
@@ -263,6 +265,11 @@ export function UserForm({ user, mode }: UserFormProps) {
       setValue("defaultConsultationDuration", undefined);
     }
   }, [currentRole, setValue]);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "schedules",
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -417,7 +424,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                     <h3 className="font-medium">{t.scheduleSectionTitle}</h3>
                   </div>
 
-                  {user.schedules?.map((field, index) => {
+                  {fields.map((field, index) => {
                     const scheduleErrors = (errors.schedules as any)?.[index];
                     const currentDayOfWeek = watch(
                       `schedules.${index}.dayOfWeek`
@@ -428,12 +435,12 @@ export function UserForm({ user, mode }: UserFormProps) {
 
                     return (
                       <Card
-                        key={index}
+                        key={field.id}
                         className="border border-border bg-background"
                       >
                         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
                           {/* Día de la semana */}
-                          <FormFieldSelect
+                          {/*   <FormFieldSelect
                             id={`schedules.${index}.dayOfWeek`}
                             label={t.scheduleDayOfWeekLabel}
                             placeholder={t.scheduleDayOfWeekPlaceholder}
@@ -448,7 +455,17 @@ export function UserForm({ user, mode }: UserFormProps) {
                             }
                             options={doctorScheduleTypeOptions}
                             error={scheduleErrors?.dayOfWeek?.message as string}
-                          />
+                          /> */}
+
+                          <div className="md:col-span-2">
+                            <FormFieldToggleGroup
+                              id="days"
+                              label="Selecciona días"
+                              options={doctorScheduleTypeOptions}
+                              variant="outline"
+                              type="multiple"
+                            />
+                          </div>
 
                           {/* Hora inicio */}
                           <FormFieldInput
@@ -541,6 +558,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                                 className="w-full h-full md:h-auto py-2"
                                 type="button"
                                 variant="destructive"
+                                onClick={() => remove(index)}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -554,7 +572,21 @@ export function UserForm({ user, mode }: UserFormProps) {
                   {isEditMode && (
                     <div>
                       <div className="flex flex-col w-full md:col-span-2">
-                        <Button type="button">{t.scheduleAddButton}</Button>
+                        {/*   <Button type="button">{t.scheduleAddButton}</Button> */}
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            append({
+                              dayOfWeek: DOCTOR_SCHEDULE_DAY_OF_WEEK.MONDAY,
+                              startTime: "08:00",
+                              endTime: "05:00",
+                              available: true,
+                              note: "",
+                            })
+                          }
+                        >
+                          {t.scheduleAddButton}
+                        </Button>
                       </div>
                     </div>
                   )}
