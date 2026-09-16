@@ -157,6 +157,28 @@ export function UserForm({ user, mode }: UserFormProps) {
 
   const currentRole = watch("role");
   const currentActive = watch("isActive");
+  const scheduleValues = watch("schedules");
+
+  const usedDays = useMemo(
+    () =>
+      (scheduleValues ?? [])
+        .map((s) => s?.dayOfWeek)
+        .filter((d): d is DOCTOR_SCHEDULE_DAY_OF_WEEK => !!d),
+    [scheduleValues]
+  );
+
+  const getAvailableDayOptions = useCallback(
+    (currentDay?: DOCTOR_SCHEDULE_DAY_OF_WEEK) =>
+      doctorScheduleTypeOptions.filter(
+        (option) =>
+          !usedDays.includes(option.value) || option.value === currentDay
+      ),
+    [doctorScheduleTypeOptions, usedDays]
+  );
+
+  const nextAvailableDay = doctorScheduleTypeOptions.find(
+    (option) => !usedDays.includes(option.value)
+  )?.value;
 
   const getHeaderTitle = () => {
     if (isViewMode) return t.viewSectionTitle;
@@ -440,7 +462,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                       >
                         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
                           {/* Día de la semana */}
-                          {/*   <FormFieldSelect
+                          <FormFieldSelect
                             id={`schedules.${index}.dayOfWeek`}
                             label={t.scheduleDayOfWeekLabel}
                             placeholder={t.scheduleDayOfWeekPlaceholder}
@@ -453,19 +475,9 @@ export function UserForm({ user, mode }: UserFormProps) {
                                 { shouldValidate: true }
                               )
                             }
-                            options={doctorScheduleTypeOptions}
+                            options={getAvailableDayOptions(currentDayOfWeek)}
                             error={scheduleErrors?.dayOfWeek?.message as string}
-                          /> */}
-
-                          <div className="md:col-span-2">
-                            <FormFieldToggleGroup
-                              id="days"
-                              label="Selecciona días"
-                              options={doctorScheduleTypeOptions}
-                              variant="outline"
-                              type="multiple"
-                            />
-                          </div>
+                          />
 
                           {/* Hora inicio */}
                           <FormFieldInput
@@ -572,12 +584,13 @@ export function UserForm({ user, mode }: UserFormProps) {
                   {isEditMode && (
                     <div>
                       <div className="flex flex-col w-full md:col-span-2">
-                        {/*   <Button type="button">{t.scheduleAddButton}</Button> */}
                         <Button
                           type="button"
+                          disabled={!nextAvailableDay}
                           onClick={() =>
+                            nextAvailableDay &&
                             append({
-                              dayOfWeek: DOCTOR_SCHEDULE_DAY_OF_WEEK.MONDAY,
+                              dayOfWeek: nextAvailableDay,
                               startTime: "08:00",
                               endTime: "05:00",
                               available: true,
