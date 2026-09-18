@@ -35,6 +35,12 @@ export interface DoctorCreateRequest {
   defaultConsultationDuration: number;
 }
 
+export interface DoctorWithoutUserCreateRequest {
+  specialty: string;
+  licenseNumber: string;
+  defaultConsultationDuration: number;
+}
+
 export interface DoctorCreateWithUserRequest {
   username: string;
   password?: string;

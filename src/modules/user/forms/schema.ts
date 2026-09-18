@@ -30,12 +30,8 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
       dayOfWeek: z.enum(DOCTOR_SCHEDULE_DAY_OF_WEEK, {
         error: () => ({ message: v.scheduleDayOfWeekRequired }),
       }),
-      startTime: z
-        .string()
-        .min(1, { message: v.scheduleStartTimeRequired }),
-      endTime: z
-        .string()
-        .min(1, { message: v.scheduleEndTimeRequired }),
+      startTime: z.string().min(1, { message: v.scheduleStartTimeRequired }),
+      endTime: z.string().min(1, { message: v.scheduleEndTimeRequired }),
       available: z.boolean(),
       note: z
         .string()
@@ -90,37 +86,7 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
         message: v.activeRequired,
       }),
 
-      schedules: z
-        .array(scheduleItemSchema)
-        .min(1, { message: v.scheduleAtLeastOne })
-        .superRefine((schedules, ctx) => {
-          // Detectar solapamientos por día
-          const byDay = new Map<string, { start: string; end: string; index: number }[]>();
-
-          schedules.forEach((s, index) => {
-            if (!s.dayOfWeek || !s.startTime || !s.endTime) return;
-            const list = byDay.get(s.dayOfWeek) ?? [];
-            list.push({ start: s.startTime, end: s.endTime, index });
-            byDay.set(s.dayOfWeek, list);
-          });
-
-          byDay.forEach((items) => {
-            for (let i = 0; i < items.length; i++) {
-              for (let j = i + 1; j < items.length; j++) {
-                const a = items[i];
-                const b = items[j];
-                const overlap = a.start < b.end && b.start < a.end;
-                if (overlap) {
-                  ctx.addIssue({
-                    code: "custom",
-                    path: [items[j].index, "startTime"],
-                    message: v.scheduleOverlapError,
-                  });
-                }
-              }
-            }
-          });
-        }),
+      schedules: z.array(scheduleItemSchema).optional().default([]),
 
       ...doctorFields,
     })
@@ -157,6 +123,43 @@ export const getCreateUserSchema = (dictionary: TranslationDictionary) => {
           message: v.defaultConsultationDurationRequired,
         });
       }
+
+      if (!data.schedules || data.schedules.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["schedules"],
+          message: v.scheduleAtLeastOne,
+        });
+        return;
+      }
+
+      const byDay = new Map<
+        string,
+        { start: string; end: string; index: number }[]
+      >();
+
+      data.schedules.forEach((s, index) => {
+        if (!s.dayOfWeek || !s.startTime || !s.endTime) return;
+        const list = byDay.get(s.dayOfWeek) ?? [];
+        list.push({ start: s.startTime, end: s.endTime, index });
+        byDay.set(s.dayOfWeek, list);
+      });
+
+      byDay.forEach((items) => {
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i];
+            const b = items[j];
+            if (a.start < b.end && b.start < a.end) {
+              ctx.addIssue({
+                code: "custom",
+                path: ["schedules", items[j].index, "startTime"],
+                message: v.scheduleOverlapError,
+              });
+            }
+          }
+        }
+      });
     });
 };
 
@@ -172,7 +175,11 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
       startTime: z.string().min(1, { message: v.scheduleStartTimeRequired }),
       endTime: z.string().min(1, { message: v.scheduleEndTimeRequired }),
       available: z.boolean(),
-      note: z.string().trim().max(250, { message: v.scheduleNoteMax }).optional(),
+      note: z
+        .string()
+        .trim()
+        .max(250, { message: v.scheduleNoteMax })
+        .optional(),
     })
     .refine(
       (data) => {
@@ -210,33 +217,7 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
         message: v.activeRequired,
       }),
 
-      schedules: z
-        .array(scheduleItemSchema)
-        .min(1, { message: v.scheduleAtLeastOne })
-        .superRefine((schedules, ctx) => {
-          const byDay = new Map<string, { start: string; end: string; index: number }[]>();
-          schedules.forEach((s, index) => {
-            if (!s.dayOfWeek || !s.startTime || !s.endTime) return;
-            const list = byDay.get(s.dayOfWeek) ?? [];
-            list.push({ start: s.startTime, end: s.endTime, index });
-            byDay.set(s.dayOfWeek, list);
-          });
-          byDay.forEach((items) => {
-            for (let i = 0; i < items.length; i++) {
-              for (let j = i + 1; j < items.length; j++) {
-                const a = items[i];
-                const b = items[j];
-                if (a.start < b.end && b.start < a.end) {
-                  ctx.addIssue({
-                    code: "custom",
-                    path: [items[j].index, "startTime"],
-                    message: v.scheduleOverlapError,
-                  });
-                }
-              }
-            }
-          });
-        }),
+        schedules: z.array(scheduleItemSchema).optional().default([]),
 
       ...doctorFields,
     })
@@ -320,6 +301,43 @@ export const getUpdateUserSchema = (dictionary: TranslationDictionary) => {
             message: v.defaultConsultationDurationRequired,
           });
         }
+
+        if (!data.schedules || data.schedules.length === 0) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["schedules"],
+            message: v.scheduleAtLeastOne,
+          });
+          return;
+        }
+
+        const byDay = new Map<
+          string,
+          { start: string; end: string; index: number }[]
+        >();
+
+        data.schedules.forEach((s, index) => {
+          if (!s.dayOfWeek || !s.startTime || !s.endTime) return;
+          const list = byDay.get(s.dayOfWeek) ?? [];
+          list.push({ start: s.startTime, end: s.endTime, index });
+          byDay.set(s.dayOfWeek, list);
+        });
+
+        byDay.forEach((items) => {
+          for (let i = 0; i < items.length; i++) {
+            for (let j = i + 1; j < items.length; j++) {
+              const a = items[i];
+              const b = items[j];
+              if (a.start < b.end && b.start < a.end) {
+                ctx.addIssue({
+                  code: "custom",
+                  path: ["schedules", items[j].index, "startTime"],
+                  message: v.scheduleOverlapError,
+                });
+              }
+            }
+          }
+        });
       }
     });
 };

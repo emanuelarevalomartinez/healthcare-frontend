@@ -2,9 +2,9 @@
 
 // TODO
 
-// hacer la parte de crear usuario con rol de doctor y sus horarios
-// actualizar el usuario de tipo doctor con sus horarios
-// evitar que las validaciones de zod molesten al intentar crear un usuario de otro rol
+// verificar el filtrar doctores desde la seccion de appointment tanto el de findAll como el de los dias normales de la lista
+// mover logica no necesaria en el formulario de usuarios a las actions
+
 // hacer que el formulariuo de horarios del medico permita añadir y quitar de forma generica y valide que se selecione una fecha o varias fechas una unica vez
 
 // mover toda la logica posible a la action de appointments y dejar libre los componentes

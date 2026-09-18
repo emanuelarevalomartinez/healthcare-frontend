@@ -45,23 +45,19 @@ import {
 import { useUsersActions } from "../list/users-actions";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { formatDisplayDateTimeToLocaleString } from "@/lib/utils/functions";
+import {} from "@/modules/doctors/types";
 import {
-  DoctorCreateWithUserRequest,
-  DoctorUpdateWithUserRequest,
-} from "@/modules/doctors/types";
-import {
-  createDoctorWithUser,
+  createDoctorWithUserAndSchedule,
   deleteDoctorAndItScheduleByUserId,
   updateDoctorWithUserAndSchedule,
 } from "@/modules/doctors/services";
 import {
+  CreateDoctorWithUserAndSchedule,
   DoctorScheduleApiResponse,
   UpdateDoctorWithUserAndScheduleRequest,
 } from "@/modules/doctor_schedule/types";
-import { Textarea } from "@/components/ui/textarea";
 import { CalendarDays, Trash2 } from "lucide-react";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
-import { FormFieldToggleGroup } from "@/components/customs/form-field-toggle-group";
 
 interface UserFormProps {
   user: UserWithDoctorandScheduleApiResponse;
@@ -155,6 +151,11 @@ export function UserForm({ user, mode }: UserFormProps) {
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "schedules",
+  });
+
   const currentRole = watch("role");
   const currentActive = watch("isActive");
   const scheduleValues = watch("schedules");
@@ -192,10 +193,13 @@ export function UserForm({ user, mode }: UserFormProps) {
     setIsLoading(true);
 
     try {
+      const wasDoctor = user.role === USER_ROLE.DOCTOR;
+      const isDoctor = currentRole === USER_ROLE.DOCTOR;
+
       if (isEditMode) {
         const updateData = data as UpdateUserSchema;
 
-        if (currentRole == USER_ROLE.DOCTOR) {
+        if (wasDoctor && isDoctor) {
           const updateDoctorWithUserAndSchedulePayload: UpdateDoctorWithUserAndScheduleRequest =
             {
               user: {
@@ -224,6 +228,55 @@ export function UserForm({ user, mode }: UserFormProps) {
                 })),
               },
             };
+
+          await updateDoctorWithUserAndSchedule(
+            user.id,
+            updateDoctorWithUserAndSchedulePayload
+          );
+        } else if (wasDoctor && !isDoctor) {
+          await deleteDoctorAndItScheduleByUserId(user.id);
+
+          const updateUserPayload: UserUpdateRequest = {
+            username: updateData.username,
+            email: updateData.email,
+            role: currentRole,
+            isActive: updateData.isActive,
+            ...(updateData.password?.trim()
+              ? { password: updateData.password }
+              : {}),
+          };
+
+          await updateUser(user.id, updateUserPayload);
+        } else if (!wasDoctor && isDoctor) {
+          const updateDoctorWithUserAndSchedulePayload: UpdateDoctorWithUserAndScheduleRequest =
+            {
+              user: {
+                username: updateData.username,
+                email: updateData.email,
+                role: currentRole,
+                isActive: currentActive,
+                ...(updateData.password?.trim()
+                  ? { password: updateData.password }
+                  : {}),
+              },
+              doctor: {
+                specialty: updateData.specialty ?? "",
+                licenseNumber: data.licenseNumber ?? "",
+                defaultConsultationDuration:
+                  data.defaultConsultationDuration ?? 0,
+              },
+              schedule: {
+                schedules: data.schedules.map((s) => ({
+                  id: s.id,
+                  dayOfWeek: s.dayOfWeek,
+                  startTime: s.startTime,
+                  endTime: s.endTime,
+                  available: s.available,
+                  notes: s.note,
+                })),
+              },
+            };
+
           await updateDoctorWithUserAndSchedule(
             user.id,
             updateDoctorWithUserAndSchedulePayload
@@ -232,13 +285,13 @@ export function UserForm({ user, mode }: UserFormProps) {
           const updateUserPayload: UserUpdateRequest = {
             username: updateData.username,
             email: updateData.email,
-            role: updateData.role,
+            role: currentRole,
             isActive: updateData.isActive,
             ...(updateData.password?.trim()
               ? { password: updateData.password }
               : {}),
           };
-          await deleteDoctorAndItScheduleByUserId(user.id);
+
           await updateUser(user.id, updateUserPayload);
         }
         toast.success(t.toastUpdateSuccess);
@@ -246,19 +299,33 @@ export function UserForm({ user, mode }: UserFormProps) {
       } else {
         const createData = data as CreateUserSchema;
 
-        if (currentRole == USER_ROLE.DOCTOR) {
-          const createDoctorWithUserPayload: DoctorCreateWithUserRequest = {
-            username: createData.username,
-            password: createData.password,
-            email: createData.email,
-            role: currentRole,
-            isActive: currentActive,
-            specialty: createData.specialty ?? "",
-            licenseNumber: data.licenseNumber ?? "",
-            defaultConsultationDuration: data.defaultConsultationDuration ?? 0,
+        if (isDoctor) {
+          const createDoctorWithUserPayload: CreateDoctorWithUserAndSchedule = {
+            user: {
+              username: createData.username,
+              password: createData.password,
+              email: createData.email,
+              role: currentRole,
+              isActive: currentActive,
+            },
+            doctor: {
+              specialty: createData.specialty ?? "",
+              licenseNumber: createData.licenseNumber ?? "",
+              defaultConsultationDuration:
+                createData.defaultConsultationDuration ?? 0,
+            },
+            schedule: {
+              schedules: (createData.schedules ?? []).map((s) => ({
+                dayOfWeek: s.dayOfWeek,
+                startTime: s.startTime,
+                endTime: s.endTime,
+                available: s.available,
+                notes: s.note ?? "",
+              })),
+            },
           };
 
-          await createDoctorWithUser(createDoctorWithUserPayload);
+          await createDoctorWithUserAndSchedule(createDoctorWithUserPayload);
         } else {
           const createUserPayload: UserCreateRequest = {
             username: createData.username,
@@ -280,18 +347,42 @@ export function UserForm({ user, mode }: UserFormProps) {
     }
   }
 
+  /// objeto a usar
+  /*  const DEFAULT_SCHEDULE = {
+    startTime: "08:00",
+    endTime: "17:00",
+    available: true,
+    note: "",
+  }; */
+
   useEffect(() => {
     if (currentRole !== USER_ROLE.DOCTOR) {
       setValue("specialty", "");
       setValue("licenseNumber", "");
       setValue("defaultConsultationDuration", undefined);
+    } else if (
+      (isEditMode && fields.length === 0) ||
+      (mode == "create" && fields.length === 0)
+    ) {
+      const firstAvailableDay = doctorScheduleTypeOptions[0]?.value;
+      if (firstAvailableDay) {
+        append({
+          dayOfWeek: firstAvailableDay,
+          startTime: "08:00",
+          endTime: "17:00",
+          available: true,
+          note: "",
+        });
+      }
     }
-  }, [currentRole, setValue]);
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "schedules",
-  });
+  }, [
+    currentRole,
+    setValue,
+    isEditMode,
+    fields.length,
+    append,
+    doctorScheduleTypeOptions,
+  ]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -451,9 +542,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                     const currentDayOfWeek = watch(
                       `schedules.${index}.dayOfWeek`
                     );
-                    const currentAvailable = watch(
-                      `schedules.${index}.available`
-                    );
 
                     return (
                       <Card
@@ -461,7 +549,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                         className="border border-border bg-background"
                       >
                         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
-                          {/* Día de la semana */}
                           <FormFieldSelect
                             id={`schedules.${index}.dayOfWeek`}
                             label={t.scheduleDayOfWeekLabel}
@@ -478,8 +565,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                             options={getAvailableDayOptions(currentDayOfWeek)}
                             error={scheduleErrors?.dayOfWeek?.message as string}
                           />
-
-                          {/* Hora inicio */}
                           <FormFieldInput
                             id={`schedules.${index}.startTime`}
                             type="time"
@@ -491,8 +576,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                             )}
                             error={scheduleErrors?.startTime?.message}
                           />
-
-                          {/* Hora fin */}
                           <FormFieldInput
                             id={`schedules.${index}.endTime`}
                             type="time"
@@ -536,8 +619,6 @@ export function UserForm({ user, mode }: UserFormProps) {
                               />
                             </Field>
                           </FieldGroup>
-
-                          {/* Nota */}
                           <div
                             className={`${
                               isEditMode
@@ -556,15 +637,9 @@ export function UserForm({ user, mode }: UserFormProps) {
                               error={scheduleErrors?.note?.message}
                             />
                           </div>
-
-                          {/* Eliminar */}
-                          {!disableFields && isEditMode && (
+                          {!disableFields && fields.length > 1 && (
                             <div
-                              className={`${
-                                isEditMode
-                                  ? "col-span-1 md:col-span-2 flex items-center place-content-center w-full"
-                                  : ""
-                              }`}
+                              className={`col-span-1 md:col-span-2 flex items-center place-content-center w-full`}
                             >
                               <Button
                                 className="w-full h-full md:h-auto py-2"
@@ -581,7 +656,7 @@ export function UserForm({ user, mode }: UserFormProps) {
                     );
                   })}
 
-                  {isEditMode && (
+                  {!disableFields && (
                     <div>
                       <div className="flex flex-col w-full md:col-span-2">
                         <Button

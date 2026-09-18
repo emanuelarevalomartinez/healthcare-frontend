@@ -1,9 +1,9 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
-import { DoctorApiResponse, DoctorCreateRequest, DoctorCreateWithUserRequest, DoctorUpdateRequest, DoctorUpdateWithUserRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
+import { DoctorApiResponse, DoctorCreateRequest, DoctorUpdateRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
-import { UpdateDoctorWithUserAndScheduleRequest } from "../doctor_schedule/types";
+import { CreateDoctorWithUserAndSchedule, UpdateDoctorWithUserAndScheduleRequest } from "../doctor_schedule/types";
 
 export const createDoctor = async (data: DoctorCreateRequest) => {
   const response = await fetcher(apiRoutes.doctors.create, {
@@ -13,8 +13,8 @@ export const createDoctor = async (data: DoctorCreateRequest) => {
   return response;
 };
 
-export const createDoctorWithUser = async (data: DoctorCreateWithUserRequest) => {
-  const response = await fetcher(apiRoutes.doctors.createWithUser, {
+export const createDoctorWithUserAndSchedule = async (data: CreateDoctorWithUserAndSchedule) => {
+  const response = await fetcher(apiRoutes.doctors.createWithUserAndSchedule, {
     ...POST_OPTIONS,
     body: JSON.stringify(data),
   });
@@ -31,7 +31,7 @@ export const updateDoctor = async (id: string, data: DoctorUpdateRequest) => {
 
 export const updateDoctorWithUserAndSchedule = async (userId: string, data: UpdateDoctorWithUserAndScheduleRequest) => {
   
-  const response = await fetcher(apiRoutes.doctors.editWithUser.replace(":userId", userId), {
+  const response = await fetcher(apiRoutes.doctors.editWithUserAndSchedule.replace(":userId", userId), {
     ...PUT_OPTIONS,
     body: JSON.stringify(data),
   });
@@ -85,7 +85,7 @@ export const deleteDoctor = async (id: string) => {
 };
 
 export const deleteDoctorAndItScheduleByUserId = async (userId: string) => {
-  const response = await fetcher(apiRoutes.doctors.deleteDoctorByUserId.replace(":userId",userId), {
+  const response = await fetcher(apiRoutes.doctors.deleteDoctorAndScheduleByUserId.replace(":userId",userId), {
     method: "DELETE",
   });
   return response;
