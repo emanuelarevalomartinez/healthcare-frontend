@@ -70,7 +70,7 @@ export function UserForm({ user, mode }: UserFormProps) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.users;
 
-  const { getRoleOptions } = useUsersActions({ dictionary });
+  const { getRoleOptions, getDoctorScheduleDaysOfWeekTypeOptions, DEFAULT_SCHEDULE_VALUES } = useUsersActions({ dictionary });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -87,31 +87,6 @@ export function UserForm({ user, mode }: UserFormProps) {
   const roleOptions = useMemo(
     () => getRoleOptions(t.roleOptions),
     [getRoleOptions, t.roleOptions]
-  );
-
-  const getDoctorScheduleDaysOfWeekTypeOptions = useCallback(
-    (optionsDict: any) => {
-      return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
-        (docScheduleType) => {
-          const docScheduleTypeKey = docScheduleType.toLowerCase() as
-            | "all_week"
-            | "weekdays"
-            | "weekend"
-            | "monday"
-            | "tuesday"
-            | "wednesday"
-            | "thursday"
-            | "friday"
-            | "saturday"
-            | "sunday";
-          return {
-            value: docScheduleType,
-            label: optionsDict[docScheduleTypeKey],
-          };
-        }
-      );
-    },
-    []
   );
 
   const doctorScheduleTypeOptions = useMemo(
@@ -347,14 +322,6 @@ export function UserForm({ user, mode }: UserFormProps) {
     }
   }
 
-  /// objeto a usar
-  /*  const DEFAULT_SCHEDULE = {
-    startTime: "08:00",
-    endTime: "17:00",
-    available: true,
-    note: "",
-  }; */
-
   useEffect(() => {
     if (currentRole !== USER_ROLE.DOCTOR) {
       setValue("specialty", "");
@@ -368,10 +335,7 @@ export function UserForm({ user, mode }: UserFormProps) {
       if (firstAvailableDay) {
         append({
           dayOfWeek: firstAvailableDay,
-          startTime: "08:00",
-          endTime: "17:00",
-          available: true,
-          note: "",
+          ...DEFAULT_SCHEDULE_VALUES
         });
       }
     }
@@ -661,15 +625,13 @@ export function UserForm({ user, mode }: UserFormProps) {
                       <div className="flex flex-col w-full md:col-span-2">
                         <Button
                           type="button"
+                          className="hover:bg-primary/90"
                           disabled={!nextAvailableDay}
                           onClick={() =>
                             nextAvailableDay &&
-                            append({
+                           append({
                               dayOfWeek: nextAvailableDay,
-                              startTime: "08:00",
-                              endTime: "05:00",
-                              available: true,
-                              note: "",
+                              ...DEFAULT_SCHEDULE_VALUES
                             })
                           }
                         >

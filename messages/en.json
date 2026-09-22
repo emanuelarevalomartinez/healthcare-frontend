@@ -24,10 +24,10 @@
       "documentTypeLabel": "Document Type",
       "documentTypePlaceholder": "Select a document type",
       "documentTypeOptions": {
-        "dni": "National ID / DNI",
-        "passport": "Passport",
-        "id_card": "State / National Identity Card",
-        "other": "Other identification"
+        "dni": "NATIONAL ID / DNI",
+        "passport": "PASSPORT",
+        "id_card": "STATE / NATIONAL IDENTITY CARD",
+        "other": "OTHER IDENTIFICATION"
       },
       "documentNumberLabel": "Document Number",
       "documentNumberPlaceholder": "E.g., 12345678-A",
@@ -126,7 +126,7 @@
       "licenseNumberLabel": "License Number",
       "licenseNumberPlaceholder": "Enter license number",
       "defaultConsultationDurationLabel": "Default Consultation Duration",
-      "defaultConsultationDurationPlaceholder": "Enter duration in minutes",
+      "defaultConsultationDurationPlaceholder": "0",
       "scheduleSectionTitle": "Consultation Schedules",
       "scheduleDayOfWeekLabel": "Day of Week",
       "scheduleDayOfWeekPlaceholder": "Select day of week",
@@ -271,10 +271,10 @@
         "no_show": "NO SHOW"
       },
       "documentTypeOptions": {
-        "dni": "National ID / DNI",
-        "passport": "Passport",
-        "id_card": "State / National Identity Card",
-        "other": "Other identification"
+        "dni": "NATIONAL ID / DNI",
+        "passport": "PASSPORT",
+        "id_card": "STATE / NATIONAL IDENTITY CARD",
+        "other": "OTHER IDENTIFICATION"
       },
       "documentTypeLabel": "Document Type",
       "documentTypePlaceholder": "Select a document type",

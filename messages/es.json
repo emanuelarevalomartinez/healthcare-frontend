@@ -24,10 +24,10 @@
       "documentTypeLabel": "Tipo de Documento",
       "documentTypePlaceholder": "Seleccione un tipo de documento",
       "documentTypeOptions": {
-        "dni": "Identificación Nacional / DNI",
-        "passport": "Pasaporte",
-        "id_card": "Tarjeta de Identidad Estatal / Nacional",
-        "other": "Otra identificación"
+        "dni": "IDENTIFICACIÓN NACIONAL / DNI",
+        "passport": "PASAPORTE",
+        "id_card": "TARJETA DE IDENTIDAD ESTATAL / NACIONAL",
+        "other": "OTRA IDENTIFICACIÓN"
       },
       "documentNumberLabel": "Número de Documento",
       "documentNumberPlaceholder": "Ej., 12345678-A",
@@ -126,7 +126,7 @@
       "licenseNumberLabel": "Número de licencia",
       "licenseNumberPlaceholder": "Introduzca el número de licencia",
       "defaultConsultationDurationLabel": "Duración predeterminada de consulta",
-      "defaultConsultationDurationPlaceholder": "Introduzca la duración en minutos",
+      "defaultConsultationDurationPlaceholder": "0",
       "scheduleSectionTitle": "Horarios de consulta",
       "scheduleDayOfWeekLabel": "Día de la semana",
       "scheduleDayOfWeekPlaceholder": "Selecciona el día de la semana",
@@ -271,10 +271,10 @@
         "no_show": "NO ASISTIÓ"
       },
       "documentTypeOptions": {
-        "dni": "Identificación Nacional / DNI",
-        "passport": "Pasaporte",
-        "id_card": "Tarjeta de Identidad Estatal / Nacional",
-        "other": "Otra identificación"
+        "dni": "IDENTIFICACIÓN NACIONAL / DNI",
+        "passport": "PASAPORTE",
+        "id_card": "TARJETA DE IDENTIDAD ESTATAL / NACIONAL",
+        "other": "OTRA IDENTIFICACIÓN"
       },
       "documentTypeLabel": "Tipo de Documento",
       "documentTypePlaceholder": "Seleccione un tipo de documento",

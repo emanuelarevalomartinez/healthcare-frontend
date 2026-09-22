@@ -3,7 +3,6 @@
 // TODO
 
 // incluir en el formulario de la primera ves login del doctor el schedule del mismo y validarlo igual y hacerlo responsive
-// mover logica no necesaria en el formulario de usuarios a las actions
 // mover la logica de appointment a las actions
 
 // hacer que la busqueda mediante rol de doctor solo filtre las citas que tiene el y tenga predeterminado a el como doctor en el formulario tanto para detalles como editar

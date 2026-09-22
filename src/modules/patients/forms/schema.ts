@@ -66,8 +66,8 @@ export const getCreatePatientSchema = (dictionary: TranslationDictionary) => {
       .string()
       .trim()
       .max(1000, { message: v.notesMax })
-      .optional()
-      .or(z.literal("")),
+      .nullable()
+      .optional(),
   });
 };
 
@@ -139,8 +139,7 @@ export const getUpdatePatientSchema = (dictionary: TranslationDictionary) => {
       .trim()
       .max(1000, { message: v.notesMax })
       .nullable()
-      .optional()
-      .or(z.literal("")),
+      .optional(),
   });
 };
 

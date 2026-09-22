@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { routes, TranslationDictionary, USER_ROLE } from "@/lib";
+import { DOCTOR_SCHEDULE_DAY_OF_WEEK, routes, TranslationDictionary, USER_ROLE } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
 import { UserUpdateRequest, UserWithDoctorandScheduleApiResponse } from "../types";
@@ -20,6 +20,13 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
 
   const user = getUserDataLocalStore();
   const currentUserId = user?.id;
+
+  const DEFAULT_SCHEDULE_VALUES = {
+    startTime: "08:00",
+    endTime: "17:00",
+    available: true,
+    note: "",
+  };
 
   const [usersData, setUsersData] = useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -141,6 +148,31 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     });
   }, []);
 
+  const getDoctorScheduleDaysOfWeekTypeOptions = useCallback(
+      (optionsDict: any) => {
+        return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
+          (docScheduleType) => {
+            const docScheduleTypeKey = docScheduleType.toLowerCase() as
+              | "all_week"
+              | "weekdays"
+              | "weekend"
+              | "monday"
+              | "tuesday"
+              | "wednesday"
+              | "thursday"
+              | "friday"
+              | "saturday"
+              | "sunday";
+            return {
+              value: docScheduleType,
+              label: optionsDict[docScheduleTypeKey],
+            };
+          }
+        );
+      },
+      []
+    );
+
   return {
     usersData,
     isAlertOpen,
@@ -154,5 +186,7 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     fetchUsers,
     handleExecuteDelete,
     getRoleOptions,
+    getDoctorScheduleDaysOfWeekTypeOptions,
+    DEFAULT_SCHEDULE_VALUES
   };
 }
