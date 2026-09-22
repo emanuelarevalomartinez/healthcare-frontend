@@ -1,19 +1,22 @@
 "use client";
 
 import { DialogWrapper } from "@/components/customs/dialog-wrapper";
-import { useState } from "react";
 import { ItemDoctorForm } from "./item-doctor-form";
-import { DoctorFormMode, useLanguage } from "@/lib";
-import { DoctorApiResponse } from "../types";
+import { DOCTOR_SCHEDULE_DAY_OF_WEEK, DoctorFormMode, useLanguage } from "@/lib";
+import { UserWithDoctorandScheduleApiResponse } from "@/modules/user/types";
 
 interface Props {
   mode: DoctorFormMode;
   openDetails: boolean;
   setOpenDetails: (e: boolean) => void;
-  doctorData: DoctorApiResponse | null;
+  doctorWithUserAndScheduleData: UserWithDoctorandScheduleApiResponse | null;
+  getDoctorScheduleDaysOfWeekTypeOptions : (e: any) => {
+    value: DOCTOR_SCHEDULE_DAY_OF_WEEK;
+    label: any;
+}[]
 }
 
-export function DoctorForm({ mode, doctorData, openDetails, setOpenDetails }: Props) {
+export function DoctorForm({ mode, doctorWithUserAndScheduleData, openDetails, setOpenDetails, getDoctorScheduleDaysOfWeekTypeOptions }: Props) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.doctors;
 
@@ -27,11 +30,11 @@ export function DoctorForm({ mode, doctorData, openDetails, setOpenDetails }: Pr
         onOpenChange={setOpenDetails}
         title={title}
         description={description}
-        className="sm:min-w-xl"
+        className="sm:min-w-1/2 overflow-y-scroll"
         showCloseButton={false}
         preventOutsideClose
       >
-        <ItemDoctorForm mode={mode} doctorData={doctorData} setOpenDetails={setOpenDetails} />
+        <ItemDoctorForm mode={mode} doctorWithUserAndScheduleData={doctorWithUserAndScheduleData} setOpenDetails={setOpenDetails} getDoctorScheduleDaysOfWeekTypeOptions={getDoctorScheduleDaysOfWeekTypeOptions} />
       </DialogWrapper>
     </>
   );

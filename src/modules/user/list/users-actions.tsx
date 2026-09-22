@@ -21,13 +21,6 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
   const user = getUserDataLocalStore();
   const currentUserId = user?.id;
 
-  const DEFAULT_SCHEDULE_VALUES = {
-    startTime: "08:00",
-    endTime: "17:00",
-    available: true,
-    note: "",
-  };
-
   const [usersData, setUsersData] = useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -187,6 +180,5 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     handleExecuteDelete,
     getRoleOptions,
     getDoctorScheduleDaysOfWeekTypeOptions,
-    DEFAULT_SCHEDULE_VALUES
   };
 }

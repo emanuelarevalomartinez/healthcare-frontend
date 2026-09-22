@@ -2,29 +2,14 @@
 
 // TODO
 
-// incluir en el formulario de la primera ves login del doctor el schedule del mismo y validarlo igual y hacerlo responsive
 // mover la logica de appointment a las actions
+// hacer que la busqueda mediante rol de doctor solo filtre las citas que tiene el y tenga 
+predeterminado a el como doctor en el formulario tanto para detalles como editar
+// el formulario para crear cita debe fijar al doctor de la sesion que esta logueado
+// comenzar a trabajar en la vista de las citas
 
-// hacer que la busqueda mediante rol de doctor solo filtre las citas que tiene el y tenga predeterminado a el como doctor en el formulario tanto para detalles como editar
-
-
-// fecha actual 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion
 
  // hacer un mejor responsive de las vistas de autenticacion
-
-// añadir traduccion de la vista de detalles de una cita 
-
-// añadir el crear una cita, editarla y eliminarla mediante las acciones
-
-// ver que datos se van a mostrar de la cita
-
-
-
- // añadir la parte de ver detalles
-
- hacer que los filtros se superpongan a la vista de otro modo no tiene sentido tener un calendario
-
- // trabajar en los filtros y las acciones de eliminar y actualizar
 

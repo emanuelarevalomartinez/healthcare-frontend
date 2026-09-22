@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import {
+  DEFAULT_SCHEDULE_VALUES,
   DOCTOR_SCHEDULE_DAY_OF_WEEK,
   FormMode,
   getErrorMessage,
@@ -70,7 +71,8 @@ export function UserForm({ user, mode }: UserFormProps) {
   const { dictionary } = useLanguage();
   const t = dictionary.dashboard.users;
 
-  const { getRoleOptions, getDoctorScheduleDaysOfWeekTypeOptions, DEFAULT_SCHEDULE_VALUES } = useUsersActions({ dictionary });
+  const { getRoleOptions, getDoctorScheduleDaysOfWeekTypeOptions } =
+    useUsersActions({ dictionary });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -327,25 +329,25 @@ export function UserForm({ user, mode }: UserFormProps) {
       setValue("specialty", "");
       setValue("licenseNumber", "");
       setValue("defaultConsultationDuration", undefined);
-    } else if (
-      (isEditMode && fields.length === 0) ||
-      (mode == "create" && fields.length === 0)
-    ) {
+      return;
+    }
+    if (mode === "create" && fields.length === 0) {
       const firstAvailableDay = doctorScheduleTypeOptions[0]?.value;
+
       if (firstAvailableDay) {
         append({
           dayOfWeek: firstAvailableDay,
-          ...DEFAULT_SCHEDULE_VALUES
+          ...DEFAULT_SCHEDULE_VALUES,
         });
       }
     }
   }, [
     currentRole,
-    setValue,
-    isEditMode,
+    mode,
     fields.length,
-    append,
     doctorScheduleTypeOptions,
+    append,
+    setValue,
   ]);
 
   return (
@@ -501,6 +503,12 @@ export function UserForm({ user, mode }: UserFormProps) {
                     <h3 className="font-medium">{t.scheduleSectionTitle}</h3>
                   </div>
 
+                  {errors.schedules?.message && (
+                    <p className="text-sm text-red-500">
+                      {errors.schedules.message}
+                    </p>
+                  )}
+
                   {fields.map((field, index) => {
                     const scheduleErrors = (errors.schedules as any)?.[index];
                     const currentDayOfWeek = watch(
@@ -629,9 +637,9 @@ export function UserForm({ user, mode }: UserFormProps) {
                           disabled={!nextAvailableDay}
                           onClick={() =>
                             nextAvailableDay &&
-                           append({
+                            append({
                               dayOfWeek: nextAvailableDay,
-                              ...DEFAULT_SCHEDULE_VALUES
+                              ...DEFAULT_SCHEDULE_VALUES,
                             })
                           }
                         >

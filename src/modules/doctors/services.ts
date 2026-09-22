@@ -1,11 +1,11 @@
 "use server";
 
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
-import { DoctorApiResponse, DoctorCreateRequest, DoctorUpdateRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
+import { DoctorApiResponse, DoctorWithSchedulesCreateRequest, DoctorUpdateRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
 import { CreateDoctorWithUserAndSchedule, UpdateDoctorWithUserAndScheduleRequest } from "../doctor_schedule/types";
 
-export const createDoctor = async (data: DoctorCreateRequest) => {
+export const createDoctorWithSchedules = async (data: DoctorWithSchedulesCreateRequest) => {
   const response = await fetcher(apiRoutes.doctors.create, {
     ...POST_OPTIONS,
     body: JSON.stringify(data),
