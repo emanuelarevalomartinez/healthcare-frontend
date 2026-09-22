@@ -293,7 +293,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         getValue: ( doctorWithDetails ) => doctorWithDetails.user.username,
       },
       {
-        key: "user",
+        key: "schedules",
         label: t.doctorSearchFields.email,
         getValue: (doctorWithDetails) => doctorWithDetails.user.email,
       },

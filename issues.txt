@@ -2,12 +2,10 @@
 
 // TODO
 
-// verificar el filtrar doctores desde la seccion de appointment tanto el de findAll como el de los dias normales de la lista
+// incluir en el formulario de la primera ves login del doctor el schedule del mismo y validarlo igual y hacerlo responsive
 // mover logica no necesaria en el formulario de usuarios a las actions
+// mover la logica de appointment a las actions
 
-// hacer que el formulariuo de horarios del medico permita añadir y quitar de forma generica y valide que se selecione una fecha o varias fechas una unica vez
-
-// mover toda la logica posible a la action de appointments y dejar libre los componentes
 // hacer que la busqueda mediante rol de doctor solo filtre las citas que tiene el y tenga predeterminado a el como doctor en el formulario tanto para detalles como editar
 
 
