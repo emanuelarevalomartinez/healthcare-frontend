@@ -3,9 +3,11 @@
 // TODO
 
 // mover la logica de appointment a las actions
-// hacer que la busqueda mediante rol de doctor solo filtre las citas que tiene el y tenga 
-predeterminado a el como doctor en el formulario tanto para detalles como editar
-// el formulario para crear cita debe fijar al doctor de la sesion que esta logueado
+
+// terminar de corregir las acciones del sidebar y traducirlas
+
+// añadir la seccion de cuenta para que el doctor pueda editar su infracion de horarios etc
+
 // comenzar a trabajar en la vista de las citas
 
 

@@ -6,9 +6,10 @@ import {
   getErrorMessage,
   routes,
   useLanguage,
+  USER_ROLE,
 } from "@/lib";
 import { useAppointmentActions } from "../list/appointment-actions";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -62,6 +63,8 @@ import { createAppointment, updateAppointment } from "../services";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { DoctorWithUserAndScheduleApiResponse } from "@/modules/doctors/types";
+import { getUserDataLocalStore } from "@/lib/utils/local-storage";
+import { findUserById } from "@/modules/user/services";
 
 interface AppointmentFormProps {
   appointment: AppointmentApiResponse;
@@ -83,6 +86,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
   const [selectedPatientId, setSelectedPatientId] = useState<string>("");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const [isDoctorLocked, setIsDoctorLocked] = useState(false);
 
   const [doctorSearch, setDoctorSearch] = useState("");
   const [patientSearch, setPatientSearch] = useState("");
@@ -214,8 +219,9 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     }
   };
 
-  const handleSelectDoctor = (doctorWithDetails: DoctorWithUserAndScheduleApiResponse): void => {
-
+  const handleSelectDoctor = (
+    doctorWithDetails: DoctorWithUserAndScheduleApiResponse
+  ): void => {
     const { doctor, user } = doctorWithDetails;
 
     setSelectedDoctorId(doctor.id);
@@ -290,7 +296,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
       {
         key: "user",
         label: t.doctorSearchFields.username,
-        getValue: ( doctorWithDetails ) => doctorWithDetails.user.username,
+        getValue: (doctorWithDetails) => doctorWithDetails.user.username,
       },
       {
         key: "schedules",
@@ -301,7 +307,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         key: "doctor",
         label: t.doctorSearchFields.licenseNumber,
         getValue: (doctorWithDetails) => doctorWithDetails.doctor.licenseNumber,
-        condition: (doctorWithDetails) => !!doctorWithDetails.doctor.licenseNumber,
+        condition: (doctorWithDetails) =>
+          !!doctorWithDetails.doctor.licenseNumber,
       },
     ];
 
@@ -323,6 +330,36 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         getValue: (patient) => patient.documentNumber,
       },
     ];
+
+  useEffect(() => {
+    const loadDoctor = async () => {
+      const userData = getUserDataLocalStore();
+      const userId = userData?.id;
+
+      if (!userId) return;
+
+      if (userData.role === USER_ROLE.DOCTOR) {
+        try {
+          const user = await findUserById(userId);
+          const doctorName = user.data.username;
+
+          setDoctorSearch(doctorName);
+          if (mode === "create" || mode === "edit") {
+            setIsDoctorLocked(true);
+          }
+
+          setValue("doctorId", user.data.doctor?.id ?? user.data.id, {
+            shouldValidate: true,
+          });
+          setSelectedDoctorId(user.data.doctor?.id ?? user.data.id);
+        } catch (error) {
+          console.error("Error to find doctor:", error);
+        }
+      }
+    };
+
+    loadDoctor();
+  }, [mode, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -354,14 +391,17 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             id="doctorName"
             label={t.doctorLabel}
             placeholder={t.doctorPlaceholder}
-            disabled={disableFields}
+            disabled={disableFields || isDoctorLocked}
             value={
               mode === "create" ? doctorSearch : appointment.doctorFullName
             }
+            /*    value={appointment.doctorFullName} */
             onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
             searchItems={searchDoctors}
-            getDisplayLabel={(doctorWithDetails) => doctorWithDetails.user.username}
+            getDisplayLabel={(doctorWithDetails) =>
+              doctorWithDetails.user.username
+            }
             displayFields={doctorDisplayFields}
             error={errors.doctorId?.message}
             minChars={1}

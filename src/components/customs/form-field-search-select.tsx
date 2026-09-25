@@ -92,6 +92,12 @@ export function FormFieldSearchSelect<T>({
   );
 
   useEffect(() => {
+    if (value !== searchTerm) {
+      setSearchTerm(value || "");
+    }
+  }, [value]);
+
+  useEffect(() => {
     if (!hasUserInteracted) {
       return;
     }
