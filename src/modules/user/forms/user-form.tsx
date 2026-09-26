@@ -56,7 +56,7 @@ import {
   CreateDoctorWithUserAndSchedule,
   DoctorScheduleApiResponse,
   UpdateDoctorWithUserAndScheduleRequest,
-} from "@/modules/doctor_schedule/types";
+} from "@/modules/doctor-schedule/types";
 import { CalendarDays, Trash2 } from "lucide-react";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 

@@ -4,6 +4,22 @@
     "language": "Idioma",
     "miAccountLabel": "My Cuenta"
   },
+  "sidebar": {
+    "menuLabel": "Menú Principal",
+    "items": {
+      "dashboard": "Dashboard",
+      "users": "Gestión de Usuarios",
+      "reports": "Reportes",
+      "patients": "Pacientes",
+      "appointments": "Agenda / Citas",
+      "consultations": "Consultas Médicas",
+      "consultationsHistory": "Historial de Consultas"
+    },
+    "footer": {
+      "version": "Versión",
+      "copyright": "Todos los derechos reservados"
+    }
+  },
   "dashboard": {
     "welcome": "Bienvenido a tu panel de control",
     "patients": {

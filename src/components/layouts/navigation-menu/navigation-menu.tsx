@@ -1,14 +1,12 @@
-import { NavigationMenuSearch } from "@/modules/navigation-menu/items/navigation-menu-search";
 import { NavigationUserProfile } from "./items/navigation-user-profile";
 import { NavigationUserNotifications } from "./items/navigation-user-notifications";
 import { NavigationUserLanguage } from "./items/navigation-user-language";
+import { NavigationMenuSearch } from "./items/navigation-menu-search";
 
 export function NavigationMenu() {
   return (
     <>
-      <header
-        className={`flex top-0 bg-background backdrop-blur w-full`}
-      >
+      <header className={`flex top-0 bg-background backdrop-blur w-full`}>
         <div className="flex w-full h-20 pr-4">
           <NavigationMenuSearch />
 

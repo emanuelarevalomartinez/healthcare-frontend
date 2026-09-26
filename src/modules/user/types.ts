@@ -1,6 +1,6 @@
 import { USER_ROLE } from "@/lib";
 import { DoctorApiResponse } from "../doctors/types";
-import { DoctorScheduleApiResponse } from "../doctor_schedule/types";
+import { DoctorScheduleApiResponse } from "../doctor-schedule/types";
 
 export interface UserApiResponse {
   id: string;

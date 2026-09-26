@@ -37,7 +37,7 @@ import { UserWithDoctorandScheduleApiResponse } from "@/modules/user/types";
 import {
   DoctorScheduleApiResponse,
   UpdateDoctorWithUserAndScheduleRequest,
-} from "@/modules/doctor_schedule/types";
+} from "@/modules/doctor-schedule/types";
 
 interface Props {
   mode: DoctorFormMode;

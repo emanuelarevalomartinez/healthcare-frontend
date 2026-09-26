@@ -4,6 +4,22 @@
     "language": "Language",
     "miAccountLabel": "My Account"
   },
+  "sidebar": {
+    "menuLabel": "Main Menu",
+    "items": {
+      "dashboard": "Dashboard",
+      "users": "User Management",
+      "reports": "Reports",
+      "patients": "Patients",
+      "appointments": "Schedule / Appointments",
+      "consultations": "Medical Consultations",
+      "consultationsHistory": "Consultation History"
+    },
+    "footer": {
+      "version": "Version",
+      "copyright": "All rights reserved"
+    }
+  },
   "dashboard": {
     "welcome": "Welcome to your dashboard",
     "patients": {
@@ -227,7 +243,7 @@
       "scheduleDayOfWeekLabel": "Day of Week",
       "scheduleDayOfWeekPlaceholder": "Select day of week",
       "scheduleSectionTitle": "Consultation Schedules",
-       "doctorScheduleDayOfWeekOptions": {
+      "doctorScheduleDayOfWeekOptions": {
         "all_week": "ALL WEEK",
         "weekdays": "WEEKDAYS",
         "weekend": "WEEKEND",

@@ -3,7 +3,7 @@
 import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
 import { DoctorApiResponse, DoctorWithSchedulesCreateRequest, DoctorUpdateRequest, DoctorWithUserAndScheduleApiResponse } from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
-import { CreateDoctorWithUserAndSchedule, UpdateDoctorWithUserAndScheduleRequest } from "../doctor_schedule/types";
+import { CreateDoctorWithUserAndSchedule, UpdateDoctorWithUserAndScheduleRequest } from "../doctor-schedule/types";
 
 export const createDoctorWithSchedules = async (data: DoctorWithSchedulesCreateRequest) => {
   const response = await fetcher(apiRoutes.doctors.create, {

@@ -1,4 +1,4 @@
-import { NavigationMenuAuth } from "@/modules/navigation-menu/navigation-menu-auth";
+import { NavigationMenuAuth } from "../navigation-menu/navigation-menu-auth";
 
 export default function AuthLayout({
   children,

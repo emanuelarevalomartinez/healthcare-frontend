@@ -1,16 +1,15 @@
-import { AppSidebar } from "@/components/customs/app-sidebar";
+import { AppSidebar } from "@/components/layouts/sidebar/app-sidebar";
 import { SheetWrapper } from "@/components/customs/sheet-wrapper";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppointmentNavigationWatcher } from "@/modules/appointments/navigation-watcher/appointments-navigation-watcher";
 import { DoctorRender } from "@/modules/doctors/forms/doctor-render";
-import { NavigationMenu } from "@/modules/navigation-menu/navigation-menu";
 import { PropsWithChildren } from "react";
+import { NavigationMenu } from "../navigation-menu/navigation-menu";
 
 export default async function DashBoardLayout({
   children,
 }: Readonly<PropsWithChildren>) {
-
   return (
     <TooltipProvider>
       <SidebarProvider>

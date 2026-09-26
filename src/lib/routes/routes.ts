@@ -24,5 +24,14 @@ export const routes = {
     edit: "/appointments/:id/edit",
     details: "/appointments/:id",
   },
-  root: "/"
+  reports: {
+    root: "/reports",
+  },
+  consultations: {
+    root: "/consultations",
+  },
+  consultationsHistory: {
+    root: "/consultations-history",
+  },
+  root: "/",
 } satisfies Routes;
