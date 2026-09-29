@@ -1,6 +1,6 @@
 import { APPOINTMENT_STATUS } from "@/lib";
 import { string } from "zod";
-import { PATIENT_DOCUMENT_TYPE } from "../patients/types";
+import { PATIENT_DOCUMENT_TYPE, PATIENT_SEX } from "../patients/types";
 
 export interface AppointmentApiResponse {
   id: string;
@@ -62,5 +62,13 @@ export interface GetAppointmentsSearchedParams {
   ascending?: boolean;
   searchTerm: string;
   appointmentStatus?: APPOINTMENT_STATUS;
+  documentType?: PATIENT_DOCUMENT_TYPE
+}
+
+export interface GetPatientsSearchedParams {
+  page?: number;
+  size?: number;
+  searchTerm: string;
+  sex?: PATIENT_SEX;
   documentType?: PATIENT_DOCUMENT_TYPE
 }

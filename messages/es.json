@@ -55,6 +55,8 @@
         "female": "Femenino",
         "other": "Otro"
       },
+      "filters": "Filtros",
+      "clear": "Borrar",
       "phoneLabel": "Número de Teléfono",
       "phonePlaceholder": "Ej., +1 (555) 0199",
       "emailLabel": "Correo Electrónico",
@@ -73,6 +75,7 @@
       "buttonCancel": "Cancelar",
       "toastSuccess": "Paciente creado con éxito.",
       "toastUpdateSuccess": "Paciente actualizado con éxito.",
+      "searchPlaceholder": "Buscar por número de historia clínica, nombre completo o número de documento",
       "validation": {
         "medicalRecordNumberRequired": "El número de historia clínica es obligatorio",
         "medicalRecordNumberMax": "El número de historia clínica no puede superar los 50 caracteres",
@@ -243,7 +246,7 @@
       "scheduleDayOfWeekLabel": "Día de la semana",
       "scheduleDayOfWeekPlaceholder": "Selecciona el día de la semana",
       "scheduleSectionTitle": "Horarios de consulta",
-       "doctorScheduleDayOfWeekOptions": {
+      "doctorScheduleDayOfWeekOptions": {
         "all_week": "TODA LA SEMANA",
         "weekdays": "DÍAS DE SEMANA",
         "weekend": "FIN DE SEMANA",
@@ -341,6 +344,7 @@
       "systemUnknown": "N/A",
       "confirmedAtLabel": "Confirmado El",
       "attendedAtLabel": "Atendido El",
+      "searchPlaceholder": "Buscar por paciente, doctor o documento",
       "validation": {
         "doctorRequired": "El médico es obligatorio.",
         "patientRequired": "El paciente es obligatorio.",

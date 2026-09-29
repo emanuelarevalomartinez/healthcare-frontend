@@ -18,8 +18,8 @@ export const getPatientColumns = (
       accessor: "fullName",
     },
     {
-      header: t.phoneLabel,
-      accessor: "phone",
+      header: t.documentNumberLabel,
+      accessor: "documentNumber",
     },
     {
       header: t.registrationDateLabel,

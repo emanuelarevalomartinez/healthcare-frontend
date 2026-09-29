@@ -11,6 +11,7 @@ import { routes, useLanguage } from "@/lib";
 import { SystemAlertDialog } from "@/components/customs/system-alert-dialog";
 import { getPatientColumns } from "./patients-columns";
 import { usePatientsActions } from "./patients-actions";
+import { PatientSearch } from "./patient-search";
 
 export function PatientList() {
   const router = useRouter();
@@ -29,11 +30,29 @@ export function PatientList() {
     patientActions,
     fetchPatients,
     handleExecuteDelete,
+    searchTerm,
+    setSearchTerm,
+    isSearchView,
+    sexTypeFilter,
+    setSexTypeFilter,
+    documentTypeFilter,
+    getDocumentTypeOptions,
+    setDocumentTypeFilter,
+    isFiltersVisible,
+    setIsFiltersVisible,
+    getSexOptions,
+    patientsSearchData,
   } = usePatientsActions({ dictionary });
 
   useEffect(() => {
-    fetchPatients();
-  }, [fetchPatients]);
+    fetchPatients(searchTerm);
+  }, [fetchPatients, searchTerm]);
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const activeData = isSearchView ? patientsSearchData : patientsData;
 
   return (
     <>
@@ -51,22 +70,39 @@ export function PatientList() {
           </Button>
         </SectionHeader>
 
-        <TableWrapper
-          cols={columns}
-          data={patientsData?.content || []}
-          actions={patientActions}
-          isLoading={isTableLoading}
-        />
-
-        {patientsData && (
-          <TablePagination
-            page={patientsData.page}
-            size={patientsData.size}
-            totalElements={patientsData.totalElements}
-            totalPages={patientsData.totalPages}
-            onPageChange={(newPage) => setCurrentPage(newPage)}
+        <div>
+          <PatientSearch
+            onSearch={handleSearch}
+            onSexFilter={setSexTypeFilter}
+            onDocumentTypeFilter={setDocumentTypeFilter}
+            initialSearchTerm={searchTerm}
+            sexType={sexTypeFilter}
+            documentType={documentTypeFilter}
+            getSexOptions={getSexOptions}
+            getDocumentTypeStatusOptions={getDocumentTypeOptions}
+            isFiltersVisible={isFiltersVisible}
+            setIsFiltersVisible={setIsFiltersVisible}
           />
-        )}
+        </div>
+
+        <div>
+          <TableWrapper
+            cols={columns}
+            data={activeData?.content || []}
+            actions={patientActions}
+            isLoading={isTableLoading}
+          />
+
+          {activeData && (
+            <TablePagination
+              page={activeData.page}
+              size={activeData.size}
+              totalElements={activeData.totalElements}
+              totalPages={activeData.totalPages}
+              onPageChange={(newPage) => setCurrentPage(newPage)}
+            />
+          )}
+        </div>
       </div>
 
       <SystemAlertDialog

@@ -1,6 +1,12 @@
 "use server";
 
-import { apiRoutes, fetcher, GET_OPTIONS, POST_OPTIONS, PUT_OPTIONS } from "@/lib";
+import {
+  apiRoutes,
+  fetcher,
+  GET_OPTIONS,
+  POST_OPTIONS,
+  PUT_OPTIONS,
+} from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import {
   PatientApiResponse,
@@ -8,6 +14,7 @@ import {
   PatientFilteredApiResponse,
   PatientUpdateRequest,
 } from "./types";
+import { GetPatientsSearchedParams } from "../appointments/types";
 
 export const createPatient = async (data: PatientCreateRequest) => {
   const response = await fetcher(apiRoutes.patients.create, {
@@ -38,18 +45,62 @@ export const getAllPatients = async (page: number = 0, size: number = 10) => {
   });
 };
 
-export const getAllPatientsFiltered = async (page: number = 0, size: number = 10, search: string) => {
+export const getAllPatientsFiltered = async (
+  page: number = 0,
+  size: number = 10,
+  search: string
+) => {
   const queryParams = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
     search: search,
   });
 
-  const urlWithParams = `${apiRoutes.patients.filter}?${queryParams.toString()}`;
+  const urlWithParams = `${
+    apiRoutes.patients.filter
+  }?${queryParams.toString()}`;
 
-  const response = await fetcher<PaginatedData<PatientFilteredApiResponse>>(urlWithParams, {
-    ...GET_OPTIONS,
+  const response = await fetcher<PaginatedData<PatientFilteredApiResponse>>(
+    urlWithParams,
+    {
+      ...GET_OPTIONS,
+    }
+  );
+
+  return response;
+};
+
+export const getAllPatientsSearched = async ({
+  page = 0,
+  size = 10,
+  searchTerm,
+  sex,
+  documentType,
+}: GetPatientsSearchedParams) => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+    searchTerm: searchTerm,
   });
+
+  if (sex) {
+    queryParams.set("sex", sex);
+  }
+
+  if (documentType) {
+    queryParams.set("documentType", documentType);
+  }
+
+  const urlWithParams = `${
+    apiRoutes.patients.search
+  }?${queryParams.toString()}`;
+
+  const response = await fetcher<PaginatedData<PatientApiResponse>>(
+    urlWithParams,
+    {
+      ...GET_OPTIONS,
+    }
+  );
 
   return response;
 };

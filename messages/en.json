@@ -55,6 +55,8 @@
         "female": "Female",
         "other": "Other"
       },
+      "filters": "Filters",
+      "clear": "Clear",
       "phoneLabel": "Phone Number",
       "phonePlaceholder": "E.g., +1 (555) 0199",
       "emailLabel": "Email Address",
@@ -73,6 +75,7 @@
       "buttonCancel": "Cancel",
       "toastSuccess": "Patient successfully created.",
       "toastUpdateSuccess": "Patient updated successfully.",
+      "searchPlaceholder": "Search by medical record number, full name, or document number",
       "validation": {
         "medicalRecordNumberRequired": "Medical record number is required",
         "medicalRecordNumberMax": "Medical record number cannot exceed 50 characters",
@@ -341,6 +344,7 @@
       "confirmedAtLabel": "Confirmed At",
       "attendedAtLabel": "Attended At",
       "systemUnknown": "N/A",
+      "searchPlaceholder": "Search by patient, doctor, or document",
       "validation": {
         "doctorRequired": "Doctor is required.",
         "patientRequired": "Patient is required.",

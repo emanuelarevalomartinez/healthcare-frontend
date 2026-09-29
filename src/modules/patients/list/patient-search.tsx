@@ -1,67 +1,65 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Filter, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useCallback, useMemo, useState } from "react";
-import { useLanguage } from "@/lib";
-import { APPOINTMENT_STATUS } from "@/lib";
-import { FormFieldSelect } from "@/components/customs/form-field-select";
-import { PATIENT_DOCUMENT_TYPE } from "@/modules/patients/types";
+"use client";
 
-interface AppointmentSearchProps {
+import { FormFieldSelect } from "@/components/customs/form-field-select";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/lib";
+import { Filter, Search, X } from "lucide-react";
+import { useMemo } from "react";
+import { PATIENT_DOCUMENT_TYPE, PATIENT_SEX } from "../types";
+
+interface PatientSearchProps {
   onSearch?: (searchTerm: string) => void;
-  onStatusFilter?: (status: APPOINTMENT_STATUS | undefined) => void;
+  onSexFilter?: (status: PATIENT_SEX | undefined) => void;
   onDocumentTypeFilter?: (
     documentType: PATIENT_DOCUMENT_TYPE | undefined
   ) => void;
   initialSearchTerm?: string;
-  status?: APPOINTMENT_STATUS | undefined;
+  sexType?: string | undefined;
   documentType?: string | undefined;
-  getAppointmentStatusOptions: (optionsDict: any) => {
-    value: APPOINTMENT_STATUS;
-    label: any;
-  }[];
   getDocumentTypeStatusOptions: (optionsDict: any) => {
     value: PATIENT_DOCUMENT_TYPE;
+    label: any;
+  }[];
+  getSexOptions: (optionsDict: any) => {
+    value: PATIENT_SEX;
     label: any;
   }[];
   isFiltersVisible: boolean;
   setIsFiltersVisible: (e: boolean) => void;
 }
 
-export function AppointmentSearch({
+export function PatientSearch({
   onSearch,
-  onStatusFilter,
+  onSexFilter,
   onDocumentTypeFilter,
   initialSearchTerm,
-  status,
+  sexType,
   documentType,
-  getAppointmentStatusOptions,
+  getSexOptions,
   getDocumentTypeStatusOptions,
   isFiltersVisible,
   setIsFiltersVisible,
-}: AppointmentSearchProps) {
+}: PatientSearchProps) {
   const { dictionary } = useLanguage();
-  const t = dictionary.dashboard.appointments;
-
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const t = dictionary.dashboard.patients;
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value);
     onSearch?.(value);
   };
 
-  const clearStatusFilter = () => {
-    onStatusFilter?.(undefined);
+  const clearSexFilter = () => {
+    onSexFilter?.(undefined);
   };
 
   const clearDocumentTypeFilter = () => {
     onDocumentTypeFilter?.(undefined);
   };
 
-  const appointmentStatusOptions = useMemo(
-    () => getAppointmentStatusOptions(t.appointmentStatusOptions),
-    [t.appointmentStatusOptions, getAppointmentStatusOptions]
+  const sexStatusOptions = useMemo(
+    () => getSexOptions(t.sexTypeOptions),
+    [t.sexTypeOptions, getSexOptions]
   );
 
   const documentTypeStatusOptions = useMemo(
@@ -69,8 +67,12 @@ export function AppointmentSearch({
     [t.documentTypeOptions, getDocumentTypeStatusOptions]
   );
 
-  const hasActiveFilters =
-    status !== undefined || documentType !== undefined || searchTerm !== "";
+  const activeFiltersCount = useMemo(
+    () =>
+      [sexType !== undefined, documentType !== undefined].filter(Boolean)
+        .length,
+    [sexType, documentType]
+  );
 
   return (
     <div className={`space-y-4`}>
@@ -80,11 +82,11 @@ export function AppointmentSearch({
           <Input
             type="text"
             placeholder={t.searchPlaceholder}
-            value={searchTerm}
+            value={initialSearchTerm}
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full h-12 pl-9 bg-background border-muted"
           />
-          {searchTerm && (
+          {initialSearchTerm && (
             <button
               onClick={() => handleSearch("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -100,20 +102,17 @@ export function AppointmentSearch({
           className="h-12 gap-2"
           onClick={() => {
             if (isFiltersVisible) {
-              onStatusFilter?.(undefined);
               onDocumentTypeFilter?.(undefined);
+              onSexFilter?.(undefined);
             }
             setIsFiltersVisible(!isFiltersVisible);
           }}
         >
           <Filter className="h-4 w-4" />
           {t.filters}
-          {hasActiveFilters && (
+          {activeFiltersCount > 0 && (
             <Badge variant="secondary" className="ml-1 px-2 py-0 text-xs">
-              {[
-                status !== undefined ? 1 : 0,
-                documentType !== undefined ? 1 : 0,
-              ].reduce((a, b) => a + b, 0)}
+              {activeFiltersCount}
             </Badge>
           )}
         </Button>
@@ -122,24 +121,24 @@ export function AppointmentSearch({
         <div className="flex flex-col lg:flex-row flex-wrap gap-2 px-4 pt-4 pb-4 lg:pb-0 border border-border rounded-lg bg-muted/30">
           <div className={`lg:w-[30%] w-full`}>
             <FormFieldSelect
-              id="appointmentStatus"
-              label={t.statusLabel}
-              placeholder={t.statusPlaceholder}
-              value={status ?? ""}
+              id="sex"
+              label={t.sexLabel}
+              placeholder={t.sexTypePlaceholder}
+              value={sexType ?? ""}
               onValueChange={(value) => {
-                const status = value as APPOINTMENT_STATUS | undefined;
-                onStatusFilter?.(status);
+                const status = value as PATIENT_SEX | undefined;
+                onSexFilter?.(status);
               }}
-              options={appointmentStatusOptions}
+              options={sexStatusOptions}
             />
           </div>
 
-          {status !== undefined && (
+          {sexType !== undefined && (
             <div className="flex lg:items-center lg:place-content-center mb-1 ml-1">
               <Button
                 variant="destructive"
                 size="default"
-                onClick={clearStatusFilter}
+                onClick={clearSexFilter}
                 className="w-full lg:w-auto"
               >
                 <X />

@@ -6,7 +6,11 @@ import { toast } from "sonner";
 import { routes, TranslationDictionary } from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
-import { deletePatient, getAllPatients } from "../services";
+import {
+  deletePatient,
+  getAllPatients,
+  getAllPatientsSearched,
+} from "../services";
 import {
   PatientApiResponse,
   PATIENT_DOCUMENT_TYPE,
@@ -21,7 +25,15 @@ export function usePatientsActions({ dictionary }: UsePatientsActionsProps) {
   const router = useRouter();
   const t = dictionary.dashboard.patients;
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchView, setIsSearchView] = useState(false);
+  const [sexTypeFilter, setSexTypeFilter] = useState<PATIENT_SEX | undefined>(
+    undefined
+  );
   const [patientsData, setPatientsData] =
+    useState<PaginatedData<PatientApiResponse>>();
+  const [patientsSearchData, setPatientsSearchData] =
     useState<PaginatedData<PatientApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -32,17 +44,75 @@ export function usePatientsActions({ dictionary }: UsePatientsActionsProps) {
   const [isTableLoading, setIsTableLoading] = useState(true);
   const pageSize = 10;
 
-  const fetchPatients = useCallback(async () => {
-    setIsTableLoading(true);
+  const [documentTypeFilter, setDocumentTypeFilter] = useState<
+    PATIENT_DOCUMENT_TYPE | undefined
+  >(undefined);
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+
+  const fetchPatientsSearched = useCallback(
+    async (searchTerm: string) => {
+      setIsLoading(true);
+
+      try {
+        const response = await getAllPatientsSearched({
+          page: currentPage,
+          size: pageSize,
+          searchTerm: searchTerm,
+          ...(sexTypeFilter !== undefined && {
+            sex: sexTypeFilter,
+          }),
+          ...(documentTypeFilter !== undefined && {
+            documentType: documentTypeFilter,
+          }),
+        });
+        setPatientsSearchData(response.data);
+      } catch (error) {
+        console.error("Error to load searched patients: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, sexTypeFilter, documentTypeFilter]
+  );
+
+  const fetchPatientsFiltered = useCallback(async () => {
+    setIsLoading(true);
+
     try {
       const response = await getAllPatients(currentPage, pageSize);
       setPatientsData(response.data);
     } catch (error) {
       console.error("Error to load the patients: ", error);
     } finally {
-      setIsTableLoading(false);
+      setIsLoading(false);
     }
   }, [currentPage, pageSize]);
+
+  const fetchPatients = useCallback(
+    async (searchTerm?: string) => {
+      setIsTableLoading(true);
+      const normalizedSearchTerm = searchTerm?.trim();
+      const hasFilters =
+        sexTypeFilter !== undefined || documentTypeFilter !== undefined;
+
+      try {
+        if (isFiltersVisible && !normalizedSearchTerm) {
+          return;
+        }
+
+        if (normalizedSearchTerm) {
+          setIsSearchView(true);
+          await fetchPatientsSearched(normalizedSearchTerm);
+        } else {
+          setIsSearchView(false);
+          await fetchPatientsFiltered();
+        }
+      } finally {
+        setIsTableLoading(false);
+      }
+    },
+    [fetchPatientsFiltered, fetchPatientsSearched, isFiltersVisible]
+  );
 
   const handleOpenDeleteConfirm = (id: string, name: string) => {
     setPatientToDelete({ id, name });
@@ -119,5 +189,15 @@ export function usePatientsActions({ dictionary }: UsePatientsActionsProps) {
     handleExecuteDelete,
     getDocumentTypeOptions,
     getSexOptions,
+    searchTerm,
+    setSearchTerm,
+    isSearchView,
+    sexTypeFilter,
+    setSexTypeFilter,
+    documentTypeFilter,
+    setDocumentTypeFilter,
+    isFiltersVisible,
+    setIsFiltersVisible,
+    patientsSearchData,
   };
 }
