@@ -3,10 +3,8 @@
 // TODO
 
 // mover la logica de appointment a las actions
-// añadir filtro para buscar los usuarios desde su vista
+// comenzar a trabajar en el perfil de usuario y que este pueda editar su informacion personal segun el rol
 // corregir por que cuando actualizo el estado de alguna cita durante la vista de busqueda n ose actualizan los datos desde base de datos
-
-// terminar de corregir las acciones del sidebar y traducirlas
 
 // añadir la seccion de cuenta para que el doctor pueda editar su infracion de horarios etc
 

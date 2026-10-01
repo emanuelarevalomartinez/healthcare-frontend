@@ -11,15 +11,16 @@ export const apiRoutes = {
     refresh: `${API_URL}/auth/refresh`,
     logout: `${API_URL}/auth/logout`,
   },
-   users: {
+  users: {
     list: `${API_URL}/users`,
     filter: `${API_URL}/users/filter`,
+    search: `${API_URL}/users/search`,
     create: `${API_URL}/users`,
     edit: `${API_URL}/users/:id`,
     details: `${API_URL}/users/:id`,
     delete: `${API_URL}/users/:id`,
   },
-   patients: {
+  patients: {
     list: `${API_URL}/patients`,
     filter: `${API_URL}/patients/filter`,
     search: `${API_URL}/patients/search`,
@@ -28,7 +29,7 @@ export const apiRoutes = {
     details: `${API_URL}/patients/:id`,
     delete: `${API_URL}/patients/:id`,
   },
-   doctors: {
+  doctors: {
     list: `${API_URL}/doctors`,
     filter: `${API_URL}/doctors/filter`,
     create: `${API_URL}/doctors`,
@@ -39,7 +40,7 @@ export const apiRoutes = {
     delete: `${API_URL}/doctors/:id`,
     deleteDoctorAndScheduleByUserId: `${API_URL}/doctors/delete-with-user-and-schedule/:userId`,
   },
-   appointments: {
+  appointments: {
     list: `${API_URL}/appointments`,
     filter: `${API_URL}/appointments/filter`,
     search: `${API_URL}/appointments/search`,

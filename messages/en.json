@@ -166,6 +166,8 @@
         "doctor": "DOCTOR",
         "receptionist": "RECEPTIONIST"
       },
+      "filters": "Filters",
+      "clear": "Clear",
       "doctorScheduleDayOfWeekOptions": {
         "all_week": "ALL WEEK",
         "weekdays": "WEEKDAYS",
@@ -178,6 +180,7 @@
         "saturday": "SATURDAY",
         "sunday": "SUNDAY"
       },
+      "searchPlaceholder": "Search by username or email",
       "validation": {
         "usernameMin": "Username must be at least 3 characters long.",
         "usernameMax": "Username cannot exceed 50 characters.",

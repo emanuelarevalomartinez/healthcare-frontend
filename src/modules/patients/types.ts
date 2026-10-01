@@ -1,3 +1,5 @@
+import { USER_ROLE } from "@/lib";
+
 export interface PatientApiResponse {
   id: string;
   medicalRecordNumber: string;
@@ -43,14 +45,21 @@ export interface PatientCreateRequest {
   notes: string | null;
 }
 
+export interface GetUsersSearchedParams {
+  page?: number;
+  size?: number;
+  searchTerm: string;
+  active?: boolean;
+  userRole?: USER_ROLE;
+}
+
 export interface PatientUpdateRequest extends PatientCreateRequest {}
 
-
 export enum PATIENT_DOCUMENT_TYPE {
-  DNI='DNI',
-  PASSPORT='PASSPORT',
-  ID_CARD='ID_CARD',
-  OTHER='OTHER',
+  DNI = "DNI",
+  PASSPORT = "PASSPORT",
+  ID_CARD = "ID_CARD",
+  OTHER = "OTHER",
 }
 
 export enum PATIENT_SEX {

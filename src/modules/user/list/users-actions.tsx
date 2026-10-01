@@ -3,11 +3,24 @@
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { DOCTOR_SCHEDULE_DAY_OF_WEEK, routes, TranslationDictionary, USER_ROLE } from "@/lib";
+import {
+  DOCTOR_SCHEDULE_DAY_OF_WEEK,
+  routes,
+  TranslationDictionary,
+  USER_ROLE,
+} from "@/lib";
 import { PaginatedData } from "@/lib/server/api-response";
 import { TableAction } from "@/components/customs/table-wrapper";
-import { UserUpdateRequest, UserWithDoctorandScheduleApiResponse } from "../types";
-import { deleteUser, getAllUsers, updateUser } from "../services";
+import {
+  UserUpdateRequest,
+  UserWithDoctorandScheduleApiResponse,
+} from "../types";
+import {
+  deleteUser,
+  getAllUsers,
+  getAllUsersSearched,
+  updateUser,
+} from "../services";
 import { getUserDataLocalStore } from "@/lib/utils/local-storage";
 
 interface UsePatientsActionsProps {
@@ -21,27 +34,89 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
   const user = getUserDataLocalStore();
   const currentUserId = user?.id;
 
-  const [usersData, setUsersData] = useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
+  const [usersData, setUsersData] =
+    useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
+  const [usersSearchData, setUsersSearchData] =
+    useState<PaginatedData<UserWithDoctorandScheduleApiResponse>>();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchView, setIsSearchView] = useState(false);
+  const [userRoleTypeFilter, setUserRoleTypeFilter] = useState<
+    USER_ROLE | undefined
+  >(undefined);
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [currentActive, setCurrentActive] = useState(true);
   const [userToDelete, setUserToDelete] = useState<{
     id: string;
     username: string;
   } | null>(null);
   const [isTableLoading, setIsTableLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const pageSize = 10;
 
-  const fetchUsers = useCallback(async () => {
-    setIsTableLoading(true);
+  const fetchUsersSearched = useCallback(
+    async (searchTerm: string) => {
+      setIsLoading(true);
+
+      try {
+        const response = await getAllUsersSearched({
+          page: currentPage,
+          size: pageSize,
+          searchTerm: searchTerm,
+          ...(userRoleTypeFilter !== undefined && {
+            userRole: userRoleTypeFilter,
+          }),
+          ...(currentActive !== undefined && {
+            active: currentActive,
+          }),
+        });
+        setUsersSearchData(response.data);
+      } catch (error) {
+        console.error("Error to load searched users: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage, currentActive, userRoleTypeFilter]
+  );
+
+  const fetchUsersFiltered = useCallback(async () => {
+    setIsLoading(true);
+
     try {
       const response = await getAllUsers(currentPage, pageSize);
       setUsersData(response.data);
     } catch (error) {
       console.error("Error to load the users: ", error);
     } finally {
-      setIsTableLoading(false);
+      setIsLoading(false);
     }
   }, [currentPage, pageSize]);
+
+  const fetchUsers = useCallback(
+    async (searchTerm?: string) => {
+      setIsTableLoading(true);
+      const normalizedSearchTerm = searchTerm?.trim();
+
+      try {
+        if (isFiltersVisible && !normalizedSearchTerm) {
+          return;
+        }
+
+        if (normalizedSearchTerm) {
+          setIsSearchView(true);
+          await fetchUsersSearched(normalizedSearchTerm);
+        } else {
+          setIsSearchView(false);
+          await fetchUsersFiltered();
+        }
+      } finally {
+        setIsTableLoading(false);
+      }
+    },
+    [fetchUsersFiltered, fetchUsersSearched, isFiltersVisible]
+  );
 
   const handleOpenDeleteConfirm = (id: string, username: string) => {
     setUserToDelete({ id, username });
@@ -142,29 +217,29 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
   }, []);
 
   const getDoctorScheduleDaysOfWeekTypeOptions = useCallback(
-      (optionsDict: any) => {
-        return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
-          (docScheduleType) => {
-            const docScheduleTypeKey = docScheduleType.toLowerCase() as
-              | "all_week"
-              | "weekdays"
-              | "weekend"
-              | "monday"
-              | "tuesday"
-              | "wednesday"
-              | "thursday"
-              | "friday"
-              | "saturday"
-              | "sunday";
-            return {
-              value: docScheduleType,
-              label: optionsDict[docScheduleTypeKey],
-            };
-          }
-        );
-      },
-      []
-    );
+    (optionsDict: any) => {
+      return Object.values(DOCTOR_SCHEDULE_DAY_OF_WEEK).map(
+        (docScheduleType) => {
+          const docScheduleTypeKey = docScheduleType.toLowerCase() as
+            | "all_week"
+            | "weekdays"
+            | "weekend"
+            | "monday"
+            | "tuesday"
+            | "wednesday"
+            | "thursday"
+            | "friday"
+            | "saturday"
+            | "sunday";
+          return {
+            value: docScheduleType,
+            label: optionsDict[docScheduleTypeKey],
+          };
+        }
+      );
+    },
+    []
+  );
 
   return {
     usersData,
@@ -180,5 +255,15 @@ export function useUsersActions({ dictionary }: UsePatientsActionsProps) {
     handleExecuteDelete,
     getRoleOptions,
     getDoctorScheduleDaysOfWeekTypeOptions,
+    searchTerm,
+    setSearchTerm,
+    userRoleTypeFilter,
+    setUserRoleTypeFilter,
+    isFiltersVisible,
+    setIsFiltersVisible,
+    currentActive,
+    setCurrentActive,
+    usersSearchData,
+    isSearchView,
   };
 }

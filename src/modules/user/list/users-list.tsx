@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { getUserColumns } from "./users-columns";
 import { useUsersActions } from "./users-actions";
 import { useRouter } from "next/navigation";
+import { UserSearch } from "./user-search";
 
 export function UserList() {
   const router = useRouter();
@@ -29,11 +30,28 @@ export function UserList() {
     usersActions,
     fetchUsers,
     handleExecuteDelete,
+    searchTerm,
+    setSearchTerm,
+    userRoleTypeFilter,
+    setUserRoleTypeFilter,
+    getRoleOptions,
+    isFiltersVisible,
+    setIsFiltersVisible,
+    currentActive,
+    setCurrentActive,
+    usersSearchData,
+    isSearchView,
   } = useUsersActions({ dictionary });
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchUsers(searchTerm);
+  }, [fetchUsers, searchTerm]);
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const activeData = isSearchView ? usersSearchData : usersData;
 
   return (
     <>
@@ -51,22 +69,38 @@ export function UserList() {
           </Button>
         </SectionHeader>
 
-        <TableWrapper
-          cols={columns}
-          data={usersData?.content || []}
-          actions={usersActions}
-          isLoading={isTableLoading}
-        />
-
-        {usersData && (
-          <TablePagination
-            page={usersData.page}
-            size={usersData.size}
-            totalElements={usersData.totalElements}
-            totalPages={usersData.totalPages}
-            onPageChange={(newPage) => setCurrentPage(newPage)}
+        <div>
+          <UserSearch
+            onSearch={handleSearch}
+            onUserRoleTypeFilter={setUserRoleTypeFilter}
+            initialSearchTerm={searchTerm}
+            userRoleType={userRoleTypeFilter}
+            getUserRoleOptions={getRoleOptions}
+            isFiltersVisible={isFiltersVisible}
+            setIsFiltersVisible={setIsFiltersVisible}
+            currentActive={currentActive}
+            setCurrentActive={setCurrentActive}
           />
-        )}
+        </div>
+
+        <div>
+          <TableWrapper
+            cols={columns}
+            data={activeData?.content || []}
+            actions={usersActions}
+            isLoading={isTableLoading}
+          />
+
+          {activeData && (
+            <TablePagination
+              page={activeData.page}
+              size={activeData.size}
+              totalElements={activeData.totalElements}
+              totalPages={activeData.totalPages}
+              onPageChange={(newPage) => setCurrentPage(newPage)}
+            />
+          )}
+        </div>
       </div>
 
       <SystemAlertDialog

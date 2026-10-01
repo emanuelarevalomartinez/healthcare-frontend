@@ -92,8 +92,6 @@ export function usePatientsActions({ dictionary }: UsePatientsActionsProps) {
     async (searchTerm?: string) => {
       setIsTableLoading(true);
       const normalizedSearchTerm = searchTerm?.trim();
-      const hasFilters =
-        sexTypeFilter !== undefined || documentTypeFilter !== undefined;
 
       try {
         if (isFiltersVisible && !normalizedSearchTerm) {
