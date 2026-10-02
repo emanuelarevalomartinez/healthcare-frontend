@@ -30,3 +30,13 @@ export const getAllConsultationsFiltered = async ({
 
   return response;
 };
+
+export const deleteConsultation = async (id: string) => {
+  const response = await fetcher(
+    apiRoutes.consultations.delete.replace(":id", id),
+    {
+      method: "DELETE",
+    }
+  );
+  return response;
+};

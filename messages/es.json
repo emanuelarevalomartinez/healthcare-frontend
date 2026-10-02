@@ -380,8 +380,15 @@
       "tableSectionTitle": "Consultas",
       "tableSectionSubtitle": "Gestiona citas, horarios y estados de las visitas médicas.",
       "createNewConsultationButton": "Nueva Consulta",
+      "searchResults": "Resultados de búsqueda",
+      "consultationCount": "consulta",
+      "consultationCountPlural": "consultas",
+      "noConsultasForDay": "No hay consultas para este día",
+      "noConsultasFound": "No se encontraron consultas que coincidan con tus criterios de búsqueda",
 
-       "deleteAlertTitle": "¿Está seguro de que desea eliminar esta consulta?",
+      "successDeleteConsultationToast": "eliminado con éxito.",
+      "errordeleteConsultationToast": "No se pudo eliminar la consulta.",
+      "deleteAlertTitle": "¿Está seguro de que desea eliminar esta consulta?",
       "deleteAlertDescription": "Esta acción no se puede deshacer. La consulta se eliminará permanentemente.",
       "cancel": "Cancelar",
       "confirm": "Confirmar"

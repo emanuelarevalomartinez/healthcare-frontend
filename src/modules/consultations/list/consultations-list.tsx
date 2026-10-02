@@ -8,7 +8,7 @@ import { routes, useLanguage } from "@/lib";
 import { UserPlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConsultationListDaily } from "./consultation-list-daily";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConsultationActions } from "./consultation-actions";
 
 export function ConsultationList() {
@@ -18,9 +18,13 @@ export function ConsultationList() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { selectedDate, handleDateChange } = useConsultationActions({
+  const { selectedDate, handleDateChange, handleCloseAlert, isAlertOpen, setIsAlertOpen, consultationsData, isLoading, setCurrentPage, consultationsActions, handleExecuteDelete, fetchConsultationsFiltered } = useConsultationActions({
     dictionary,
   });
+
+   useEffect(() => {
+      fetchConsultationsFiltered;
+    }, [fetchConsultationsFiltered]);
 
    if (!selectedDate) {
     return null;
@@ -86,7 +90,15 @@ export function ConsultationList() {
               <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
                 <CardContent>
                   <ConsultationListDaily
-                  
+                  consultationsData={consultationsData}
+                  isAlertOpen={isAlertOpen}
+                  setIsAlertOpen={setIsAlertOpen}
+                  selectedDate={selectedDate}
+                  isLoading={isLoading}
+                  setCurrentPage={setCurrentPage}
+                  actions={consultationsActions}
+                  handleExecuteDelete={handleExecuteDelete}
+                  handleCloseAlert={handleCloseAlert}
                    />
                   {/*       <AppointmentListDaily
                         actions={appointmentActions}
