@@ -376,7 +376,16 @@
       "confirm": "Delete",
       "apply": "Apply"
     },
-    "doctorSchedule": {}
+    "consultations": {
+      "tableSectionTitle": "Consultations",
+      "tableSectionSubtitle": "Manage appointments, schedules, and statuses of medical visits.",
+      "createNewConsultationButton": "New Consultation",
+
+      "deleteAlertTitle": "Are you sure you want to delete this consultation?",
+      "deleteAlertDescription": "This action cannot be undone. This will permanently delete the consultation.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
   },
   "auth": {
     "login": {

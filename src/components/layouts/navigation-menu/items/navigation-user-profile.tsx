@@ -14,6 +14,7 @@ import { routes, useLanguage } from "@/lib";
 import { deleteUserAuthCredentialsCookies } from "@/lib/utils/cookies";
 import {
   deleteAppointmentSelectedDateToViewLocalStorage,
+  deleteConsultationSelectedDateToViewLocalStorage,
   deleteUserDataLocalStorage,
   getUserDataLocalStore,
 } from "@/lib/utils/local-storage";
@@ -38,6 +39,7 @@ export function NavigationUserProfile() {
       await deleteUserAuthCredentialsCookies();
       deleteUserDataLocalStorage();
       deleteAppointmentSelectedDateToViewLocalStorage();
+      deleteConsultationSelectedDateToViewLocalStorage();
       router.push(routes.auth.login);
       toast("Sesión cerrada con exito.");
     } catch (error) {

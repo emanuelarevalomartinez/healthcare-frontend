@@ -1,11 +1,13 @@
 import {
   AppointmentSelectedDateToViewLocalStorageInterface,
+  ConsultationSelectedDateToViewLocalStorageInterface,
   UserDataLocalStorageInterface,
 } from "./local-storage-type";
 
 export enum LOCAL_STORAGE {
   USER_DATA = "user_data",
   APPOINTMENT_SELECTED_DATE_TO_VIEW = "appointment_selected_date_to_view",
+  CONSULTATION_SELECTED_DATE_TO_VIEW = "consultation_selected_date_to_view",
 }
 
 export const getUserDataLocalStore =
@@ -78,4 +80,48 @@ export const deleteAppointmentSelectedDateToViewLocalStorage = () => {
   }
 
   localStorage.removeItem(LOCAL_STORAGE.APPOINTMENT_SELECTED_DATE_TO_VIEW);
+};
+
+export const getConsultationSelectedDateToViewLocalStorage =
+  (): ConsultationSelectedDateToViewLocalStorageInterface | null => {
+    if (typeof window === "undefined" || typeof localStorage === "undefined") {
+      return null;
+    }
+
+    const currentConsultationSelectedDataToViewJson = localStorage.getItem(
+      LOCAL_STORAGE.CONSULTATION_SELECTED_DATE_TO_VIEW
+    );
+
+    if (currentConsultationSelectedDataToViewJson) {
+      const consultationSelectedDataToView: ConsultationSelectedDateToViewLocalStorageInterface =
+        JSON.parse(currentConsultationSelectedDataToViewJson);
+      return consultationSelectedDataToView;
+    } else {
+      return null;
+    }
+  };
+
+export const setConsultationSelectedDateToViewLocalStorage = (
+  newConsultationSelectedDataToView: ConsultationSelectedDateToViewLocalStorageInterface
+) => {
+  if (typeof window === "undefined" || typeof localStorage === "undefined") {
+    return;
+  }
+
+  const currentConsultationSelectedDataToViewJson = JSON.stringify(
+    newConsultationSelectedDataToView
+  );
+
+  localStorage.setItem(
+    LOCAL_STORAGE.CONSULTATION_SELECTED_DATE_TO_VIEW,
+    currentConsultationSelectedDataToViewJson
+  );
+};
+
+export const deleteConsultationSelectedDateToViewLocalStorage = () => {
+  if (typeof window === "undefined" || typeof localStorage === "undefined") {
+    return;
+  }
+
+  localStorage.removeItem(LOCAL_STORAGE.CONSULTATION_SELECTED_DATE_TO_VIEW);
 };

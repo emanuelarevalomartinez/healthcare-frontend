@@ -23,7 +23,7 @@ export function AppointmentsList() {
     appointmentDataToCancel,
     setCurrentPage,
     selectedDate,
-    setSelectedDate,
+    handleDateChange,
     isLoading,
     appointmentActions,
     handleExecuteDelete,
@@ -145,7 +145,7 @@ export function AppointmentsList() {
                     selected={selectedDate}
                     onSelect={(date) => {
                       if (date) {
-                        setSelectedDate(date);
+                        handleDateChange(date);
                       }
                     }}
                   />

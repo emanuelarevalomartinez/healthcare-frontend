@@ -372,11 +372,20 @@
       "confirmAlertDescription": "¿Está seguro de que desea confirmar esta cita?",
       "cancelAlertTitle": "¿Está seguro de que desea cancelar esta cita?",
       "cancelAlertDescription": "Esta acción cancelará la cita.",
-      "cancel": "Cancel",
-      "confirm": "Delete",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
       "apply": "Aplicar"
     },
-    "doctorSchedule": {}
+    "consultations": {
+      "tableSectionTitle": "Consultas",
+      "tableSectionSubtitle": "Gestiona citas, horarios y estados de las visitas médicas.",
+      "createNewConsultationButton": "Nueva Consulta",
+
+       "deleteAlertTitle": "¿Está seguro de que desea eliminar esta consulta?",
+      "deleteAlertDescription": "Esta acción no se puede deshacer. La consulta se eliminará permanentemente.",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    }
   },
   "auth": {
     "login": {

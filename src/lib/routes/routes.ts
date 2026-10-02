@@ -29,6 +29,9 @@ export const routes = {
   },
   consultations: {
     root: "/consultations",
+    create: "/consultations/create",
+    edit: "/consultations/:id/edit",
+    details: "/consultations/:id",
   },
   consultationsHistory: {
     root: "/consultations-history",

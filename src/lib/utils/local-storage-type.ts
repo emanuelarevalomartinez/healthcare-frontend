@@ -9,5 +9,9 @@ export interface UserDataLocalStorageInterface {
 }
 
 export interface AppointmentSelectedDateToViewLocalStorageInterface {
-  selectedDate: string;
+  appointmentSelectedDate: string;
+}
+
+export interface ConsultationSelectedDateToViewLocalStorageInterface {
+  consultationSelectedDate: string;
 }

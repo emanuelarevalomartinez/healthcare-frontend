@@ -12,7 +12,9 @@ export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const response = await findAppointmentById(id);
   const user = await findUserById(response.data.createdBy);
-  const userCancelledAppointment = response.data.cancelledBy ? await findUserById(response.data.cancelledBy) : undefined;
+  const userCancelledAppointment = response.data.cancelledBy
+    ? await findUserById(response.data.cancelledBy)
+    : undefined;
 
   return (
     <AppointmentForm
@@ -31,7 +33,7 @@ export default async function Page({ params }: PageProps) {
         attendedAt: response.data.attendedAt,
         notes: response.data.notes,
         medicalRecordNumber: response.data.medicalRecordNumber,
-                documentType: response.data.documentType as PATIENT_DOCUMENT_TYPE,
+        documentType: response.data.documentType as PATIENT_DOCUMENT_TYPE,
         patientFullName: response.data.patientFullName,
         doctorFullName: response.data.doctorFullName,
       }}

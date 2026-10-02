@@ -67,7 +67,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     const savedData = getAppointmentSelectedDateToViewLocalStorage();
 
     if (savedData) {
-      setSelectedDate(parse(savedData.selectedDate, "yyyy-MM-dd", new Date()));
+      setSelectedDate(parse(savedData.appointmentSelectedDate, "yyyy-MM-dd", new Date()));
       return;
     }
 
@@ -76,7 +76,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     setSelectedDate(currentDate);
 
     setAppointmentSelectedDateToViewLocalStorage({
-      selectedDate: format(currentDate, "yyyy-MM-dd"),
+      appointmentSelectedDate: format(currentDate, "yyyy-MM-dd"),
     });
   }, []);
 
@@ -167,7 +167,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
       setSelectedDate(newDate);
 
       setAppointmentSelectedDateToViewLocalStorage({
-        selectedDate: format(newDate, "yyyy-MM-dd"),
+        appointmentSelectedDate: format(newDate, "yyyy-MM-dd"),
       });
 
       fetchAppointmentsFiltered(newDate);
@@ -308,7 +308,7 @@ export function useAppointmentActions({ dictionary }: UsePatientsActionsProps) {
     setCurrentPage,
     isLoading,
     selectedDate,
-    setSelectedDate: handleDateChange,
+    handleDateChange,
     appointmentActions,
     handleExecuteDelete,
     isCancelDialogWrapperOpen,

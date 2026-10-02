@@ -1,5 +1,4 @@
 import { APPOINTMENT_STATUS } from "@/lib";
-import { string } from "zod";
 import { PATIENT_DOCUMENT_TYPE, PATIENT_SEX } from "../patients/types";
 
 export interface AppointmentApiResponse {

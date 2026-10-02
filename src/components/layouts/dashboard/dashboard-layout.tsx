@@ -6,6 +6,7 @@ import { AppointmentNavigationWatcher } from "@/modules/appointments/navigation-
 import { DoctorRender } from "@/modules/doctors/forms/doctor-render";
 import { PropsWithChildren } from "react";
 import { NavigationMenu } from "../navigation-menu/navigation-menu";
+import { ConsultationNavigationWatcher } from "@/modules/consultations/navigation-watcher/consultation-navigation-watcher";
 
 export default async function DashBoardLayout({
   children,
@@ -16,6 +17,7 @@ export default async function DashBoardLayout({
         <AppSidebar />
 
         <AppointmentNavigationWatcher />
+        <ConsultationNavigationWatcher />
 
         <main className="w-full">
           <div className="flex flex-col w-full sticky top-0 z-20 bg-background">
