@@ -385,6 +385,13 @@
       "consultationCountPlural": "consultas",
       "noConsultasForDay": "No hay consultas para este día",
       "noConsultasFound": "No se encontraron consultas que coincidan con tus criterios de búsqueda",
+      "doctor": "Doctor",
+      "patient": "Paciente",
+      "minutes": "min",
+      "symptomsLabel": "Síntomas",
+      "symptomsPlaceholder": "Ingrese los síntomas del paciente...",
+      "diagnosisLabel": "Diagnóstico",
+      "diagnosisPlaceholder": "Ingrese el diagnóstico...",
 
       "successDeleteConsultationToast": "eliminado con éxito.",
       "errordeleteConsultationToast": "No se pudo eliminar la consulta.",

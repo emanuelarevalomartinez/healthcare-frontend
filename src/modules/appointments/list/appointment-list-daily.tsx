@@ -84,7 +84,9 @@ export function AppointmentListDaily({
       <div className="w-full rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold">
-            { selectedDate ? formatSelectedDateToInputString(selectedDate) : t.searchResults }
+            {selectedDate
+              ? formatSelectedDateToInputString(selectedDate)
+              : t.searchResults}
           </h3>
 
           <span className="text-sm text-muted-foreground space-x-1">
@@ -108,85 +110,102 @@ export function AppointmentListDaily({
             {appointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className="relative w-full border border-border rounded-md p-3 mb-3 text-left"
+                className="rounded-md border border-border px-3 py-2.5 text-left"
               >
-                <div className="absolute top-2 right-2 flex items-center gap-1">
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {appointment.durationMinutes} {t.minutes}
-                  </span>
-
-                  {actions && actions.length > 0 && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-8 cursor-pointer"
-                        >
-                          <MoreHorizontalIcon />
-                        </Button>
-                      </DropdownMenuTrigger>
-
-                      <DropdownMenuContent className="bg-card" align="end">
-                        {actions.map((action, actionIndex) => (
-                          <div key={actionIndex}>
-                            {action.separatorBefore && (
-                              <DropdownMenuSeparator />
-                            )}
-
-                            <DropdownMenuItem
-                              className="cursor-pointer"
-                              disabled={action.disabled?.(appointment)}
-                              variant={
-                                action.variant === "destructive"
-                                  ? "destructive"
-                                  : "default"
-                              }
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                action.onClick(appointment);
-                              }}
-                            >
-                              {typeof action.label === "function"
-                                ? action.label(appointment)
-                                : action.label}
-                            </DropdownMenuItem>
-                          </div>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </div>
-
-                <div className="pr-20">
-                  <div className="font-medium">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold">
                     {formatDisplayDateTimeToLocaleString(
                       appointment.appointmentDateTime
                     )}
+                  </span>
+
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {appointment.durationMinutes} {t.minutes}
+                    </span>
+
+                    {actions && actions.length > 0 && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 shrink-0 cursor-pointer"
+                          >
+                            <MoreHorizontalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent className="bg-card" align="end">
+                          {actions.map((action, actionIndex) => (
+                            <div key={actionIndex}>
+                              {action.separatorBefore && (
+                                <DropdownMenuSeparator />
+                              )}
+
+                              <DropdownMenuItem
+                                className="cursor-pointer"
+                                disabled={action.disabled?.(appointment)}
+                                variant={
+                                  action.variant === "destructive"
+                                    ? "destructive"
+                                    : "default"
+                                }
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  action.onClick(appointment);
+                                }}
+                              >
+                                {typeof action.label === "function"
+                                  ? action.label(appointment)
+                                  : action.label}
+                              </DropdownMenuItem>
+                            </div>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-2 space-y-1.5 border-t border-border pt-2">
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.patient}
+                    </span>
+                    <p className="truncate">{appointment.patientFullName}</p>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    {t.doctor}: {appointment.doctorFullName}
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.doctor}
+                    </span>
+                    <p className="truncate">{appointment.doctorFullName}</p>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    {t.patient}: {appointment.patientFullName}
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.documentTypeLabel}
+                    </span>
+                    <p className="truncate">{appointment.documentType}</p>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    {t.documentTypeLabel}: {appointment.documentType}
-                  </div>
-
-                  <div className="mt-1">
-                    <BadgeWrapper
-                      type={
-                        statusBadgeMap[appointment.status as APPOINTMENT_STATUS]
-                      }
-                    >
-                      {getAppointmentStatusLabel(
-                        appointment.status as APPOINTMENT_STATUS
-                      )}
-                    </BadgeWrapper>
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.statusLabel}
+                    </span>
+                    <div className="mt-0.5">
+                      <BadgeWrapper
+                        type={
+                          statusBadgeMap[
+                            appointment.status as APPOINTMENT_STATUS
+                          ]
+                        }
+                      >
+                        {getAppointmentStatusLabel(
+                          appointment.status as APPOINTMENT_STATUS
+                        )}
+                      </BadgeWrapper>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -91,12 +91,14 @@ export function ConsultationListDaily({
             {consultations.map((consultation) => (
               <div
                 key={consultation.id}
-                className="relative w-full border border-border rounded-md p-3 mb-3 text-left"
+                className="rounded-md border border-border px-3 py-2.5 text-left"
               >
-                <div className="absolute top-2 right-2 flex items-center gap-1">
-                 {/*  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {consultation.durationMinutes} {t.minutes}
-                  </span> */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-semibold">
+                    {formatDisplayDateTimeToLocaleString(
+                      consultation.consultationDate
+                    )}
+                  </span>
 
                   {actions && actions.length > 0 && (
                     <DropdownMenu>
@@ -104,9 +106,9 @@ export function ConsultationListDaily({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="size-8 cursor-pointer"
+                          className="size-7 shrink-0 cursor-pointer"
                         >
-                          <MoreHorizontalIcon />
+                          <MoreHorizontalIcon className="size-4" />
                         </Button>
                       </DropdownMenuTrigger>
 
@@ -141,40 +143,34 @@ export function ConsultationListDaily({
                   )}
                 </div>
 
-                <div className="pr-20">
-                  <div className="font-medium">
-                    {formatDisplayDateTimeToLocaleString(
-                      consultation.consultationDate
-                    )}
+                <div className="mt-2 space-y-1.5 border-t border-border pt-2">
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.patient}
+                    </span>
+                    <p className="truncate">{consultation.patientName}</p>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    llave: valor
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.doctor}
+                    </span>
+                    <p className="truncate">{consultation.doctorName}</p>
                   </div>
 
-                 {/*  <div className="text-sm text-muted-foreground">
-                    {t.doctor}: {consultation.doctorFullName}
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.symptomsLabel}
+                    </span>
+                    <p className="line-clamp-2">{consultation.symptoms}</p>
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
-                    {t.patient}: {consultation.patientFullName}
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.diagnosisLabel}
+                    </span>
+                    <p className="line-clamp-2">{consultation.diagnosis}</p>
                   </div>
-
-                  <div className="text-sm text-muted-foreground">
-                    {t.documentTypeLabel}: {consultation.documentType}
-                  </div> */}
-
-                  {/*  <div className="mt-1">
-                            <BadgeWrapper
-                              type={
-                                statusBadgeMap[consultation.status as APPOINTMENT_STATUS]
-                              }
-                            >
-                              {getAppointmentStatusLabel(
-                                consultation.status as APPOINTMENT_STATUS
-                              )}
-                            </BadgeWrapper>
-                          </div> */}
                 </div>
               </div>
             ))}
@@ -193,56 +189,18 @@ export function ConsultationListDaily({
         )}
       </div>
 
-     {/*  <SystemAlertDialog
-              isOpen={alertActionType !== null}
-              onClose={handleCloseAlert}
-              onConfirm={
-                alertActionType === ALERT_ACTION.DELETE
-                  ? handleExecuteDelete
-                  : handleExecuteConfirm
-              }
-              title={
-                alertActionType === ALERT_ACTION.DELETE
-                  ? t.deleteAlertTitle
-                  : t.confirmAlertTitle
-              }
-              description={
-                alertActionType === ALERT_ACTION.DELETE
-                  ? t.deleteAlertDescription
-                  : t.confirmAlertDescription
-              }
-              cancelText={t.cancel}
-              confirmText={
-                alertActionType === ALERT_ACTION.DELETE ? t.confirm : t.apply
-              }
-            /> */}
-
-             <SystemAlertDialog
-                    isOpen={isAlertOpen}
-                    onClose={() => {
-                      setIsAlertOpen(false);
-                      handleCloseAlert();
-                    }}
-                    onConfirm={handleExecuteDelete}
-                    title={t.deleteAlertTitle}
-                    description={t.deleteAlertDescription}
-                    cancelText={t.cancel}
-                    confirmText={t.confirm}
-                  />
-
-     {/*  <DialogWrapper
-        open={isCancelDialogWrapperOpen}
-        onOpenChange={setIsCancelDialogWrapperOpen}
-        title={t.cancelSectionTitle}
-        description={t.cancelSectionSubtitle}
-        className="sm:min-w-xl"
-      >
-        <ItemAppointmentCancelForm
-          setOpenDetails={setIsCancelDialogWrapperOpen}
-          appointmentData={appointmentDataToCancel}
-          onSuccess={fetchAppointmentsFiltered}
-        />
-      </DialogWrapper> */}
+      <SystemAlertDialog
+        isOpen={isAlertOpen}
+        onClose={() => {
+          setIsAlertOpen(false);
+          handleCloseAlert();
+        }}
+        onConfirm={handleExecuteDelete}
+        title={t.deleteAlertTitle}
+        description={t.deleteAlertDescription}
+        cancelText={t.cancel}
+        confirmText={t.confirm}
+      />
     </>
   );
 }
