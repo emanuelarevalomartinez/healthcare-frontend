@@ -16,19 +16,38 @@ export function ConsultationList() {
   const t = dictionary.dashboard.consultations;
   const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const { selectedDate, handleDateChange, handleCloseAlert, isAlertOpen, setIsAlertOpen, consultationsData, isLoading, setCurrentPage, consultationsActions, handleExecuteDelete, fetchConsultationsFiltered } = useConsultationActions({
+  const {
+    selectedDate,
+    handleDateChange,
+    handleCloseAlert,
+    isAlertOpen,
+    setIsAlertOpen,
+    consultationsData,
+    isLoading,
+    setCurrentPage,
+    consultationsActions,
+    handleExecuteDelete,
+    fetchConsultations,
+    searchTerm,
+    setSearchTerm,
+    consultationsSearchData
+  } = useConsultationActions({
     dictionary,
   });
 
-   useEffect(() => {
-      fetchConsultationsFiltered;
-    }, [fetchConsultationsFiltered]);
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
 
-   if (!selectedDate) {
+  useEffect(() => {
+    fetchConsultations(searchTerm);
+  }, [fetchConsultations, searchTerm]);
+
+  if (!selectedDate) {
     return null;
   }
+
+  const isSearching = searchTerm !== "";
 
   return (
     <>
@@ -64,60 +83,26 @@ export function ConsultationList() {
                 />
               </div> */}
 
-          {searchTerm !== "" ? (
-            <div className="flex gap-2 pt-4">
-              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
-                <CardContent>
-                  {/*    <AppointmentListDaily
-                        actions={appointmentActions}
-                        appointmentDataToCancel={appointmentDataToCancel}
-                        appointmentsData={appointmentsSearchData}
-                        isLoading={isLoading}
-                        setCurrentPage={setCurrentPage}
-                        handleExecuteDelete={handleExecuteDelete}
-                        isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
-                        setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
-                        fetchAppointmentsFiltered={fetchAppointments}
-                        alertActionType={alertActionType}
-                        handleCloseAlert={handleCloseAlert}
-                        handleExecuteConfirm={handleExecuteConfirm}
-                      /> */}
-                </CardContent>
-              </Card>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
-              <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
-                <CardContent>
-                  <ConsultationListDaily
-                  consultationsData={consultationsData}
+          <div className="grid grid-cols-1 2xl:flex 2xl:flex-row gap-2 pt-4">
+            <Card className="row-start-2 flex w-full bg-transparent border border-border h-[80vh]">
+              <CardContent>
+                <ConsultationListDaily
+                  consultationsData={
+                    isSearching ? consultationsSearchData : consultationsData
+                  }
                   isAlertOpen={isAlertOpen}
                   setIsAlertOpen={setIsAlertOpen}
-                  selectedDate={selectedDate}
+                  selectedDate={isSearching ? undefined : selectedDate}
                   isLoading={isLoading}
                   setCurrentPage={setCurrentPage}
                   actions={consultationsActions}
                   handleExecuteDelete={handleExecuteDelete}
                   handleCloseAlert={handleCloseAlert}
-                   />
-                  {/*       <AppointmentListDaily
-                        actions={appointmentActions}
-                        appointmentDataToCancel={appointmentDataToCancel}
-                        appointmentsData={appointmentsData}
-                        selectedDate={selectedDate}
-                        isLoading={isLoading}
-                        setCurrentPage={setCurrentPage}
-                        handleExecuteDelete={handleExecuteDelete}
-                        isCancelDialogWrapperOpen={isCancelDialogWrapperOpen}
-                        setIsCancelDialogWrapperOpen={setIsCancelDialogWrapperOpen}
-                        fetchAppointmentsFiltered={fetchAppointments}
-                        alertActionType={alertActionType}
-                        handleCloseAlert={handleCloseAlert}
-                        handleExecuteConfirm={handleExecuteConfirm}
-                      /> */}
-                </CardContent>
-              </Card>
+                />
+              </CardContent>
+            </Card>
 
+            {!isSearching && (
               <Card className="row-start-1 flex w-full 2xl:w-4/12 bg-transparent border border-border h-auto overflow-y-auto">
                 <CardContent>
                   <Calendar
@@ -134,8 +119,8 @@ export function ConsultationList() {
                   />
                 </CardContent>
               </Card>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </>

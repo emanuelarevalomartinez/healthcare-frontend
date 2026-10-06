@@ -8,6 +8,8 @@ export interface ConsultationApiResponse {
   consultationDate: string;
   nextReview: string;
   registrationDate: string;
+  doctorName: string;
+  patientName: string;
 }
 
 export interface GetConsultationsFilteredParams {
@@ -15,4 +17,11 @@ export interface GetConsultationsFilteredParams {
   size?: number;
   ascending: boolean;
   date: string;
+}
+
+export interface GetConsultationsSearchedParams {
+  page?: number;
+  size?: number;
+  ascending?: boolean;
+  searchTerm: string;
 }

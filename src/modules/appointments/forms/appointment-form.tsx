@@ -20,8 +20,10 @@ import { useRouter } from "next/navigation";
 
 import {
   AppointmentSchema,
+  CreateAppointmentSchema,
   getCreateAppointmentSchema,
   getUpdateAppointmentSchema,
+  UpdateAppointmentSchema,
 } from "./schema";
 
 import {
@@ -31,8 +33,6 @@ import {
 } from "../types";
 
 import { getAllDoctorsFiltered } from "@/modules/doctors/services";
-
-import { ApiResponse, PaginatedData } from "@/lib/server/api-response";
 import {
   FormFieldSearchSelect,
   SearchSelectDisplayField,
@@ -85,12 +85,16 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
   const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
   const [selectedPatientId, setSelectedPatientId] = useState<string>("");
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isDoctorLocked, setIsDoctorLocked] = useState(false);
 
-  const [doctorSearch, setDoctorSearch] = useState("");
-  const [patientSearch, setPatientSearch] = useState("");
+  const [doctorSearch, setDoctorSearch] = useState(
+    mode === "create" ? "" : appointment.doctorFullName ?? ""
+  );
+  const [patientSearch, setPatientSearch] = useState(
+    mode === "create" ? "" : appointment.patientFullName ?? ""
+  );
 
   const isEditMode = mode === "edit";
   const isViewMode = mode === "details";
@@ -258,26 +262,44 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
     setIsLoading(true);
 
     try {
-      const payload = {
-        patientId: data.patientId,
-        doctorId: data.doctorId,
-        appointmentDateTime: formatDateTimeToApiString(
-          data.appointmentDateTime,
-          data.appointmentTime
-        ),
-        durationMinutes: data.durationMinutes,
-        consultationReason: data.consultationReason,
-        status: data.status,
-        cancellationReason: data.cancellationReason || null,
-        notes: data.notes || null,
-      };
+      let response;
 
-      const response = isEditMode
-        ? await updateAppointment(
-            appointment.id,
-            payload as AppointmentUpdateRequest
-          )
-        : await createAppointment(payload as AppointmentCreateRequest);
+      if (isEditMode) {
+        const updateData = data as UpdateAppointmentSchema;
+
+        const updatePayload: AppointmentUpdateRequest = {
+          appointmentDateTime:
+            updateData.appointmentDateTime && updateData.durationMinutes
+              ? formatDateTimeToApiString(
+                  updateData.appointmentDateTime,
+                  updateData.appointmentTime
+                )
+              : undefined,
+          durationMinutes: updateData.durationMinutes,
+          consultationReason: updateData.consultationReason,
+          status: updateData.status as APPOINTMENT_STATUS | undefined,
+          cancellationReason: updateData.cancellationReason,
+          notes: updateData.notes || undefined,
+        };
+
+        response = await updateAppointment(appointment.id, updatePayload);
+      } else {
+        const createData = data as CreateAppointmentSchema;
+
+        const createPayload: AppointmentCreateRequest = {
+          doctorId: createData.doctorId,
+          patientId: createData.patientId,
+          appointmentDateTime: formatDateTimeToApiString(
+            createData.appointmentDateTime,
+            createData.appointmentTime
+          ),
+          durationMinutes: createData.durationMinutes,
+          consultationReason: createData.consultationReason,
+          notes: createData.notes || undefined,
+        };
+
+        response = await createAppointment(createPayload);
+      }
 
       if (response.status === 201 || response.status === 200) {
         toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
@@ -333,6 +355,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
   useEffect(() => {
     const loadDoctor = async () => {
+      if (mode !== "create") return;
+
       const userData = getUserDataLocalStore();
       const userId = userData?.id;
 
@@ -341,17 +365,12 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
       if (userData.role === USER_ROLE.DOCTOR) {
         try {
           const user = await findUserById(userId);
-          const doctorName = user.data.username;
+          const doctorId = user.data.doctor?.id ?? user.data.id;
 
-          setDoctorSearch(doctorName);
-          if (mode === "create" || mode === "edit") {
-            setIsDoctorLocked(true);
-          }
-
-          setValue("doctorId", user.data.doctor?.id ?? user.data.id, {
-            shouldValidate: true,
-          });
-          setSelectedDoctorId(user.data.doctor?.id ?? user.data.id);
+          setDoctorSearch(user.data.username);
+          setIsDoctorLocked(true);
+          setSelectedDoctorId(doctorId);
+          setValue("doctorId", doctorId, { shouldValidate: true });
         } catch (error) {
           console.error("Error to find doctor:", error);
         }
@@ -391,11 +410,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             id="doctorName"
             label={t.doctorLabel}
             placeholder={t.doctorPlaceholder}
-            disabled={disableFields || isDoctorLocked}
-            value={
-              mode === "create" ? doctorSearch : appointment.doctorFullName
-            }
-            /*    value={appointment.doctorFullName} */
+            disabled={isViewMode || isEditMode || isDoctorLocked}
+            value={doctorSearch}
             onChange={setDoctorSearch}
             onSelect={handleSelectDoctor}
             searchItems={searchDoctors}
@@ -413,10 +429,8 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
             id="patientName"
             label={t.patientLabel}
             placeholder={t.patientPlaceholder}
-            disabled={disableFields}
-            value={
-              mode === "create" ? patientSearch : appointment.patientFullName
-            }
+            disabled={isViewMode || isEditMode}
+            value={patientSearch}
             onChange={setPatientSearch}
             onSelect={handleSelectPatient}
             searchItems={searchPatients}

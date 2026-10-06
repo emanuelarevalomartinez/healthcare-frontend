@@ -26,7 +26,7 @@ export interface AppointmentCreateRequest {
   appointmentDateTime: string;
   durationMinutes: number;
   consultationReason: string;
-  notes: string;
+  notes?: string;
 }
 
 export interface AppointmentUpdateRequest {
@@ -34,7 +34,7 @@ export interface AppointmentUpdateRequest {
   durationMinutes?: number;
   consultationReason?: string;
   status?: APPOINTMENT_STATUS;
-  cancellationReason?: string;
+  cancellationReason?: string | null;
   confirmedAt?: string;
   attendedAt?: string;
   notes?: string;

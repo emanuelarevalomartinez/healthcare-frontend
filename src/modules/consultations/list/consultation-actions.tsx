@@ -10,7 +10,11 @@ import { useCallback, useEffect, useState } from "react";
 import { format, parse } from "date-fns";
 import { PaginatedData } from "@/lib/server/api-response";
 import { ConsultationApiResponse } from "../types";
-import { deleteConsultation, getAllConsultationsFiltered } from "../services";
+import {
+  deleteConsultation,
+  getAllConsultationsFiltered,
+  getAllConsultationsSearched,
+} from "../services";
 import { toast } from "sonner";
 import { TableAction } from "@/components/customs/table-wrapper";
 
@@ -30,10 +34,14 @@ export function useConsultationActions({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [consultationsData, setConsultationsDataData] =
     useState<PaginatedData<ConsultationApiResponse>>();
-    const [consultationToDelete, setConsultationToDelete] = useState<{
+  const [consultationsSearchData, setConsultationsSearchData] =
+    useState<PaginatedData<ConsultationApiResponse>>();
+  const [consultationToDelete, setConsultationToDelete] = useState<{
     id: string;
   } | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchView, setIsSearchView] = useState(false);
 
   useEffect(() => {
     const savedData = getConsultationSelectedDateToViewLocalStorage();
@@ -82,6 +90,43 @@ export function useConsultationActions({
     [currentPage, selectedDate]
   );
 
+  const fetchConsultationsSearched = useCallback(
+    async (searchTerm: string) => {
+      setIsLoading(true);
+
+      try {
+        const response = await getAllConsultationsSearched({
+          page: currentPage,
+          size: pageSize,
+          ascending: true,
+          searchTerm: searchTerm,
+        });
+
+        setConsultationsSearchData(response.data);
+      } catch (error) {
+        console.error("Error to load searched consultations: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentPage]
+  );
+
+  const fetchConsultations = useCallback(
+    async (searchTerm?: string) => {
+      const normalizedSearchTerm = searchTerm?.trim();
+
+      if (normalizedSearchTerm) {
+        setIsSearchView(true);
+        await fetchConsultationsSearched(normalizedSearchTerm);
+      } else {
+        setIsSearchView(false);
+        await fetchConsultationsFiltered();
+      }
+    },
+    [fetchConsultationsFiltered, fetchConsultationsSearched]
+  );
+
   const handleDateChange = useCallback(
     (newDate: Date | undefined) => {
       if (!newDate) return;
@@ -98,50 +143,49 @@ export function useConsultationActions({
   );
 
   const handleOpenDeleteConfirm = (id: string) => {
-      setConsultationToDelete({ id });
-      setIsAlertOpen(true);
-    };
-  
-    const handleExecuteDelete = async () => {
-      if (!consultationToDelete) return;
-      try {
-        const response = await deleteConsultation(consultationToDelete.id);
-        if (response.status === 200 || response.status === 204) {
-          toast.success(t.successDeleteConsultationToast);
-          if (consultationsData?.content.length === 1 && currentPage > 0) {
-            setCurrentPage((prev) => prev - 1);
-          } else {
-            // TODO esto hay que cambiarlo por fetchConsultations
-            await fetchConsultationsFiltered();
-          }
-        }
-      } catch (error) {
-        console.error("Error to delete:", error);
-        toast.error(t.errordeleteConsultationToast);
-      } finally {
-        setIsAlertOpen(false);
-        setConsultationToDelete(null);
-      }
-    };
+    setConsultationToDelete({ id });
+    setIsAlertOpen(true);
+  };
 
-    const consultationsActions: TableAction<ConsultationApiResponse>[] = [
-        {
-          label: dictionary.components.actions.viewDetails,
-          onClick: (p) =>
-            router.push(routes.consultations.details.replace(":id", p.id)),
-        },
-        {
-          label: dictionary.components.actions.edit,
-          onClick: (p) =>
-            router.push(routes.consultations.edit.replace(":id", p.id)),
-        },
-        {
-          label: dictionary.components.actions.delete,
-          variant: "destructive",
-          separatorBefore: true,
-          onClick: (p) => handleOpenDeleteConfirm(p.id),
-        },
-      ];
+  const handleExecuteDelete = async () => {
+    if (!consultationToDelete) return;
+    try {
+      const response = await deleteConsultation(consultationToDelete.id);
+      if (response.status === 200 || response.status === 204) {
+        toast.success(t.successDeleteConsultationToast);
+        if (consultationsData?.content.length === 1 && currentPage > 0) {
+          setCurrentPage((prev) => prev - 1);
+        } else {
+          await fetchConsultations();
+        }
+      }
+    } catch (error) {
+      console.error("Error to delete:", error);
+      toast.error(t.errordeleteConsultationToast);
+    } finally {
+      setIsAlertOpen(false);
+      setConsultationToDelete(null);
+    }
+  };
+
+  const consultationsActions: TableAction<ConsultationApiResponse>[] = [
+    {
+      label: dictionary.components.actions.viewDetails,
+      onClick: (p) =>
+        router.push(routes.consultations.details.replace(":id", p.id)),
+    },
+    {
+      label: dictionary.components.actions.edit,
+      onClick: (p) =>
+        router.push(routes.consultations.edit.replace(":id", p.id)),
+    },
+    {
+      label: dictionary.components.actions.delete,
+      variant: "destructive",
+      separatorBefore: true,
+      onClick: (p) => handleOpenDeleteConfirm(p.id),
+    },
+  ];
 
   const handleCloseAlert = () => {
     setConsultationToDelete(null);
@@ -158,6 +202,9 @@ export function useConsultationActions({
     setCurrentPage,
     consultationsActions,
     handleExecuteDelete,
-    fetchConsultationsFiltered
+    fetchConsultations,
+    searchTerm,
+    setSearchTerm,
+    consultationsSearchData,
   };
 }

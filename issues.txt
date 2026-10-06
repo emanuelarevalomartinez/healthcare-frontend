@@ -2,9 +2,11 @@
 
 // TODO
 
- // tengo que renombrar el metodo de consultations que trae los datos y hacer el fetch con el search a ver si ese es el error de por que no carga a la primera y terminar de añadir toda esa logica
+// terminar de maquetar la vista de listar las consultas con los datos que debe mostrar 
+// añadir el componete de busqueda a la lista de las consultas
 
-// mover la logica de appointment a las actions
+// mover toda la logica posible del formulario de appointment a las actions respectivas
+
 // comenzar a trabajar en el perfil de usuario y que este pueda editar su informacion personal segun el rol
 // corregir por que cuando actualizo el estado de alguna cita durante la vista de busqueda n ose actualizan los datos desde base de datos
 
