@@ -3,9 +3,10 @@
 // TODO
 
 // añadir el componete de busqueda a la lista de las consultas
-// comenzar a trabajar en el formulario de las consultas
+// incluir la cita y el doctor al formulario de las consultas
 
 // mover toda la logica posible del formulario de appointment a las actions respectivas
+// mover toda la logica posible del formulario de consultas a las actions respectivas
 
 // comenzar a trabajar en el perfil de usuario y que este pueda editar su informacion personal segun el rol
 // corregir por que cuando actualizo el estado de alguna cita durante la vista de busqueda n ose actualizan los datos desde base de datos

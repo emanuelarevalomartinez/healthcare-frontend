@@ -1,8 +1,42 @@
 "use server";
 
-import { apiRoutes, fetcher, GET_OPTIONS } from "@/lib";
-import { ConsultationApiResponse, GetConsultationsFilteredParams, GetConsultationsSearchedParams } from "./types";
+import {
+  apiRoutes,
+  fetcher,
+  GET_OPTIONS,
+  POST_OPTIONS,
+  PUT_OPTIONS,
+} from "@/lib";
+import {
+  ConsultationApiResponse,
+  ConsultationCreateRequest,
+  ConsultationUpdateRequest,
+  GetConsultationsFilteredParams,
+  GetConsultationsSearchedParams,
+} from "./types";
 import { PaginatedData } from "@/lib/server/api-response";
+
+export const createConsultation = async (data: ConsultationCreateRequest) => {
+  const response = await fetcher(apiRoutes.consultations.create, {
+    ...POST_OPTIONS,
+    body: JSON.stringify(data),
+  });
+  return response;
+};
+
+export const updateConsultation = async (
+  id: string,
+  data: ConsultationUpdateRequest
+) => {
+  const response = await fetcher(
+    apiRoutes.consultations.edit.replace(":id", id),
+    {
+      ...PUT_OPTIONS,
+      body: JSON.stringify(data),
+    }
+  );
+  return response;
+};
 
 export const getAllConsultationsFiltered = async ({
   page = 0,
@@ -55,6 +89,16 @@ export const getAllConsultationsSearched = async ({
     }
   );
 
+  return response;
+};
+
+export const findConsultationById = async (id: string) => {
+  const response = await fetcher<ConsultationApiResponse>(
+    apiRoutes.consultations.details.replace(":id", id),
+    {
+      ...GET_OPTIONS,
+    }
+  );
   return response;
 };
 

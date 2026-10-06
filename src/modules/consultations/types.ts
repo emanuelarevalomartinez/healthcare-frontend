@@ -12,6 +12,28 @@ export interface ConsultationApiResponse {
   patientName: string;
 }
 
+export interface ConsultationCreateRequest {
+  appointmentId: string;
+  createdByDoctor: string;
+  symptoms: string;
+  diagnosis: string;
+  treatment: string;
+  prescription: string;
+  observations: string;
+  consultationDate: string;
+  nextReview: string;
+}
+
+export interface ConsultationUpdateRequest {
+  symptoms?: string;
+  diagnosis?: string;
+  treatment?: string;
+  prescription?: string;
+  observations?: string;
+  consultationDate?: string;
+  nextReview?: string;
+}
+
 export interface GetConsultationsFilteredParams {
   page?: number;
   size?: number;
