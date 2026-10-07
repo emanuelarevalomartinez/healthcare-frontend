@@ -1,8 +1,10 @@
 "use client";
 
-import { FormMode, useLanguage } from "@/lib";
-import { ConsultationApiResponse } from "../types";
-import { useMemo, useState } from "react";
+import { FormMode, routes, useLanguage, USER_ROLE } from "@/lib";
+import {
+  ConsultationApiResponse,
+} from "../types";
+import { useEffect, useMemo, useState } from "react";
 import { useConsultationActions } from "../list/consultation-actions";
 import { useRouter } from "next/navigation";
 import {
@@ -15,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SectionHeader } from "@/components/customs/secction-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FormFieldSearchSelect } from "@/components/customs/form-field-search-select";
+import { FormFieldSearchSelect, SearchSelectDisplayField } from "@/components/customs/form-field-search-select";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -25,18 +27,25 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { FormFieldInput } from "@/components/customs/form-field-input";
-import { FormFieldSelect } from "@/components/customs/form-field-select";
 import { FormFieldTextArea } from "@/components/customs/form-field-text-area";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { DoctorWithUserAndScheduleApiResponse } from "@/modules/doctors/types";
 import {
   formatApiDateToInputString,
+  formatApiDateToTimeInputString,
   formatDisplayDateTimeToLocaleString,
   formatSelectedDateToInputString,
   parseInputStringToDate,
 } from "@/lib/utils/functions";
 import { cn } from "@/lib/utils";
+import { getAllDoctorsFiltered } from "@/modules/doctors/services";
+import {
+  getAllAppointmentsSearched,
+} from "@/modules/appointments/services";
+import { AppointmentApiResponse } from "@/modules/appointments/types";
+import { getUserDataLocalStore } from "@/lib/utils/local-storage";
+import { findUserById } from "@/modules/user/services";
 
 interface ConsultationFormProps {
   consultation: ConsultationApiResponse;
@@ -61,12 +70,33 @@ export function ConsultationForm({
   const [isNextReviewCalendarOpen, setIsNextReviewCalendarOpen] =
     useState(false);
 
+      const [isDoctorLocked, setIsDoctorLocked] = useState(false);
+
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("");
+  const [selectedAppointmentId, setSelectedAppointmentId] =
+    useState<string>("");
+
+    const [doctorSearch, setDoctorSearch] = useState(
+    mode === "create" ? "" : consultation.doctorName ?? ""
+  );
+  const [appointmentSearch, setAppointmentSearch] = useState(
+    mode === "create" ? "" : consultation.id ?? ""
+  );
+
   const initialConsultationDate = useMemo(() => {
     return formatApiDateToInputString(consultation?.consultationDate);
   }, [consultation?.consultationDate]);
 
+  const initialConsultationTime = useMemo(() => {
+    return formatApiDateToTimeInputString(consultation?.consultationDate);
+  }, [consultation?.consultationDate]);
+
   const initialNextReview = useMemo(() => {
     return formatApiDateToInputString(consultation?.nextReview);
+  }, [consultation?.nextReview]);
+
+  const initialNextReviewTime = useMemo(() => {
+    return formatApiDateToTimeInputString(consultation?.nextReview);
   }, [consultation?.nextReview]);
 
   const isEditMode = mode === "edit";
@@ -95,8 +125,10 @@ export function ConsultationForm({
       treatment: consultation.treatment,
       prescription: consultation.prescription,
       observations: consultation.observations,
-      consultationDate: consultation.consultationDate,
-      nextReview: consultation.nextReview,
+      consultationDate: initialConsultationDate,
+      consultationTime: initialConsultationTime,
+      nextReview: initialNextReview,
+      nextReviewTime: initialNextReviewTime,
     },
   });
 
@@ -119,9 +151,187 @@ export function ConsultationForm({
     return t.createSectionTitle;
   };
 
+  const searchDoctors = async (
+    query: string
+  ): Promise<DoctorWithUserAndScheduleApiResponse[]> => {
+    try {
+      const response = await getAllDoctorsFiltered(0, 10, query);
+      return response.data?.content || [];
+    } catch (error) {
+      console.error("Error searching doctors:", error);
+      return [];
+    }
+  };
+
+  const handleSelectDoctor = (
+    doctorWithDetails: DoctorWithUserAndScheduleApiResponse
+  ): void => {
+    const { doctor, user } = doctorWithDetails;
+
+    setSelectedDoctorId(doctor.id);
+    setDoctorSearch(user.username);
+
+    setValue("createdByDoctor", doctor.id, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    clearErrors("createdByDoctor");
+  };
+
+  const searchAppointments = async (
+    query: string
+  ): Promise<AppointmentApiResponse[]> => {
+    try {
+      const response = await getAllAppointmentsSearched({
+        page: 0,
+        size: 10,
+        ascending: true,
+        searchTerm: query,
+      });
+      return response.data?.content || [];
+    } catch (error) {
+      console.error("Error searching appointments:", error);
+      return [];
+    }
+  };
+
+  const handleSelectAppointment = (
+    appointment: AppointmentApiResponse
+  ): void => {
+    setSelectedAppointmentId(appointment.id);
+    setAppointmentSearch(appointment.id);
+
+    setValue("appointmentId", appointment.id, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    clearErrors("appointmentId");
+  };
+
   async function onSubmit(data: ConsultationSchema) {
     console.log("aqui va el submit");
   }
+
+  /*    async function onSubmit(data: ConsultationSchema) {
+    if (isViewMode) return;
+    setIsLoading(true);
+
+    try {
+      let response;
+
+      if (isEditMode) {
+        const updateData = data as UpdateConsultationSchema;
+
+        const updatePayload: ConsultationUpdateRequest = {
+          symptoms: updateData.symptoms,
+          diagnosis: updateData.diagnosis,
+          treatment: updateData.treatment,
+          prescription: updateData.prescription || undefined,
+          observations: updateData.observations || undefined,
+          consultationDate: updateData.consultationDate,
+          nextReview: updateData.nextReview || undefined,
+        };
+
+        response = await updateConsultation(consultation.id, updatePayload);
+      } else {
+        const createData = data as CreateConsultationSchema;
+
+        const createPayload: ConsultationCreateRequest = {
+          appointmentId: createData.appointmentId,
+          createdByDoctor: createData.createdByDoctor,
+          symptoms: createData.symptoms,
+          diagnosis: createData.diagnosis,
+          treatment: createData.treatment,
+          prescription: createData.prescription || undefined,
+          observations: createData.observations || undefined,
+          consultationDate: createData.consultationDate,
+          nextReview: createData.nextReview || undefined,
+        };
+
+        response = await createConsultation(createPayload);
+      }
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success(isEditMode ? t.toastUpdateSuccess : t.toastSuccess);
+        router.push(routes.consultations.root);
+      }
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  } */
+
+     const doctorDisplayFields: SearchSelectDisplayField<DoctorWithUserAndScheduleApiResponse>[] =
+    [
+      {
+        key: "user",
+        label: t.doctorSearchFields.username,
+        getValue: (doctorWithDetails) => doctorWithDetails.user.username,
+      },
+      {
+        key: "user",
+        label: t.doctorSearchFields.email,
+        getValue: (doctorWithDetails) => doctorWithDetails.user.email,
+      },
+      {
+        key: "schedules",
+        label: t.doctorSearchFields.licenseNumber,
+        getValue: (doctorWithDetails) => doctorWithDetails.doctor.licenseNumber,
+        condition: (doctorWithDetails) =>
+          !!doctorWithDetails.doctor.licenseNumber,
+      },
+    ];
+
+  const appointmentsDisplayFields: SearchSelectDisplayField<AppointmentApiResponse>[] =
+    [
+      {
+        key: "patientFullName",
+        label: t.appointmentSearchFields.patientName,
+        getValue: (appointment) => appointment.patientFullName,
+      },
+      {
+        key: "doctorFullName",
+        label: t.appointmentSearchFields.doctorName,
+        getValue: (appointment) => appointment.doctorFullName,
+      },
+      {
+        key: "appointmentDateTime",
+        label: t.appointmentSearchFields.appointmentDateTime,
+        getValue: (appointment) =>
+          formatDisplayDateTimeToLocaleString(appointment.appointmentDateTime),
+      },
+    ];
+
+    useEffect(() => {
+    const loadDoctor = async () => {
+      if (mode !== "create") return;
+
+      const userData = getUserDataLocalStore();
+      const userId = userData?.id;
+
+      if (!userId) return;
+
+      if (userData.role === USER_ROLE.DOCTOR) {
+        try {
+          const user = await findUserById(userId);
+          const doctorId = user.data.doctor?.id ?? user.data.id;
+
+          setDoctorSearch(user.data.username);
+          setIsDoctorLocked(true);
+          setSelectedDoctorId(doctorId);
+          setValue("createdByDoctor", doctorId, { shouldValidate: true });
+        } catch (error) {
+          console.error("Error to find doctor:", error);
+        }
+      }
+    };
+
+    loadDoctor();
+  }, [mode, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -149,24 +359,26 @@ export function ConsultationForm({
 
       <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
-          {/*    <FormFieldSearchSelect<ConsultationApiResponse>
-            id="patientName"
-            label={t.patientLabel}
-            placeholder={t.patientPlaceholder}
-            disabled={isViewMode || isEditMode}
-            value={patientSearch}
-            onChange={setPatientSearch}
-            onSelect={handleSelectPatient}
-            searchItems={searchPatients}
-            getDisplayLabel={(patient) => patient.fullName}
-            displayFields={patientsDisplayFields}
-            error={errors.patientId?.message}
-            minChars={1}
-            debounceDelay={200}
-            maxResults={10}
-          /> */}
+          {!isEditMode && (
+            <FormFieldSearchSelect<AppointmentApiResponse>
+              id="appointmentId"
+              label={t.appoinmentLabel}
+              placeholder={t.appointmentPlaceholder}
+              disabled={isViewMode || isEditMode}
+              value={appointmentSearch}
+              onChange={setAppointmentSearch}
+              onSelect={handleSelectAppointment}
+              searchItems={searchAppointments}
+              getDisplayLabel={(appointment) => appointment.id}
+              displayFields={appointmentsDisplayFields}
+              error={errors.root?.message}
+              minChars={1}
+              debounceDelay={200}
+              maxResults={10}
+            />
+          )}
 
-          {/*  <FormFieldSearchSelect<DoctorWithUserAndScheduleApiResponse>
+          <FormFieldSearchSelect<DoctorWithUserAndScheduleApiResponse>
             id="createdByDoctor"
             label={t.doctorLabel}
             placeholder={t.doctorPlaceholder}
@@ -179,11 +391,11 @@ export function ConsultationForm({
               doctorWithDetails.user.username
             }
             displayFields={doctorDisplayFields}
-            error={errors.doctorId?.message}
+            error={errors.root?.message}
             minChars={1}
             debounceDelay={200}
             maxResults={10}
-          /> */}
+          />
 
           <div className="grid gap-2">
             <Label htmlFor="consultationDate">{t.consultationDateLabel}</Label>
@@ -236,6 +448,15 @@ export function ConsultationForm({
               )}
             </div>
           </div>
+          <FormFieldInput
+            id="consultationTime"
+            type="time"
+            label={t.consultationTimeLabel}
+            placeholder={t.consultationTimePlaceholder}
+            disabled={disableFields}
+            register={register("consultationTime")}
+            error={errors.consultationTime?.message as string}
+          />
           <div className="grid gap-2">
             <Label htmlFor="nextReview">{t.nextReviewLabel}</Label>
             <Popover
@@ -293,6 +514,15 @@ export function ConsultationForm({
               )}
             </div>
           </div>
+          <FormFieldInput
+            id="nextReviewTime"
+            type="time"
+            label={t.nextReviewTimeLabel}
+            placeholder={t.nextReviewTimePlaceholder}
+            disabled={disableFields}
+            register={register("nextReviewTime")}
+            error={errors.nextReviewTime?.message as string}
+          />
 
           <div className="md:col-span-2">
             <FormFieldTextArea

@@ -409,10 +409,27 @@
       "observationsPlaceholder": "Ingrese observaciones adicionales",
       "consultationDateLabel": "Fecha de Consulta",
       "consultationDatePlaceholder": "Seleccione la fecha de la consulta",
+      "consultationTimeLabel": "Hora de Consulta",
+      "consultationTimePlaceholder": "Seleccione la hora de la consulta",
       "nextReviewLabel": "Próxima Revisión",
       "nextReviewPlaceholder": "Seleccione la fecha de la próxima revisión",
+      "nextReviewTimeLabel": "Hora de Próxima Revisión",
+      "nextReviewTimePlaceholder": "Seleccione la hora de la próxima revisión",
       "registrationDateLabel": "Fecha de Registro",
+      "doctorPlaceholder": "Buscar doctor",
+      "appointmentPlaceholder": "Buscar cita",
       "systemUnknown": "N/A",
+      "doctorSearchFields": {
+        "username": "Usuario",
+        "email": "Correo",
+        "licenseNumber": "Número de Licencia"
+      },
+      "appointmentSearchFields": {
+        "id": "ID",
+        "patientName": "Paciente",
+        "doctorName": "Doctor",
+        "appointmentDateTime": "Fecha"
+      },
       "validation": {
         "appointmentRequired": "El ID de la cita es obligatorio",
         "createdByDoctorRequired": "El ID del médico que crea es obligatorio",
@@ -424,7 +441,8 @@
         "treatmentMaxLength": "El tratamiento no puede exceder 2000 caracteres",
         "prescriptionMaxLength": "La receta no puede exceder 2000 caracteres",
         "observationsMaxLength": "Las observaciones no pueden exceder 1000 caracteres",
-        "consultationDateRequired": "La fecha de consulta es obligatoria"
+        "consultationDateRequired": "La fecha de consulta es obligatoria",
+        "consultationTimeRequired": "La hora de consulta es obligatoria"
       },
       "successDeleteConsultationToast": "eliminado con éxito.",
       "errordeleteConsultationToast": "No se pudo eliminar la consulta.",

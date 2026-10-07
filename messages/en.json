@@ -409,10 +409,27 @@
       "observationsPlaceholder": "Enter additional observations",
       "consultationDateLabel": "Consultation Date",
       "consultationDatePlaceholder": "Select the consultation date",
+      "consultationTimeLabel": "Consultation Time",
+      "consultationTimePlaceholder": "Select the consultation time",
       "nextReviewLabel": "Next Review",
       "nextReviewPlaceholder": "Select the date for the next review",
+      "nextReviewTimeLabel": "Next Review Time",
+      "nextReviewTimePlaceholder": "Select the time for the next review",
       "registrationDateLabel": "Registration Date",
+      "doctorPlaceholder": "Search doctor",
+      "appointmentPlaceholder": "Search appointment",
       "systemUnknown": "N/A",
+      "doctorSearchFields": {
+        "username": "Username",
+        "email": "Email",
+        "licenseNumber": "License Number"
+      },
+      "appointmentSearchFields": {
+        "id": "ID",
+        "patientName": "Patient",
+        "doctorName": "Doctor",
+        "appointmentDateTime": "Date"
+      },
       "validation": {
         "appointmentRequired": "Appointment ID is required",
         "createdByDoctorRequired": "The ID of the doctor who creates it is required",
@@ -424,7 +441,8 @@
         "treatmentMaxLength": "Treatment cannot exceed 2000 characters",
         "prescriptionMaxLength": "Prescription cannot exceed 2000 characters",
         "observationsMaxLength": "Observations cannot exceed 1000 characters",
-        "consultationDateRequired": "Consultation date is required"
+        "consultationDateRequired": "Consultation date is required",
+        "consultationTimeRequired": "Consultation time is required"
       },
       "successDeleteConsultationToast": "successfully deleted.",
       "errordeleteConsultationToast": "Could not delete the consultation.",

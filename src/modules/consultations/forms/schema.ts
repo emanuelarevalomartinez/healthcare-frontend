@@ -48,7 +48,14 @@ export const getCreateConsultationSchema = (
       })
       .min(1, v.consultationDateRequired),
 
+    consultationTime: z
+      .string({
+        error: v.consultationTimeRequired,
+      })
+      .min(1, v.consultationTimeRequired),
+
     nextReview: z.string().optional().nullish(),
+    nextReviewTime: z.string().optional().nullish(),
   });
 };
 
@@ -101,7 +108,14 @@ export const getUpdateConsultationSchema = (
       })
       .optional(),
 
+    consultationTime: z
+      .string({
+        error: v.consultationTimeRequired,
+      })
+      .optional(),
+
     nextReview: z.string().optional().nullish(),
+    nextReviewTime: z.string().optional().nullish(),
   });
 };
 

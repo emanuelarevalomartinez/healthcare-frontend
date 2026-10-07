@@ -2,6 +2,7 @@
 
 // TODO
 
+// añadir el nombre de la cita a todo el flujo de las mismas
 // añadir el componete de busqueda a la lista de las consultas
 // incluir la cita y el doctor al formulario de las consultas
 
