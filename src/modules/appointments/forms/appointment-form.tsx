@@ -174,6 +174,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
   } = useForm<AppointmentSchema>({
     resolver: zodResolver(currentSchema) as Resolver<AppointmentSchema>,
     defaultValues: {
+      appointmentName: appointment.appointmentName,
       status: appointment.status as APPOINTMENT_STATUS,
       cancellationReason: appointment.cancellationReason,
       appointmentDateTime: initialAppointmentDate,
@@ -268,6 +269,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         const updateData = data as UpdateAppointmentSchema;
 
         const updatePayload: AppointmentUpdateRequest = {
+          appointmentName: updateData.appointmentName,
           appointmentDateTime:
             updateData.appointmentDateTime && updateData.durationMinutes
               ? formatDateTimeToApiString(
@@ -289,6 +291,7 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
         const createPayload: AppointmentCreateRequest = {
           doctorId: createData.doctorId,
           patientId: createData.patientId,
+          appointmentName: createData.appointmentName,
           appointmentDateTime: formatDateTimeToApiString(
             createData.appointmentDateTime,
             createData.appointmentTime
@@ -406,6 +409,15 @@ export function AppointmentForm({ appointment, mode }: AppointmentFormProps) {
 
       <Card className="border bg-background border-border rounded-lg w-full overflow-visible">
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 pt-6">
+          <FormFieldInput
+            id="appointmentName"
+            label={t.appointmentNameLabel}
+            placeholder={t.appointmentNamePlaceholder}
+            disabled={disableFields}
+            register={register("appointmentName")}
+            error={errors.appointmentName?.message as string}
+          />
+
           <FormFieldSearchSelect<DoctorWithUserAndScheduleApiResponse>
             id="doctorName"
             label={t.doctorLabel}

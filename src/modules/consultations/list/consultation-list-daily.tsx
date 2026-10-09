@@ -146,6 +146,18 @@ export function ConsultationListDaily({
                 <div className="mt-2 space-y-1.5 border-t border-border pt-2">
                   <div className="text-sm">
                     <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.consultationName}
+                    </span>
+                    <p className="truncate">{consultation.consultationName}</p>
+                  </div>
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t.appointmentName}
+                    </span>
+                    <p className="truncate">{consultation.appointmentName}</p>
+                  </div>
+                  <div className="text-sm">
+                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {t.patient}
                     </span>
                     <p className="truncate">{consultation.patientName}</p>

@@ -19,6 +19,7 @@ export default async function Page({ params }: PageProps) {
       mode="details"
       appointment={{
         id: response.data.id,
+        appointmentName: response.data.appointmentName,
         appointmentDateTime: response.data.appointmentDateTime,
         durationMinutes: response.data.durationMinutes,
         consultationReason: response.data.consultationReason,

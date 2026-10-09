@@ -2,9 +2,7 @@
 
 // TODO
 
-// añadir el nombre de la cita a todo el flujo de las mismas
 // añadir el componete de busqueda a la lista de las consultas
-// incluir la cita y el doctor al formulario de las consultas
 
 // mover toda la logica posible del formulario de appointment a las actions respectivas
 // mover toda la logica posible del formulario de consultas a las actions respectivas
@@ -15,6 +13,10 @@
 // añadir la seccion de cuenta para que el doctor pueda editar su infracion de horarios etc
 
 // comenzar a trabajar en la vista de las citas
+
+// corregir el tamaño de los elementos que tiene barra de busqueda
+
+// intentar borrar todo desde la mas alta jerarquia para ver que n ose puede borrar porque no esta en cascada
 
 
 // cerrar el app=sidebar cuando estoy en vista movile y el usuario seleciona una seccion

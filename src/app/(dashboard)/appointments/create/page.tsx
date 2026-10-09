@@ -5,9 +5,10 @@ import { PATIENT_DOCUMENT_TYPE } from "@/modules/patients/types";
 export default async function Page() {
   return (
     <AppointmentForm
-     mode="create"
-     appointment={{
-       id: "",
+      mode="create"
+      appointment={{
+        id: "",
+        appointmentName: "",
         appointmentDateTime: "",
         durationMinutes: 0,
         consultationReason: "",
@@ -23,7 +24,7 @@ export default async function Page() {
         documentType: undefined as unknown as PATIENT_DOCUMENT_TYPE,
         patientFullName: "",
         doctorFullName: "",
-     }}
+      }}
     />
   );
 }

@@ -14,6 +14,7 @@ export default async function Page({ params }: PageProps) {
       mode="edit"
       consultation={{
         id: response.data.id,
+        consultationName: response.data.consultationName,
         symptoms: response.data.symptoms,
         diagnosis: response.data.diagnosis,
         treatment: response.data.treatment,
@@ -22,6 +23,8 @@ export default async function Page({ params }: PageProps) {
         consultationDate: response.data.consultationDate,
         nextReview: response.data.nextReview,
         registrationDate: response.data.registrationDate,
+        appointmentName: response.data.appointmentName,
+        appointmentDateTime: response.data.appointmentDateTime,
         doctorName: response.data.doctorName,
         patientName: response.data.patientName,
       }}

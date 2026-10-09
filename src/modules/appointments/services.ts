@@ -43,6 +43,8 @@ export const getAllAppointmetsFiltered = async ({
   size = 10,
   ascending,
   date,
+  appointmentName,
+  searchByNameOnly,
   appointmentStatus,
   patientFullName,
   doctorUserName,
@@ -58,6 +60,14 @@ export const getAllAppointmetsFiltered = async ({
     ascending: ascending.toString(),
     date,
   });
+
+  if (appointmentName) {
+    queryParams.set("appointmentName", appointmentName);
+  }
+
+  if (searchByNameOnly !== undefined && searchByNameOnly !== null) {
+    queryParams.set("searchByNameOnly", searchByNameOnly.toString());
+  }
 
   if (appointmentStatus) {
     queryParams.set("appointmentStatus", appointmentStatus);
@@ -110,6 +120,7 @@ export const getAllAppointmentsSearched = async ({
   size = 10,
   ascending = true,
   searchTerm,
+  searchByNameOnly,
   appointmentStatus,
   documentType,
 }: GetAppointmentsSearchedParams) => {
@@ -119,6 +130,10 @@ export const getAllAppointmentsSearched = async ({
     ascending: ascending.toString(),
     searchTerm: searchTerm,
   });
+
+  if (searchByNameOnly !== undefined && searchByNameOnly !== null) {
+    queryParams.set("searchByNameOnly", searchByNameOnly.toString());
+  }
 
   if (appointmentStatus) {
     queryParams.set("appointmentStatus", appointmentStatus);

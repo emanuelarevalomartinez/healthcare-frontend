@@ -286,6 +286,8 @@
       "doctorPlaceholder": "Enter doctor's name, email, or license number...",
       "patientLabel": "Patient",
       "patientPlaceholder": "Enter patient's name, medical record number, or document number...",
+      "appointmentNameLabel": "Appointment Name",
+      "appointmentNamePlaceholder": "Enter the appointment name",
       "appointmentDateTimeLabel": "Appointment Date",
       "appointmentDateTimePlaceholder": "Select appointment date",
       "durationMinutesLabel": "Duration (minutes)",
@@ -294,10 +296,8 @@
       "consultationReasonPlaceholder": "Enter consultation reason",
       "appointmentTimeLabel": "Appointment Time",
       "appointmentTimePlaceholder": "Select appointment time",
-
       "statusLabel": "Status",
       "statusPlaceholder": "Select appointment status",
-
       "notesLabel": "Notes",
       "notesPlaceholder": "Enter additional notes",
       "doctorSearchFields": {
@@ -334,6 +334,7 @@
       "noAppointmentsForDay": "No appointments for this day",
       "noAppointmentsFound": "No appointments found matching your search criteria",
       "searchResults": "Search Results",
+      "appointmentName": "Appointment Name",
       "doctor": "Doctor",
       "patient": "Patient",
       "minutes": "min",
@@ -347,10 +348,12 @@
       "confirmedAtLabel": "Confirmed At",
       "attendedAtLabel": "Attended At",
       "systemUnknown": "N/A",
-      "searchPlaceholder": "Search by patient, doctor, or document",
+      "searchPlaceholder": "Search by appoinment name, patient, doctor, or document",
       "validation": {
         "doctorRequired": "Doctor is required.",
         "patientRequired": "Patient is required.",
+        "appointmentNameRequired": "Appointment name is required.",
+        "appointmentNameMaxLength": "Appointment name cannot exceed 150 characters.",
         "appointmentDateTimeRequired": "Appointment date and time are required.",
         "appointmentTimeRequired": "Appointment time is required.",
         "appointmentTimeInvalid": "Appointment time must be a valid time.",
@@ -387,6 +390,8 @@
       "editSectionSubtitle": "Update details",
       "createNewConsultationButton": "New Consultation",
       "save": "Save",
+      "consultationNameLabel": "Consultation Name",
+      "consultationNamePlaceholder": "Enter the consultation name",
       "doctorLabel": "Doctor",
       "appoinmentLabel": "Appoinment",
       "searchResults": "Search Results",
@@ -394,6 +399,8 @@
       "consultationCountPlural": "consultations",
       "noConsultasForDay": "No consultas for this day",
       "noConsultasFound": "No consultas found matching your search criteria",
+      "consultationName": "Consultation Name",
+      "appointmentName": "Appointment Name",
       "doctor": "Doctor",
       "patient": "Patient",
       "minutes": "min",
@@ -425,14 +432,14 @@
         "licenseNumber": "License Number"
       },
       "appointmentSearchFields": {
-        "id": "ID",
-        "patientName": "Patient",
-        "doctorName": "Doctor",
-        "appointmentDateTime": "Date"
+        "appoinmentName": "Appoinment name",
+        "appointmentDateTime": "Appoinment date"
       },
       "validation": {
         "appointmentRequired": "Appointment ID is required",
         "createdByDoctorRequired": "The ID of the doctor who creates it is required",
+        "consultationNameRequired": "Consultation name is required.",
+        "consultationNameMaxLength": "Consultation name cannot exceed 150 characters.",
         "symptomsRequired": "Symptoms are required",
         "symptomsMaxLength": "Symptoms cannot exceed 1000 characters",
         "diagnosisRequired": "Diagnosis is required",
@@ -444,6 +451,8 @@
         "consultationDateRequired": "Consultation date is required",
         "consultationTimeRequired": "Consultation time is required"
       },
+      "toastSuccess": "Consultation successfully created.",
+      "toastUpdateSuccess": "Consultation updated successfully.",
       "successDeleteConsultationToast": "successfully deleted.",
       "errordeleteConsultationToast": "Could not delete the consultation.",
       "deleteAlertTitle": "Are you sure you want to delete this consultation?",

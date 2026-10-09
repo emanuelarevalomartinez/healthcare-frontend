@@ -6,6 +6,7 @@ export default async function Page() {
       mode="create"
       consultation={{
         id: "",
+        consultationName: "",
         symptoms: "",
         diagnosis: "",
         treatment: "",
@@ -14,6 +15,8 @@ export default async function Page() {
         consultationDate: "",
         nextReview: "",
         registrationDate: "",
+        appointmentName: "",
+        appointmentDateTime: "",
         doctorName: "",
         patientName: "",
       }}

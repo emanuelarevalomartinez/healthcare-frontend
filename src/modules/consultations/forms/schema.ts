@@ -10,6 +10,12 @@ export const getCreateConsultationSchema = (
     appointmentId: z.string().uuid(v.appointmentRequired),
     createdByDoctor: z.string().uuid(v.createdByDoctorRequired),
 
+    consultationName: z
+      .string()
+      .trim()
+      .min(1, v.consultationNameRequired)
+      .max(150, v.consultationNameMaxLength),
+
     symptoms: z
       .string()
       .trim()
@@ -65,6 +71,13 @@ export const getUpdateConsultationSchema = (
   const v = dictionary.dashboard.consultations.validation;
 
   return z.object({
+    consultationName: z
+      .string()
+      .trim()
+      .min(1, v.consultationNameRequired)
+      .max(150, v.consultationNameMaxLength)
+      .optional(),
+
     symptoms: z
       .string()
       .trim()

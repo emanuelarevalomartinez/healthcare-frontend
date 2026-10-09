@@ -3,6 +3,7 @@ import { PATIENT_DOCUMENT_TYPE, PATIENT_SEX } from "../patients/types";
 
 export interface AppointmentApiResponse {
   id: string;
+  appointmentName: string;
   appointmentDateTime: string;
   durationMinutes: number;
   consultationReason: string;
@@ -23,6 +24,7 @@ export interface AppointmentApiResponse {
 export interface AppointmentCreateRequest {
   patientId: string;
   doctorId: string;
+  appointmentName: string;
   appointmentDateTime: string;
   durationMinutes: number;
   consultationReason: string;
@@ -30,6 +32,7 @@ export interface AppointmentCreateRequest {
 }
 
 export interface AppointmentUpdateRequest {
+  appointmentName?: string;
   appointmentDateTime?: string;
   durationMinutes?: number;
   consultationReason?: string;
@@ -45,6 +48,8 @@ export interface GetAppointmentsFilteredParams {
   size?: number;
   ascending: boolean;
   date: string;
+  appointmentName?: string;
+  searchByNameOnly?: boolean;
   appointmentStatus?: APPOINTMENT_STATUS;
   patientFullName?: string;
   doctorUserName?: string;
@@ -60,6 +65,7 @@ export interface GetAppointmentsSearchedParams {
   size?: number;
   ascending?: boolean;
   searchTerm: string;
+  searchByNameOnly?: boolean,
   appointmentStatus?: APPOINTMENT_STATUS;
   documentType?: PATIENT_DOCUMENT_TYPE
 }

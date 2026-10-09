@@ -11,6 +11,12 @@ export const getCreateAppointmentSchema = (
 
     patientId: z.string().uuid(v.patientRequired),
 
+    appointmentName: z
+      .string()
+      .trim()
+      .min(1, v.appointmentNameRequired)
+      .max(150, v.appointmentNameMaxLength),
+
     appointmentDateTime: z
       .string({
         error: v.appointmentDateTimeRequired,
@@ -60,6 +66,13 @@ export const getUpdateAppointmentSchema = (
     .object({
       doctorId: z.string().uuid(v.doctorRequired).optional(),
       patientId: z.string().uuid(v.patientRequired).optional(),
+
+      appointmentName: z
+        .string()
+        .trim()
+        .min(1, v.appointmentNameRequired)
+        .max(150, v.appointmentNameMaxLength)
+        .optional(),
 
       appointmentDateTime: z
         .string({
