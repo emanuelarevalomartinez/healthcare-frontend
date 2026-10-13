@@ -2,6 +2,8 @@
 
 // TODO
 
+// añadir el boton de eliminar todas las consult_histories desde la vista principal al lado del titulo de la seccion
+
 // añadir el componete de busqueda a la lista de las consultas
 
 // mover toda la logica posible del formulario de appointment a las actions respectivas

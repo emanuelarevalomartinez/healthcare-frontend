@@ -459,6 +459,38 @@
       "deleteAlertDescription": "Esta acción no se puede deshacer. La consulta se eliminará permanentemente.",
       "cancel": "Cancelar",
       "confirm": "Confirmar"
+    },
+    "consultationHistories": {
+      "sectionTitle": "Historial de consultas",
+      "sectionSubtitle": "Línea de tiempo de todas las acciones registradas en consultas y citas.",
+      "empty": "Aún no hay historial registrado.",
+      "consultationLabel": "Consulta",
+      "appointmentLabel": "Cita",
+      "patientLabel": "Paciente",
+      "doctorLabel": "Doctor",
+      "performedByLabel": "Realizado por",
+      "registeredAtLabel": "Registrado el",
+      "deleteDayButton": "Eliminar registro día",
+      "deleteOneButton": "Eliminar registro",
+      "deleteOneLabel": "Registro de consulta del día",
+      "deleteOneLabelConnector": "del",
+      "deleteDayAlertTitle": "¿Eliminar todos los registros de este día?",
+      "deleteDayAlertDescription": "Esta acción no se puede deshacer. Se eliminarán todos los registros del historial de",
+      "deleteOneAlertTitle": "¿Eliminar este registro?",
+      "deleteOneAlertDescription": "Esta acción no se puede deshacer. Se eliminará permanentemente el registro",
+      "successDeleteDay": "Historial del día eliminado correctamente.",
+      "successDeleteOne": "Registro eliminado correctamente.",
+      "errorLoad": "No se pudo cargar el historial de consultas.",
+      "errorDelete": "No se pudo eliminar el historial.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar",
+      "buttonLoading": "Eliminando...",
+      "systemUnknown": "N/A",
+      "eventTypes": {
+        "created": "CREADO",
+        "updated": "ACTUALIZADO",
+        "deleted": "ELIMINADO"
+      }
     }
   },
   "auth": {

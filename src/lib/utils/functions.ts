@@ -1,5 +1,5 @@
 import { format, parse } from "date-fns";
-import { APPOINTMENT_STATUS } from "../constants";
+import { APPOINTMENT_STATUS, CONSULTATION_HISTORIES_EVENT_TYPE } from "../constants";
 import { BadgeType } from "@/components/customs/badge-wrapper";
 
 export function formatApiDateToInputString(
@@ -69,6 +69,12 @@ export const statusBadgeMap: Record<APPOINTMENT_STATUS, BadgeType> = {
   ATTENDED: "gray",
   CANCELLED: "red",
   NO_SHOW: "red",
+};
+
+export const statusConsultationHistoryMap: Record<CONSULTATION_HISTORIES_EVENT_TYPE, BadgeType> = {
+  CREATED: "green",
+  UPDATED: "blue",
+  DELETED: "red",
 };
 
   export function formatDateTimeToApiString(

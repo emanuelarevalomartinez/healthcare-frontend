@@ -58,4 +58,10 @@ export const apiRoutes = {
     details: `${API_URL}/consultations/:id`,
     delete: `${API_URL}/consultations/:id`,
   },
+   consultation_histories: {
+    list: `${API_URL}/consultation_histories`,
+    delete: `${API_URL}/consultation_histories/:id`,
+    deleteByDate: `${API_URL}/consultation_histories/by-date`,
+    deleteAll: `${API_URL}/consultation_histories/all`,
+  },
 };

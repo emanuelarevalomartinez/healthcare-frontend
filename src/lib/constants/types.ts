@@ -29,6 +29,12 @@ export enum DOCTOR_SCHEDULE_DAY_OF_WEEK {
     SUNDAY = "SUNDAY",
 }
 
+export enum CONSULTATION_HISTORIES_EVENT_TYPE {
+    CREATED = "CREATED",
+    UPDATED = "UPDATED",
+    DELETED = "DELETED",
+}
+
 export type FormMode = "create" | "edit" | "details";
 export type DoctorFormMode = "create" | "complete";
 

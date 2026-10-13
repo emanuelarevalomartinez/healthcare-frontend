@@ -459,6 +459,38 @@
       "deleteAlertDescription": "This action cannot be undone. This will permanently delete the consultation.",
       "cancel": "Cancel",
       "confirm": "Delete"
+    },
+    "consultationHistories": {
+      "sectionTitle": "Consultation History",
+      "sectionSubtitle": "Timeline of every action recorded on consultations and appointments.",
+      "empty": "No history recorded yet.",
+      "consultationLabel": "Consultation",
+      "appointmentLabel": "Appointment",
+      "patientLabel": "Patient",
+      "doctorLabel": "Doctor",
+      "performedByLabel": "Performed by",
+      "registeredAtLabel": "Registered at",
+      "deleteDayButton": "Delete day record",
+      "deleteOneButton": "Delete record",
+      "deleteOneLabel": "Consultation record for the day",
+      "deleteOneLabelConnector": "on",
+      "deleteDayAlertTitle": "Delete all records for this day?",
+      "deleteDayAlertDescription": "This action cannot be undone. All history records for",
+      "deleteOneAlertTitle": "Delete this record?",
+      "deleteOneAlertDescription": "This action cannot be undone. This will permanently delete the record",
+      "successDeleteDay": "Day history deleted successfully.",
+      "successDeleteOne": "Record deleted successfully.",
+      "errorLoad": "Could not load the consultation history.",
+      "errorDelete": "Could not delete the history.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "buttonLoading": "Deleting...",
+      "systemUnknown": "N/A",
+      "eventTypes": {
+        "created": "CREATED",
+        "updated": "UPDATED",
+        "deleted": "DELETED"
+      }
     }
   },
   "auth": {
