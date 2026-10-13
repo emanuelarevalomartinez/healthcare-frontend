@@ -3,6 +3,7 @@
 // TODO
 
 // añadir el boton de eliminar todas las consult_histories desde la vista principal al lado del titulo de la seccion
+// mejorar lo que se muestra cuando la seccion de historial esta vacia por completo
 
 // añadir el componete de busqueda a la lista de las consultas
 
